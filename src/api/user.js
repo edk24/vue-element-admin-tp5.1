@@ -4,7 +4,7 @@ import qs from 'qs'
 // 用户登录
 export function login(data) {
   return request({
-    url: '/user/login',
+    url: '/v1/user/login',
     method: 'post',
     data: qs.stringify(data)
   })
