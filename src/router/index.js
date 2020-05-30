@@ -329,114 +329,183 @@ export const constantRoutes = [{
       }
     ]
   },
-
+  // 产品管理  --
   {
-    path: '/project',
+    path: '/product',
     component: Layout,
-    name: '项目管理',
+    name: '产品管理',
+    alwaysShow: true,
     meta: {
-      title: '项目管理',
-      tree: 'tree',
-      icon: 'component'
-    },
-    children: [{
-        path: 'language',
-        name: '开发语言',
-        component: () => import('@/views/project/language'),
-        meta: {
-          title: '开语语言',
-          icon: 'tree'
-        }
-      },
-      {
-        path: 'system',
-        name: '开发终端',
-        component: () => import('@/views/project/system'),
-        meta: {
-          title: '开发终端',
-          icon: 'tree'
-        }
-      },
-      {
-        path: 'task-type',
-        name: '项目类型',
-        component: () => import('@/views/project/task-type'),
-        meta: {
-          title: '项目类型',
-          icon: 'tree'
-        }
-      }
-    ]
-  },
-
-  {
-    path: '/service',
-    component: Layout,
-    name: '服务商管理',
-    meta: {
-      title: '服务商管理',
-      tree: 'tree',
-      icon: 'international'
+      title: '产品管理',
+      icon: 'table'
     },
     children: [{
         path: 'index',
-        name: '服务商列表',
-        component: () => import('@/views/company/index'),
+        name: '产品管理',
+        component: () => import('@/views/product/index'),
         meta: {
-          title: '服务商列表',
+          title: '产品管理',
           icon: 'tree'
         }
       },
-      {
-        path: 'complaint',
-        name: '投诉列表',
-        component: () => import('@/views/company/tousu'),
-        meta: {
-          title: '投诉列表',
-          icon: 'tree'
-        }
-      }
+      // {
+      //   path: 'integral',
+      //   name: '新用户注册送积分',
+      //   component: () => import('@/views/platform/integral'),
+      //   meta: {
+      //     title: '新用户注册送积分',
+      //     icon: 'tree'
+      //   }
+      // },
+      // {
+      //   path: 'height',
+      //   name: '每日最高积分设置',
+      //   component: () => import('@/views/platform/height'),
+      //   meta: {
+      //     title: '每日最高积分设置',
+      //     icon: 'tree'
+      //   }
+      // },
+      // {
+      //   path: 'lower',
+      //   name: '消费最低积分设置',
+      //   component: () => import('@/views/platform/lower'),
+      //   meta: {
+      //     title: '消费最低积分设置',
+      //     icon: 'tree'
+      //   }
+      // }
     ]
   },
-
+  // 产品管理  --
   {
-    path: '/system',
+    path: '/feedback',
     component: Layout,
-    name: '系统管理',
+    name: '用户反馈',
+    alwaysShow: true,
     meta: {
-      title: '系统管理',
-      tree: 'tree',
-      icon: 'component'
+      title: '用户反馈',
+      icon: 'table'
     },
     children: [{
-        path: 'setting',
-        name: '系统设置',
-        component: () => import('@/views/admin/index'),
+        path: 'index',
+        name: '用户反馈',
+        component: () => import('@/views/feedback/index'),
         meta: {
-          title: '系统设置',
-          icon: 'tree'
-        }
-      },
-      {
-        path: 'feedback',
-        name: '意见反馈',
-        component: () => import('@/views/system/feedback'),
-        meta: {
-          title: '意见反馈',
-          icon: 'tree'
-        }
-      },
-      {
-        path: 'kefu',
-        name: '在线客服',
-        component: () => import('@/views/admin/index'),
-        meta: {
-          title: '在线客服',
+          title: '用户反馈',
           icon: 'tree'
         }
       }
     ]
   },
+  
+  // {
+  //   path: '/project',
+  //   component: Layout,
+  //   name: '项目管理',
+  //   meta: {
+  //     title: '项目管理',
+  //     tree: 'tree',
+  //     icon: 'component'
+  //   },
+  //   children: [{
+  //       path: 'language',
+  //       name: '开发语言',
+  //       component: () => import('@/views/project/language'),
+  //       meta: {
+  //         title: '开语语言',
+  //         icon: 'tree'
+  //       }
+  //     },
+  //     {
+  //       path: 'system',
+  //       name: '开发终端',
+  //       component: () => import('@/views/project/system'),
+  //       meta: {
+  //         title: '开发终端',
+  //         icon: 'tree'
+  //       }
+  //     },
+  //     {
+  //       path: 'task-type',
+  //       name: '项目类型',
+  //       component: () => import('@/views/project/task-type'),
+  //       meta: {
+  //         title: '项目类型',
+  //         icon: 'tree'
+  //       }
+  //     }
+  //   ]
+  // },
+
+  // {
+  //   path: '/service',
+  //   component: Layout,
+  //   name: '服务商管理',
+  //   meta: {
+  //     title: '服务商管理',
+  //     tree: 'tree',
+  //     icon: 'international'
+  //   },
+  //   children: [{
+  //       path: 'index',
+  //       name: '服务商列表',
+  //       component: () => import('@/views/company/index'),
+  //       meta: {
+  //         title: '服务商列表',
+  //         icon: 'tree'
+  //       }
+  //     },
+  //     {
+  //       path: 'complaint',
+  //       name: '投诉列表',
+  //       component: () => import('@/views/company/tousu'),
+  //       meta: {
+  //         title: '投诉列表',
+  //         icon: 'tree'
+  //       }
+  //     }
+  //   ]
+  // },
+
+  // {
+  //   path: '/system',
+  //   component: Layout,
+  //   name: '系统管理',
+  //   meta: {
+  //     title: '系统管理',
+  //     tree: 'tree',
+  //     icon: 'component'
+  //   },
+  //   children: [{
+  //       path: 'setting',
+  //       name: '系统设置',
+  //       component: () => import('@/views/admin/index'),
+  //       meta: {
+  //         title: '系统设置',
+  //         icon: 'tree'
+  //       }
+  //     },
+  //     {
+  //       path: 'feedback',
+  //       name: '意见反馈',
+  //       component: () => import('@/views/system/feedback'),
+  //       meta: {
+  //         title: '意见反馈',
+  //         icon: 'tree'
+  //       }
+  //     },
+  //     {
+  //       path: 'kefu',
+  //       name: '在线客服',
+  //       component: () => import('@/views/admin/index'),
+  //       meta: {
+  //         title: '在线客服',
+  //         icon: 'tree'
+  //       }
+  //     }
+  //   ]
+  // },
   // {
   //   path: '/tender',
   //   component: Layout,
@@ -448,64 +517,64 @@ export const constantRoutes = [{
   //   ]
   // },
 
-  {
-    path: '/task',
-    component: Layout,
-    name: '需求管理',
-    meta: {
-      title: '需求管理',
-      tree: 'tree',
-      icon: 's-order'
-    },
-    children: [{
-        path: 'bidding',
-        name: 'bidding',
-        component: () => import('@/views/task/bidding'),
-        meta: {
-          title: '竞标列表',
-          icon: 'tree'
-        }
-      },
-      {
-        path: 'audit',
-        name: 'audit',
-        component: () => import('@/views/task/audit'),
-        meta: {
-          title: '待审核列表',
-          icon: 'tree'
-        }
-      },
-      {
-        path: 'back',
-        name: '退款申请',
-        component: () => import('@/views/admin/index'),
-        meta: {
-          title: '退款申请',
-          icon: 'tree'
-        }
-      }
-    ]
-  },
-  {
-    path: '/goods',
-    component: Layout,
-    name: '商品管理',
-    meta: {
-      title: '商品管理',
-      tree: 'tree',
-      icon: 's-order'
-    },
-    children: [{
-      path: 'index',
-      name: '商品列表',
-      component: () => import('@/views/goods/index'),
-      meta: {
-        title: '商品列表',
-        icon: 'tree'
-      }
-    }
-  ]
-  },
+  // {
+  //   path: '/task',
+  //   component: Layout,
+  //   name: '需求管理',
+  //   meta: {
+  //     title: '需求管理',
+  //     tree: 'tree',
+  //     icon: 's-order'
+  //   },
+  //   children: [{
+  //       path: 'bidding',
+  //       name: 'bidding',
+  //       component: () => import('@/views/task/bidding'),
+  //       meta: {
+  //         title: '竞标列表',
+  //         icon: 'tree'
+  //       }
+  //     },
+  //     {
+  //       path: 'audit',
+  //       name: 'audit',
+  //       component: () => import('@/views/task/audit'),
+  //       meta: {
+  //         title: '待审核列表',
+  //         icon: 'tree'
+  //       }
+  //     },
+  //     {
+  //       path: 'back',
+  //       name: '退款申请',
+  //       component: () => import('@/views/admin/index'),
+  //       meta: {
+  //         title: '退款申请',
+  //         icon: 'tree'
+  //       }
+  //     }
+  //   ]
+  // },
+  // {
+  //   path: '/goods',
+  //   component: Layout,
+  //   name: '商品管理',
+  //   meta: {
+  //     title: '商品管理',
+  //     tree: 'tree',
+  //     icon: 's-order'
+  //   },
+  //   children: [{
+  //     path: 'index',
+  //     name: '商品列表',
+  //     component: () => import('@/views/goods/index'),
+  //     meta: {
+  //       title: '商品列表',
+  //       icon: 'tree'
+  //     }
+  //   }
+  // ]
+  // },
   // 404 page must be placed at the end !!!
   {
     path: '*',
