@@ -45,6 +45,7 @@
 </template>
 
 <script>
+  import {logout} from '@/api/user.js';
 import { mapGetters } from 'vuex'
 import Breadcrumb from '@/components/Breadcrumb'
 import Hamburger from '@/components/Hamburger'

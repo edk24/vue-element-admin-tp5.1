@@ -4,7 +4,7 @@ import qs from 'qs'
 // 添加轮播图
 export function advertisement_add(data) {
   return request({
-    url: '/Advertisement/add',
+    url: '/v1/banner/add',
     method: 'post',
     data
  })
@@ -13,7 +13,7 @@ export function advertisement_add(data) {
 // 查询轮播列表
 export function advertisement_list(page, limit) {
   return request({
-    url: '/Advertisement/list?' + qs.stringify(page, limit),
+    url: '/v1/banner/list?' + qs.stringify(page, limit),
     method: 'get'
  })
 }
@@ -21,7 +21,7 @@ export function advertisement_list(page, limit) {
 // 编辑轮播
 export function advertisement_edit(data) {
   return request({
-    url: '/Advertisement/edit',
+    url: '/v1/banner/edit',
     method: 'post',
     data
   })
@@ -38,7 +38,7 @@ export function advertisement_audit(id, type) {
 // 删除轮播
 export function advertisement_del(id) {
   return request({
-    url: '/Advertisement/del?id=' + id,
+    url: '/v1/banner/del?id=' + id,
     method: 'get'
   })
 }

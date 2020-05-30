@@ -35,14 +35,15 @@
       </el-table-column>
       <el-table-column
         prop="is_sub"
-        label="超级管理员发布"
+        label="轮播图信息"
       >
         <template slot-scope="scope">
-          <span v-if="scope.row.is_sub===1">是</span>
-          <span v-else>否</span>
+          <span>{{scope.row.explain}}</span>
+        <!--  <span v-if="scope.row.is_sub===1">是</span>
+          <span v-else>否</span> -->
         </template>
       </el-table-column>
-      <el-table-column
+     <!-- <el-table-column
         prop="is_show"
         label="是否展示"
       >
@@ -56,20 +57,18 @@
             @change="show_enable(scope.row)"
           />
         </template>
-      </el-table-column>
+      </el-table-column> -->
 
       <el-table-column
         prop="to_type"
-        label="跳转类型"
+        label="跳转链接"
       >
         <template slot-scope="scope">
-          <span v-if="scope.row.to_type===0">产品</span>
-          <span v-else-if="scope.row.to_type===1">项目</span>
-          <span v-else-if="scope.row.to_type===2">服务商首页</span>
+         <span>{{scope.row.url}}</span>
         </template>
       </el-table-column>
 
-      <el-table-column
+     <!-- <el-table-column
         prop="status"
         label="审核状态"
       >
@@ -78,13 +77,16 @@
           <span v-else-if="scope.row.status===1">通过</span>
           <span v-else-if="scope.row.status===2">驳回</span>
         </template>
-      </el-table-column>
+      </el-table-column> -->
       <!-- <el-table-column prop="type" label="类型" /> -->
       <el-table-column
         prop="create_time"
         label="创建时间"
-      />
-
+      >
+      <template slot-scope="scope">
+        <span>{{scope.row.create_time}}</span>
+      </template>
+      </el-table-column>
       <el-table-column label="管理">
         <template slot-scope="scope">
           <div>
@@ -142,9 +144,17 @@
           </el-upload>
 
         </el-form-item>
+
+        <el-form-item label="详细介绍">
+          <el-input
+            v-model="form.explain"
+            placeholder="请输入轮播图信息"
+          />
+        </el-form-item>
+
         <el-form-item label="分类">
           <el-select
-            v-model="form.pid"
+            v-model="form.type"
             placeholder="请选择分类"
           >
             <el-option
@@ -154,37 +164,9 @@
           </el-select>
         </el-form-item>
 
-        <el-form-item label="排序">
-          <el-input-number
-            v-model="form.sort"
-            :min="1"
-            :max="9999"
-          />
-        </el-form-item>
-
-        <el-form-item label="跳转类型">
-          <el-select
-            v-model="form.to_type"
-            placeholder="请选择跳转类型"
-          >
-            <el-option
-              label="产品"
-              :value="0"
-            />
-            <el-option
-              label="项目"
-              :value="1"
-            />
-            <el-option
-              label="服务商首页"
-              :value="2"
-            />
-          </el-select>
-        </el-form-item>
-
         <el-form-item label="跳转链接">
           <el-input
-            v-model="form.to_url"
+            v-model="form.url"
             placeholder="请输入跳转链接"
           />
         </el-form-item>
@@ -246,6 +228,7 @@ export default {
         if (code === 0) {
           data.forEach(row => {
             row.image = imgsrc(row.image)
+            console.log(row);
             this.list.push(row)
           })
           this.count = count
@@ -335,15 +318,16 @@ export default {
       const data = this.form
       const form = new FormData()
       form.append('title', this.form.title)
-      form.append('to_type', this.form.to_type)
-      form.append('to_url', this.form.to_url)
-      form.append('sort', this.form.sort)
-      form.append('pid', this.form.pid)
+      form.append('explain', this.form.explain)
+      form.append('type', this.form.type)
+      form.append('url', this.form.url)
+      // form.append('sort', this.form.sort)
+      // form.append('pid', this.form.pid)
 
       if (data.imageFile) {
         form.append('image', data.imageFile)
       }
-
+      console.log(form);
       if (this.form.id) {
         // update
         form.append('id', this.form.id)

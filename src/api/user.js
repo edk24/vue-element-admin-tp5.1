@@ -20,8 +20,8 @@ export function getInfo() {
 // 注销
 export function logout() {
   return request({
-    url: '/admin/out',
-    method: 'post'
+    url: '/v1/user/logout',
+    method: 'get'
   })
 }
 

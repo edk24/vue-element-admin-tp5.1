@@ -13,7 +13,7 @@ export function admin_list(page, limit) {
 export function change_pwd(pwd) {
   const data = qs.stringify({ password: pwd })
   return request({
-    url: '/admin/password',
+    url: '/v1/admin/password',
     method: 'post',
     data
   })

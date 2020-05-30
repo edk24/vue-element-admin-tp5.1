@@ -347,34 +347,7 @@ export const constantRoutes = [{
           title: '产品管理',
           icon: 'tree'
         }
-      },
-      // {
-      //   path: 'integral',
-      //   name: '新用户注册送积分',
-      //   component: () => import('@/views/platform/integral'),
-      //   meta: {
-      //     title: '新用户注册送积分',
-      //     icon: 'tree'
-      //   }
-      // },
-      // {
-      //   path: 'height',
-      //   name: '每日最高积分设置',
-      //   component: () => import('@/views/platform/height'),
-      //   meta: {
-      //     title: '每日最高积分设置',
-      //     icon: 'tree'
-      //   }
-      // },
-      // {
-      //   path: 'lower',
-      //   name: '消费最低积分设置',
-      //   component: () => import('@/views/platform/lower'),
-      //   meta: {
-      //     title: '消费最低积分设置',
-      //     icon: 'tree'
-      //   }
-      // }
+      }
     ]
   },
   // 产品管理  --
@@ -398,7 +371,7 @@ export const constantRoutes = [{
       }
     ]
   },
-  
+
   // {
   //   path: '/project',
   //   component: Layout,
