@@ -129,6 +129,7 @@ export default {
         if (code === 0) {
           this.roleList = []
           data.forEach(row => {
+            console.log(row);
             if (row.permissions !== '') {
               row.permissions = row.permissions.split(',')
               // to Int
@@ -181,9 +182,17 @@ export default {
         permissions: this.formData.permissions.join(','),
         id: this.formData.id
       }
-
+      
       if (this.formData.id === 0) {
         // add
+        if(!this.formData.title){
+          this.$message.error('请输入角色名称');
+          return;
+        }
+        if(!this.formData.note){
+          this.$message.error('请输入角色备注');
+          return;
+        }
         role_add(data).then(({ code, msg }) => {
           if (code === 0) {
             this.$message.success(msg || '操作成功')

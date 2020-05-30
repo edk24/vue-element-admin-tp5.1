@@ -25,7 +25,7 @@
       <el-table-column
         label="头像"
         width="110"
-        align="center"
+         align="center"
       >
         <template slot-scope="scope">
           <el-image class="icon" :src="scope.row.avatar" />
@@ -40,7 +40,7 @@
 
       <el-table-column label="真实姓名">
         <template slot-scope="scope">
-          {{ scope.row.realname }}
+          {{ scope.row.username }}
         </template>
       </el-table-column>
 
@@ -211,7 +211,7 @@ export default {
         that.list = []
         response.data.forEach(row => {
           console.log(row)
-          row.icon = that.url + row.icon
+          row.avatar = that.url + row.avatar
           that.list.push(row)
         })
         this.count = response.count

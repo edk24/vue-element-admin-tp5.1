@@ -10,6 +10,7 @@
       :data="list"
       style="width: 100%"
     >
+    <el-table-column type="index" label="序号"  align="center" width="80" />
       <el-table-column
         prop="title"
         label="名称"
@@ -17,11 +18,12 @@
       />
       <el-table-column
         label="图片"
-        width="180"
+        width="250"
       >
         <template slot-scope="scope">
           <el-image
             class="image"
+            width="200"
             :src="scope.row.image"
           >
             <div
@@ -41,6 +43,15 @@
           <span>{{scope.row.explain}}</span>
         <!--  <span v-if="scope.row.is_sub===1">是</span>
           <span v-else>否</span> -->
+        </template>
+      </el-table-column>
+      <el-table-column
+        prop="is_sub"
+        label="轮播图分类"
+      >
+        <template slot-scope="scope">
+          <span>{{scope.row.type}}</span>
+         <!-- <span v-if="scope.row.type===0">首页</span> -->
         </template>
       </el-table-column>
      <!-- <el-table-column
@@ -68,17 +79,6 @@
         </template>
       </el-table-column>
 
-     <!-- <el-table-column
-        prop="status"
-        label="审核状态"
-      >
-        <template slot-scope="scope">
-          <span v-if="scope.row.status===0">待审核</span>
-          <span v-else-if="scope.row.status===1">通过</span>
-          <span v-else-if="scope.row.status===2">驳回</span>
-        </template>
-      </el-table-column> -->
-      <!-- <el-table-column prop="type" label="类型" /> -->
       <el-table-column
         prop="create_time"
         label="创建时间"
@@ -153,14 +153,13 @@
         </el-form-item>
 
         <el-form-item label="分类">
+
           <el-select
-            v-model="form.type"
+            v-model="current"
             placeholder="请选择分类"
           >
-            <el-option
-              label="无"
-              value="0"
-            />
+            <el-option v-for="(item,index) in typeArr" :key="index" :label="item" :value="index"/>
+
           </el-select>
         </el-form-item>
 
@@ -187,7 +186,7 @@
 </template>
 
 <script>
-import { advertisement_add, advertisement_list, banner_enable, advertisement_edit, advertisement_del } from '@/api/advertisement'
+import { advertisement_add, advertisement_list, banner_enable, advertisement_edit, advertisement_del ,advertisement_type} from '@/api/advertisement'
 import { imgsrc } from '@/utils/index'
 export default {
   data() {
@@ -197,22 +196,22 @@ export default {
       limit: 25,
       count: 0,
       centerDialogVisible: false,
+      typeArr: [], //位置/类型数组,
       form: {
         title: '',
         image: null,
         imageFile: null, // 新图片文件
-        to_type: '',
-        to_url: '',
-        sort: 99,
-        pid: 0,
-        id: null
-
-      }
+        url: '',
+        type: 0,
+        id: null,
+      },
+      current: ''
     }
   },
   // init
   created() {
-    this.fetchData()
+    this.fetchData();
+    this.getBannerType();
   },
   methods: {
     /**
@@ -223,12 +222,10 @@ export default {
         this.page = 1
         this.list = []
       }
-
       advertisement_list(this.page, this.limit).then(({ code, msg, data, count }) => {
         if (code === 0) {
           data.forEach(row => {
             row.image = imgsrc(row.image)
-            console.log(row);
             this.list.push(row)
           })
           this.count = count
@@ -238,7 +235,18 @@ export default {
         }
       }).catch(() => { })
     },
-
+    /*
+    * 获取轮播图位置
+    */
+   getBannerType(){
+     advertisement_type().then(res => {
+       if(res.code == 0){
+          this.typeArr = res.data;
+          this.current = this.typeArr[0];
+       }else{
+       }
+     })
+   },
     /**
      * 展示开关
      */
@@ -271,8 +279,6 @@ export default {
      */
     selectImg(file) {
       // 验证
-      console.log(666666)
-
       const isRightSize = file.size / 1024 < 500
       if (!isRightSize) {
         this.$message.error('文件大小超过 500KB')
@@ -319,15 +325,11 @@ export default {
       const form = new FormData()
       form.append('title', this.form.title)
       form.append('explain', this.form.explain)
-      form.append('type', this.form.type)
+      form.append('type', this.current)
       form.append('url', this.form.url)
-      // form.append('sort', this.form.sort)
-      // form.append('pid', this.form.pid)
-
       if (data.imageFile) {
-        form.append('image', data.imageFile)
+        form.append('file', data.imageFile)
       }
-      console.log(form);
       if (this.form.id) {
         // update
         form.append('id', this.form.id)
@@ -335,16 +337,39 @@ export default {
           if (code === 0) {
             this.$message.success('操作成功')
             this.fetchData(true)
+            this.centerDialogVisible = false
           } else {
             this.$message.error(msg || '操作失败')
           }
+
         }).catch(() => { })
       } else {
         // create
+        if(!this.form.title){
+          this.$message.error('请输入名称');
+          return;
+        }
+        if(!this.form.imageFile){
+          this.$message.error('请选择图片');
+          return;
+        }
+        if(!this.form.explain){
+          this.$message.error('请输入轮播图信息');
+          return;
+        }
+        if(!this.current){
+          this.$message.error('请输入轮播图分类');
+          return;
+        }
+        if(!this.form.url){
+          this.$message.error('请输入跳转链接');
+          return;
+        }
         advertisement_add(form).then(({ code, msg }) => {
           if (code === 0) {
             this.$message.success('操作成功')
             this.fetchData(true)
+             this.centerDialogVisible = false
           } else {
             this.$message.error(msg || '操作失败')
           }

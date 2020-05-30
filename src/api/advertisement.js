@@ -27,6 +27,16 @@ export function advertisement_edit(data) {
   })
 }
 
+// 轮播图位置
+export function advertisement_type(data) {
+  return request({
+    url: '/v1/banner/type',
+    method: 'get',
+    data
+  })
+}
+
+
 // 轮播审核
 export function advertisement_audit(id, type) {
   return request({

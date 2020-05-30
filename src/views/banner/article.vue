@@ -4,7 +4,7 @@
       <el-button
         type="primary"
         @click="create()"
-      >添加轮播图</el-button>
+      >添加文章</el-button>
     </p>
     <el-table
       :data="list"
@@ -16,73 +16,27 @@
         width="180"
       />
       <el-table-column
-        label="图片"
+        prop="abstract"
+        label="摘要"
         width="180"
       >
-        <template slot-scope="scope">
-          <el-image
-            class="image"
-            :src="scope.row.image"
-          >
-            <div
-              slot="placeholder"
-              class="image-slot"
-            >
-              加载中<span class="dot">...</span>
-            </div>
-          </el-image>
-        </template>
-      </el-table-column>
-      <el-table-column
-        prop="is_sub"
-        label="超级管理员发布"
-      >
-        <template slot-scope="scope">
-          <span v-if="scope.row.is_sub===1">是</span>
-          <span v-else>否</span>
-        </template>
-      </el-table-column>
-      <el-table-column
-        prop="is_show"
-        label="是否展示"
-      >
-        <template slot-scope="scope">
-          <el-switch
-            v-model="scope.row.is_show"
-            active-color="#13ce66"
-            inactive-color="#ff4949"
-            :active-value="1"
-            :inactive-value="0"
-            @change="show_enable(scope.row)"
-          />
-        </template>
       </el-table-column>
 
       <el-table-column
-        prop="to_type"
-        label="跳转类型"
+        prop="content"
+        label="内容"
+        width="500"
       >
-        <template slot-scope="scope">
-          <span v-if="scope.row.to_type===0">产品</span>
-          <span v-else-if="scope.row.to_type===1">项目</span>
-          <span v-else-if="scope.row.to_type===2">服务商首页</span>
-        </template>
       </el-table-column>
 
-      <el-table-column
-        prop="status"
-        label="审核状态"
-      >
-        <template slot-scope="scope">
-          <span v-if="scope.row.status===0">待审核</span>
-          <span v-else-if="scope.row.status===1">通过</span>
-          <span v-else-if="scope.row.status===2">驳回</span>
-        </template>
-      </el-table-column>
-      <!-- <el-table-column prop="type" label="类型" /> -->
       <el-table-column
         prop="create_time"
         label="创建时间"
+      />
+
+      <el-table-column
+        prop="update_time"
+        label="更新时间"
       />
 
       <el-table-column label="管理">
@@ -121,72 +75,11 @@
         <el-form-item label="名称">
           <el-input v-model="form.title" />
         </el-form-item>
-        <el-form-item label="图片">
-
-          <el-upload
-            :show-file-list="false"
-            :multiple="false"
-            action="post"
-            :before-upload="selectImg"
-            :on-change="changeImage"
-          >
-            <img
-              v-if="form.image"
-              :src="form.image"
-              class="avatar"
-            >
-            <i
-              v-else
-              class="el-icon-plus avatar-uploader-icon"
-            />
-          </el-upload>
-
+        <el-form-item label="摘要">
+          <el-input v-model="form.abstract" />
         </el-form-item>
-        <el-form-item label="分类">
-          <el-select
-            v-model="form.pid"
-            placeholder="请选择分类"
-          >
-            <el-option
-              label="无"
-              value="0"
-            />
-          </el-select>
-        </el-form-item>
-
-        <el-form-item label="排序">
-          <el-input-number
-            v-model="form.sort"
-            :min="1"
-            :max="9999"
-          />
-        </el-form-item>
-
-        <el-form-item label="跳转类型">
-          <el-select
-            v-model="form.to_type"
-            placeholder="请选择跳转类型"
-          >
-            <el-option
-              label="产品"
-              :value="0"
-            />
-            <el-option
-              label="项目"
-              :value="1"
-            />
-            <el-option
-              label="服务商首页"
-              :value="2"
-            />
-          </el-select>
-        </el-form-item>
-
-        <el-form-item label="跳转链接">
-          <el-input
-            v-model="form.to_url"
-            placeholder="请输入跳转链接"
-          />
+        <el-form-item label="内容">
+          <el-input v-model="form.content" />
         </el-form-item>
       </el-form>
 
@@ -205,7 +98,7 @@
 </template>
 
 <script>
-import { advertisement_add, advertisement_list, banner_enable, advertisement_edit, advertisement_del } from '@/api/advertisement'
+import { article_add, article_list, article_edit, article_del } from '@/api/article'
 import { imgsrc } from '@/utils/index'
 export default {
   data() {
@@ -217,14 +110,8 @@ export default {
       centerDialogVisible: false,
       form: {
         title: '',
-        image: null,
-        imageFile: null, // 新图片文件
-        to_type: '',
-        to_url: '',
-        sort: 99,
-        pid: 0,
-        id: null
-
+        abstract: '',
+        content: ''
       }
     }
   },
@@ -242,10 +129,10 @@ export default {
         this.list = []
       }
 
-      advertisement_list(this.page, this.limit).then(({ code, msg, data, count }) => {
+      article_list(this.page, this.limit).then(({ code, msg, data, count }) => {
         if (code === 0) {
           data.forEach(row => {
-            row.image = imgsrc(row.image)
+            // row.image = imgsrc(row.image)
             this.list.push(row)
           })
           this.count = count
@@ -257,23 +144,10 @@ export default {
     },
 
     /**
-     * 展示开关
-     */
-    show_enable(obj) {
-      banner_enable(obj.id, obj.is_show).then(({ code, msg }) => {
-        if (code === 0) {
-          this.$message.success('修改成功')
-        } else {
-          this.$message.error(msg || '修改失败')
-          return false
-        }
-      }).catch(() => { })
-    },
-    /**
      * 删除轮播
      */
     del(obj) {
-      advertisement_del(obj.id).then(({ code, msg }) => {
+      article_del(obj.id).then(({ code, msg }) => {
         if (code === 0) {
           this.$message.success('操作成功')
           this.fetchData(true)
@@ -281,37 +155,6 @@ export default {
           this.$message.error(msg || '删除失败')
         }
       }).catch(() => { })
-    },
-
-    /**
-     * 事件-选择图片
-     */
-    selectImg(file) {
-      // 验证
-      console.log(666666)
-
-      const isRightSize = file.size / 1024 < 500
-      if (!isRightSize) {
-        this.$message.error('文件大小超过 500KB')
-      }
-      const isAccept = new RegExp('image/*').test(file.type)
-      if (!isAccept) {
-        this.$message.error('应该选择image/*类型的文件')
-      }
-
-      this.form.imageFile = file
-      return false // don't auto upload
-    },
-
-    // 图片被改变
-    changeImage(file) {
-      // 读图片预览
-      const that = this
-      var reader = new FileReader()
-      reader.onload = (e) => {
-        that.form.image = e.target.result
-      }
-      reader.readAsDataURL(file.raw)
     },
 
     /**
@@ -332,35 +175,44 @@ export default {
      * 提交表单
      */
     submit() {
+      console.log(this.form.abstract);
       const data = this.form
       const form = new FormData()
       form.append('title', this.form.title)
-      form.append('to_type', this.form.to_type)
-      form.append('to_url', this.form.to_url)
-      form.append('sort', this.form.sort)
-      form.append('pid', this.form.pid)
-
-      if (data.imageFile) {
-        form.append('image', data.imageFile)
-      }
+      form.append('abstract', this.form.abstract)
+      form.append('content', this.form.content)
 
       if (this.form.id) {
         // update
         form.append('id', this.form.id)
-        advertisement_edit(form).then(({ code, msg }) => {
+        article_edit(form).then(({ code, msg }) => {
           if (code === 0) {
             this.$message.success('操作成功')
             this.fetchData(true)
+            this.centerDialogVisible = false
           } else {
             this.$message.error(msg || '操作失败')
           }
         }).catch(() => { })
       } else {
         // create
-        advertisement_add(form).then(({ code, msg }) => {
+        if(!this.form.title){
+          this.$message.error('请输入标题');
+          return;
+        }
+        if(!this.form.abstract){
+          this.$message.error('请输入摘要');
+          return;
+        }
+        if(!this.form.content){
+          this.$message.error('请输入内容');
+          return;
+        }
+        article_add(form).then(({ code, msg }) => {
           if (code === 0) {
             this.$message.success('操作成功')
             this.fetchData(true)
+            this.centerDialogVisible = false
           } else {
             this.$message.error(msg || '操作失败')
           }
