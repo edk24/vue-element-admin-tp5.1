@@ -134,7 +134,7 @@ export const constantRoutes = [
     name: '商品管理',
     meta: { title: '商品管理', tree: 'tree', icon: 's-order' },
     children: [
-      { path: 'index', name: '商品列表', component: () => import('@/views/goods/index'), meta: { title: '商品列表', icon: 'tree' }},
+      { path: 'index', name: '商品列表', component: () => import('@/views/goods/index'), meta: { title: '商品列表', icon: 'tree' }}
     ]
   },
   // 404 page must be placed at the end !!!
