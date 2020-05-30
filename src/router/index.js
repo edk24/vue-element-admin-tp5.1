@@ -72,12 +72,11 @@ export const constantRoutes = [{
           title: '菜单管理',
           icon: 'tree'
         }
-      },
+      }
       // 不展示  一般
       // { path: 'permission', name: '权限管理', component: () => import('@/views/admin/permission'), meta: { title: '权限管理', icon: 'tree' }}
     ]
   },
-
 
   // 用户管理  --家长管理--学生管理
   {
@@ -106,7 +105,7 @@ export const constantRoutes = [{
           title: '学生管理',
           icon: 'tree'
         }
-      },
+      }
     ]
   },
 
@@ -137,7 +136,7 @@ export const constantRoutes = [{
           title: '股东管理',
           icon: 'tree'
         }
-      },
+      }
     ]
   },
 
@@ -168,7 +167,7 @@ export const constantRoutes = [{
           title: '交易记录',
           icon: 'tree'
         }
-      },
+      }
     ]
   },
 
@@ -199,7 +198,7 @@ export const constantRoutes = [{
           title: '产品订单',
           icon: 'tree'
         }
-      },
+      }
     ]
   },
 
@@ -438,8 +437,6 @@ export const constantRoutes = [{
       }
     ]
   },
-
-
   // {
   //   path: '/tender',
   //   component: Layout,
@@ -506,7 +503,8 @@ export const constantRoutes = [{
         title: '商品列表',
         icon: 'tree'
       }
-    }, ]
+    }
+  ]
   },
   // 404 page must be placed at the end !!!
   {
