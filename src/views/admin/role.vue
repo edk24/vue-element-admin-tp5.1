@@ -89,7 +89,7 @@
 </template>
 
 <script>
-import { role_getlist, role_add, role_update, role_del } from '@/api/role'
+import { role_getlist, role_add, role_update, role_del ,role_info } from '@/api/role'
 import { get_permission_list } from '@/api/permission'
 
 export default {

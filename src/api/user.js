@@ -26,9 +26,9 @@ export function logout() {
 }
 
 // 查询用户列表
-export function user_list(page, limit, keyword) {
+export function user_list(page, limit) {
   return request({
-    url: '/user/list?' + qs.stringify({ limit, page, phone: keyword })
+    url: '/v1/admin/list?' + qs.stringify(limit, page)
   })
 }
 

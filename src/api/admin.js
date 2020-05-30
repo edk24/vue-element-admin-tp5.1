@@ -8,6 +8,7 @@ export function admin_list(page, limit) {
     method: 'get'
   })
 }
+
 // 管理员密码修改
 export function change_pwd(pwd) {
   const data = qs.stringify({ password: pwd })
@@ -46,4 +47,3 @@ export function admin_unadd(user_id) {
 }
 
 //
-
