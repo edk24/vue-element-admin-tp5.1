@@ -4,7 +4,7 @@ import qs from 'qs'
 // 管理员列表
 export function admin_list(page, limit) {
   return request({
-    url: '/admin/list?' + qs.stringify({ page, limit }),
+    url: '/v1/admin/list?' + qs.stringify({ page, limit }),
     method: 'get'
   })
 }
