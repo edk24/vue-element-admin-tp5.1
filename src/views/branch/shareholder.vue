@@ -7,10 +7,7 @@
       <el-button type="primary" @click="all()">全部</el-button>
     </p>
     <p>
-      <el-button
-        type="primary"
-        @click="create()"
-      >添加股东</el-button>
+      <el-button type="primary" @click="create()">添加股东</el-button>
     </p>
     <el-table v-loading="listLoading" :data="list" element-loading-text="Loading" fit highlight-current-row>
       <el-table-column align="center" label="ID" width="64">
@@ -77,23 +74,12 @@
       </el-table-column>
     </el-table>
 
-    <el-dialog
-      :visible.sync="centerDialogVisible"
-      width="600px"
-      center
-    >
-      <el-form
-        ref="form"
-        :model="form"
-        label-width="80px"
-      >
+    <el-dialog :visible.sync="centerDialogVisible" width="600px" center>
+      <el-form ref="form" :model="form" label-width="80px">
         <el-form-item label="股东类型">
-          <el-select
-            v-model="current"
-            placeholder="股东类型"
-          >
-            <el-option label="总公司股东" :value="0"/>
-            <el-option label="子公司股东" :value="1"/>
+          <el-select v-model="current" placeholder="股东类型">
+            <el-option label="总公司股东" :value="0" />
+            <el-option label="子公司股东" :value="1" />
           </el-select>
         </el-form-item>
         <el-form-item label="股东姓名">
@@ -116,15 +102,9 @@
         </el-form-item>
       </el-form>
 
-      <span
-        slot="footer"
-        class="dialog-footer"
-      >
+      <span slot="footer" class="dialog-footer">
         <el-button @click="centerDialogVisible = false">取 消</el-button>
-        <el-button
-          type="primary"
-          @click="submit()"
-        >确 定</el-button>
+        <el-button type="primary" @click="submit()">确 定</el-button>
       </span>
     </el-dialog>
 
@@ -181,15 +161,15 @@
         },
         current: '总公司股东', //当前股东类型
         // 表单
-       form: {
-         company: '',
-         username: '',
-         phone: '',
-         province: '',
-         city: '',
-         area: '',
-         address:''
-       }
+        form: {
+          company: '',
+          username: '',
+          phone: '',
+          province: '',
+          city: '',
+          area: '',
+          address: ''
+        }
       }
     },
     created() {
@@ -200,7 +180,15 @@
        * 添加股东
        */
       create() {
-        this.form = { company: '', username: '',phone: '', province: '',city: '',area: '',address: ''};
+        this.form = {
+          company: '',
+          username: '',
+          phone: '',
+          province: '',
+          city: '',
+          area: '',
+          address: ''
+        };
         this.centerDialogVisible = true
       },
       /**
@@ -247,7 +235,10 @@
         if (this.form.id) {
           // update
           form.append('id', this.form.id)
-          shareholder_edit(form).then(({ code, msg }) => {
+          shareholder_edit(form).then(({
+            code,
+            msg
+          }) => {
             if (code === 0) {
               this.$message.success('操作成功')
               this.fetchData(true)
@@ -256,61 +247,67 @@
               this.$message.error(msg || '操作失败')
             }
             this.current = "总公司股东"
-          }).catch(() => { })
+          }).catch(() => {})
         } else {
           // create
           // if(!this.form.company){
           //   this.$message.error('请输入股东类型');
           //   return;
           // }
-          if(!this.form.username){
+          if (!this.form.username) {
             this.$message.error('请输入股东姓名');
             return;
           }
-          if(!this.form.phone){
+          if (!this.form.phone) {
             this.$message.error('请输入手机号');
             return;
           }
-          if(!this.form.province){
+          if (!this.form.province) {
             this.$message.error('请输入省');
             return;
           }
-          if(!this.form.city){
+          if (!this.form.city) {
             this.$message.error('请输入市');
             return;
           }
-          if(!this.form.area){
+          if (!this.form.area) {
             this.$message.error('请输入区');
             return;
           }
-          if(!this.form.address){
+          if (!this.form.address) {
             this.$message.error('请输入详细地址');
             return;
           }
-          shareholder_add(form).then(({ code, msg }) => {
+          shareholder_add(form).then(({
+            code,
+            msg
+          }) => {
             if (code === 0) {
               this.$message.success('操作成功')
               this.fetchData(true)
-               this.centerDialogVisible = false
+              this.centerDialogVisible = false
             } else {
               this.$message.error(msg || '操作失败')
             }
             this.current = "总公司股东"
-          }).catch(() => { })
+          }).catch(() => {})
         }
       },
       /**
        * 删除股东
        */
       del(obj) {
-        shareholder_del(obj.id).then(({ code, msg }) => {
+        shareholder_del(obj.id).then(({
+          code,
+          msg
+        }) => {
           if (code === 0) {
             this.$message.success('操作成功')
             this.fetchData(true)
           } else {
             this.$message.error(msg || '删除失败')
           }
-        }).catch(() => { })
+        }).catch(() => {})
       },
       // 搜索
       search() {

@@ -1,300 +1,394 @@
 <template>
   <div class="app-container">
     <p>
-      <el-input v-model="keyword" maxlength="16" style="width:300px;margin-right:15px" placeholder="请输入关键字进行搜索" @keyup.enter.native="search()" />
+      <el-input v-model="keyword" maxlength="16" style="width:300px;margin-right:15px" placeholder="请输入关键字进行搜索"
+        @keyup.enter.native="search()" />
       <el-button type="primary" @click="search()">搜索</el-button>
       <el-button type="primary" @click="all()">全部</el-button>
     </p>
-    <el-table
-      v-loading="listLoading"
-      :data="list"
-      element-loading-text="Loading"
-      fit
-      highlight-current-row
-    >
-      <el-table-column
-        align="center"
-        label="ID"
-        width="64"
-      >
+    <p>
+      <el-button
+        type="primary"
+        @click="create()"
+      >添加合伙人</el-button>
+    </p>
+    <el-table v-loading="listLoading" :data="list" element-loading-text="Loading" fit highlight-current-row>
+      <el-table-column align="center" label="ID" width="64">
         <template slot-scope="scope">
           {{ scope.$index+1 }}
         </template>
       </el-table-column>
-
-      <el-table-column
-        label="头像"
-        width="110"
-        align="center"
-      >
+      <el-table-column label="商品标题">
         <template slot-scope="scope">
-          <el-image class="icon" :src="scope.row.avatar" />
+          {{ scope.row.title }}
+        </template>
+      </el-table-column>
+      <el-table-column label="商品首图" width="110" align="center">
+        <template slot-scope="scope">
+          <el-image class="icon" :src="scope.row.image" />
         </template>
       </el-table-column>
 
-      <el-table-column label="昵称">
+      <el-table-column label="兑换所需积分">
         <template slot-scope="scope">
-          {{ scope.row.nickname }}
+          {{ scope.row.price }}
+        </template>
+
+      </el-table-column>
+
+      <el-table-column label="商品详情">
+        <template slot-scope="scope">
+          {{ scope.row.note }}
         </template>
       </el-table-column>
 
-      <el-table-column label="真实姓名">
+      <el-table-column label="是否是默认推送的产品">
         <template slot-scope="scope">
-          {{ scope.row.realname }}
+          <el-switch
+            v-model="scope.row.is_default"
+            active-color="#409EFF"
+            inactive-color="#dddddd">
+          </el-switch>
         </template>
       </el-table-column>
 
-      <el-table-column label="手机号">
-        <template slot-scope="scope">
-          {{ scope.row.phone }}
-        </template>
-      </el-table-column>
 
-      <el-table-column label="性别">
-        <template slot-scope="scope">
-          <span v-if="scope.row.sex==0">女</span>
-          <span v-else-if="scope.row.sex==1">男</span>
-          <span v-else>未知</span>
-        </template>
-      </el-table-column>
-
-      <el-table-column label="封号状态">
-        <template slot-scope="scope">
-          <span v-if="scope.row.is_use==0">已封号</span>
-          <span v-else-if="scope.row.is_use==1">正常</span>
-          <span v-else>未知</span>
-        </template>
-      </el-table-column>
-
-      <el-table-column label="封号理由">
-        <template slot-scope="scope">
-          <span v-if="scope.row.is_use==0">{{ scope.row.error_content }}</span>
-        </template>
-      </el-table-column>
-
-      <el-table-column label="实名状态">
-        <template slot-scope="scope">
-          <span v-if="scope.row.real_status==0">待实名</span>
-          <span v-else-if="scope.row.real_status==1">已实名</span>
-          <span v-else-if="scope.row.real_status==2">实名失败</span>
-          <span v-else-if="scope.row.real_status==3">审核中</span>
-          <span v-else>未知</span>
-        </template>
-      </el-table-column>
-
-      <el-table-column
-        align="center"
-        prop="created_at"
-        label="注册时间"
-        width="200"
-      >
+      <el-table-column align="center" label="注册时间" width="200">
         <template slot-scope="scope">
           <span>{{ scope.row.create_time }}</span>
         </template>
       </el-table-column>
 
-      <el-table-column
-        align="center"
-        prop="created_at"
-        label="修改时间"
-        width="200"
-      >
+      <el-table-column align="center" label="更新时间" width="200">
         <template slot-scope="scope">
           <span>{{ scope.row.update_time }}</span>
         </template>
       </el-table-column>
-      <el-table-column
-        align="center"
-        label="管理"
-        width="200"
-        fixed="right"
-      >
+
+      <el-table-column label="管理">
         <template slot-scope="scope">
-          <el-popconfirm
-            title="确定要封禁吗?"
-            @onConfirm="user_ban(scope.row)"
-          >
-            <el-button
-              v-if="scope.row.is_use===1"
-              slot="reference"
-              type="danger"
-              size="small"
-            >封禁</el-button>
-          </el-popconfirm>
-          <!-- <el-button>封禁</el-button> -->
-          <el-button
-            v-if="scope.row.is_use===0"
-            type="primary"
-            size="small"
-            @click="user_ban(scope.row)"
-          >解禁</el-button>
+          <div>
+            <el-button size="small" type="primary" @click="edit(scope.row)">编辑</el-button>
+            <el-popconfirm title="确定删除这行信息吗?" @onConfirm="del(scope.row)">
+              <el-button slot="reference" size="small" type="danger">删除</el-button>
+            </el-popconfirm>
+          </div>
         </template>
       </el-table-column>
     </el-table>
 
+    <el-dialog
+      :visible.sync="centerDialogVisible"
+      width="600px"
+      center
+    >
+      <el-form
+        ref="form"
+        :model="form"
+        label-width="80px"
+      >
+        <el-form-item label="商品标题">
+          <el-input v-model="form.title" />
+        </el-form-item>
+        <el-form-item label="商品首图">
+          <el-upload
+            :show-file-list="false"
+            :multiple="false"
+            action="post"
+            :before-upload="selectImg"
+            :on-change="changeImage"
+          >
+            <img
+              v-if="form.image"
+              :src="form.image"
+              class="avatar"
+            >
+            <i
+              v-else
+              class="el-icon-plus avatar-uploader-icon"
+            />
+          </el-upload>
+        </el-form-item>
+        <el-form-item label="兑换所需积分">
+          <el-input v-model="form.price" />
+        </el-form-item>
+        <el-form-item label="商品详情">
+          <el-input v-model="form.note" />
+        </el-form-item>
+        <el-form-item label="是否是默认推送的产品">
+          <el-select
+            v-model="current"
+            placeholder="请选择"
+          >
+            <el-option label="否" :value="0"/>
+            <el-option label="是" :value="1"/>
+          </el-select>
+        </el-form-item>
+      </el-form>
+
+      <span
+        slot="footer"
+        class="dialog-footer"
+      >
+        <el-button @click="centerDialogVisible = false">取 消</el-button>
+        <el-button
+          type="primary"
+          @click="submit()"
+        >确 定</el-button>
+      </span>
+    </el-dialog>
+
     <p>
-      <el-pagination
-        background
-        layout="prev, pager, next"
-        :total="count"
-        :page-size="limit"
-        @current-change="fetchData"
-      />
+      <el-pagination background layout="prev, pager, next" :total="count" :page-size="limit" @current-change="fetchData" />
     </p>
 
   </div>
 </template>
 
 <script>
-import { user_use, user_ban, user_list } from '@/api/user'
-export default {
-  components: {},
-  filters: {
-    statusFilter(status) {
-      const statusMap = {
-        published: 'success',
-        draft: 'gray',
-        deleted: 'danger'
+  import {
+    exchange_add,
+    exchange_list,
+    exchange_del,
+    exchange_edit
+  } from '@/api/product'
+  export default {
+    components: {},
+    filters: {
+      statusFilter(status) {
+        const statusMap = {
+          published: 'success',
+          draft: 'gray',
+          deleted: 'danger'
+        }
+        return statusMap[status]
       }
-      return statusMap[status]
-    }
-  },
-  data() {
-    return {
-      url: process.env.VUE_APP_BASE_API,
-      list: [],
-      count: 0,
-      page: 1,
-      limit: 25,
-      keyword: '',
-      listLoading: true,
-      formData: {
-        title: undefined,
-        icon: null,
-        id: 0,
-        // 欲上传文件对象
-        fileIcon: null
+    },
+    data() {
+      return {
+        url: process.env.VUE_APP_BASE_API,
+        list: [],
+        count: 0,
+        page: 1,
+        limit: 25,
+        keyword: '',
+        listLoading: true,
+        centerDialogVisible: false,
+        formData: {
+          title: undefined,
+          icon: null,
+          id: 0,
+          // 欲上传文件对象
+          fileIcon: null
+        },
+
+        rules: {
+          title: [{
+            required: true,
+            message: '请输入名称',
+            trigger: 'blur'
+          }]
+        },
+        current: '否', //当前选中 是否推送 0-否  1-是
+        // 表单
+       form: {
+         title: '',
+         image: '',
+         imageFile: '',  // 新图片文件
+         price: '',
+         note: '',
+         is_default: ''
+       }
+      }
+    },
+    created() {
+      this.fetchData(1)
+    },
+    methods: {
+      /**
+       * 添加轮播图
+       */
+      create() {
+        this.form = { title: '', image: '',imageFile: '',price: '', note: '',is_default: ''};
+        this.centerDialogVisible = true
       },
-
-      rules: {
-        title: [{
-          required: true,
-          message: '请输入名称',
-          trigger: 'blur'
-        }]
+      /**
+       * 编辑轮播图
+       */
+      edit(obj) {
+        this.form = obj
+        this.centerDialogVisible = true
       },
-      // 表单
-      dialogFrom: {
-        show: false,
-        module: 'add' // add=添加  save=修改
-      }
-    }
-  },
-  created() {
-    user_list(1, 10).then(res => {
-      console.log(res)
-    }).catch(() => {})
-
-    this.fetchData(1)
-  },
-  methods: {
-    // 拉取数据
-    fetchData(page) {
-      const that = this
-      if (page) {
-        this.page = page
-        if (page <= 1) { that.page = 1 }
-      }
-
-      this.listLoading = true
-      user_list(this.page, this.limit, this.keyword).then(response => {
-        that.list = []
-        response.data.forEach(row => {
-          console.log(row)
-          row.icon = that.url + row.icon
-          that.list.push(row)
-        })
-        this.count = response.count
-        this.listLoading = false
-      }).catch((err) => { console.log(err.message) })
-    },
-    // 搜索
-    search() {
-      if (this.keyword) {
-        this.fetchData()
-      } else {
-        this.$message.warning('请输入关键词')
-      }
-    },
-    // 查询全部
-    all() {
-      this.keyword = ''
-      this.fetchData()
-    },
-    // 封号/解封
-    user_ban(user) {
-      const that = this
-      if (user.is_use === 0) {
-        // 解除封号
-        user_use(user.id).then(response => {
-          that.$message.success(response.msg || '操作成功')
-          that.fetchData()
-        }).catch(err => {
-          that.$message.error(err.message || 'error')
-        })
-      } else {
-        // 封号
-        that.$prompt('请输入封号理由:', '封号', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          inputPattern: /^\S{1,}$/,
-          inputErrorMessage: '理由不能为空'
-        }).then(({ value }) => {
-          user_ban(user.id, value).then(response => {
-            that.$message.success(response.msg || '操作成功')
-            that.fetchData()
-          }).catch(err => {
-            that.$message.error(err.message || 'error')
+      // 拉取数据
+      fetchData(page) {
+        const that = this
+        if (page) {
+          this.page = page
+          if (page <= 1) {
+            that.page = 1
+          }
+        }
+        this.listLoading = true
+        exchange_list(this.page, this.limit).then(response => {
+          that.list = []
+          response.data.forEach(row => {
+            row.is_default = row.is_default == 1 ? true:false
+            row.image = that.url + row.image
+            console.log(row);
+            that.list.push(row)
           })
-        }).catch(() => {})
-      }
-    }
+          this.count = response.count
+          this.listLoading = false
+        }).catch((err) => {
+          console.log(err.message)
+        })
+      },
+      submit() {
+        const data = this.form
+        const form = new FormData()
+        form.append('title', this.form.title)
+        form.append('price', this.form.price)
+        form.append('note', this.form.note)
+        form.append('is_default', this.current)
+        if (data.imageFile) {
+          form.append('image', data.imageFile)
+        }
 
+        if (this.form.id) {
+          // update
+          form.append('id', this.form.id)
+          exchange_edit(form).then(({ code, msg }) => {
+            if (code === 0) {
+              this.$message.success('操作成功')
+              this.fetchData(true)
+              this.centerDialogVisible = false
+            } else {
+              this.$message.error(msg || '操作失败')
+            }
+          }).catch(() => { })
+        } else {
+          // create
+          if(!this.form.title){
+            this.$message.error('请输入商品标题');
+            return;
+          }
+          if(!this.form.image){
+            this.$message.error('请选择商品首图');
+            return;
+          }
+          if(!this.form.price){
+            this.$message.error('请输入兑换所需积分');
+            return;
+          }
+          if(!this.form.note){
+            this.$message.error('请输入商品详情');
+            return;
+          }
+          exchange_add(form).then(({ code, msg }) => {
+            if (code === 0) {
+              this.$message.success('操作成功')
+              this.fetchData(true)
+               this.centerDialogVisible = false
+            } else {
+              this.$message.error(msg || '操作失败')
+            }
+          }).catch(() => { })
+        }
+      },
+      /**
+       * 事件-选择图片
+       */
+      selectImg(file) {
+        // console.log(file);
+        // 验证
+        const isRightSize = file.size / 1024 < 500
+        if (!isRightSize) {
+          this.$message.error('文件大小超过 500KB')
+        }
+        const isAccept = new RegExp('image/*').test(file.type)
+        if (!isAccept) {
+          this.$message.error('应该选择image/*类型的文件')
+        }
+
+        this.form.imageFile = file
+        return false // don't auto upload
+      },
+
+      // 图片被改变
+      changeImage(file) {
+        // 读预览图片
+        const that = this
+        var reader = new FileReader()
+        reader.onload = (e) => {
+          that.form.image = e.target.result
+        }
+        reader.readAsDataURL(file.raw)
+      },
+      /**
+       * 删除合伙人
+       */
+      del(obj) {
+        exchange_del(obj.id).then(({ code, msg }) => {
+          if (code === 0) {
+            this.$message.success('操作成功')
+            this.fetchData(true)
+          } else {
+            this.$message.error(msg || '删除失败')
+          }
+        }).catch(() => { })
+      },
+      // 搜索
+      search() {
+        if (this.keyword) {
+          this.fetchData()
+        } else {
+          this.$message.warning('请输入关键词')
+        }
+      },
+      // 查询全部
+      all() {
+        this.keyword = ''
+        this.fetchData()
+      },
+    }
   }
-}
 </script>
 
 <style>
-.el-upload__tip {
-  line-height: 1.2;
-}
+  .el-upload__tip {
+    line-height: 1.2;
+  }
 
-.avatar-uploader .el-upload {
-  border: 1px dashed #d9d9d9;
-  border-radius: 6px;
-  cursor: pointer;
-  position: relative;
-  overflow: hidden;
-}
-.avatar-uploader .el-upload:hover {
-  border-color: #409eff;
-}
-.avatar-uploader-icon {
-  font-size: 28px;
-  color: #8c939d;
-  width: 178px;
-  height: 178px;
-  line-height: 178px;
-  text-align: center;
-}
-.avatar {
-  width: 178px;
-  height: 178px;
-  display: block;
-}
-.icon {
-  width: 50px;
-  height: 50px;
-  border-radius: 3px;
-}
+  .avatar-uploader .el-upload {
+    border: 1px dashed #d9d9d9;
+    border-radius: 6px;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .avatar-uploader .el-upload:hover {
+    border-color: #409eff;
+  }
+
+  .avatar-uploader-icon {
+    font-size: 28px;
+    color: #8c939d;
+    width: 178px;
+    height: 178px;
+    line-height: 178px;
+    text-align: center;
+  }
+
+  .avatar {
+    width: 178px;
+    height: 178px;
+    display: block;
+  }
+
+  .icon {
+    width: 50px;
+    height: 50px;
+    border-radius: 3px;
+  }
 </style>
