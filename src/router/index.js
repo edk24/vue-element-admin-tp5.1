@@ -120,18 +120,18 @@ export const constantRoutes = [{
       icon: 'example'
     },
     children: [{
-        path: 'shareholder',
+        path: 'partner',
         name: '合伙人管理',
-        component: () => import('@/views/branch/shareholder'),
+        component: () => import('@/views/branch/partner'),
         meta: {
           title: '合伙人管理',
           icon: 'tree'
         }
       },
       {
-        path: 'partner',
+        path: 'shareholder',
         name: '股东管理',
-        component: () => import('@/views/branch/partner'),
+        component: () => import('@/views/branch/shareholder'),
         meta: {
           title: '股东管理',
           icon: 'tree'

@@ -357,7 +357,7 @@ export default {
           this.$message.error('请输入轮播图信息');
           return;
         }
-        if(!this.current){
+        if(!this.form.current){
           this.$message.error('请输入轮播图分类');
           return;
         }

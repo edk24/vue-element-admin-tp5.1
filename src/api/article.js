@@ -36,10 +36,3 @@ export function article_del(id) {
     method: 'get'
   })
 }
-
-export function banner_enable(id, status) {
-  return request({
-    url: 'Advertisement/show',
-    params: { id, status }
-  })
-}
