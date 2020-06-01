@@ -13,10 +13,14 @@
       >添加合伙人</el-button>
     </p>
     <el-table v-loading="listLoading" :data="list" element-loading-text="Loading" fit highlight-current-row>
-      <el-table-column align="center" label="ID" width="64">
-        <template slot-scope="scope">
-          {{ scope.$index+1 }}
-        </template>
+      <el-table-column
+              label="序号"
+              type="index"
+              width="50"
+              align="center">
+          <template scope="scope">
+              <span>{{(page - 1) * limit + scope.$index + 1}}</span>
+          </template>
       </el-table-column>
       <el-table-column label="企业名称">
         <template slot-scope="scope">
@@ -88,6 +92,18 @@
       </el-table-column>
     </el-table>
 
+    <!-- <pagination :total="count" :page.sync="page" :limit.sync="limit" @pagination="fetchData" /> -->
+    <p>
+      <el-pagination
+         background
+         @current-change="fetchData"
+         :current-page.sync="page"
+         :page-size="limit"
+         layout="total, prev, pager, next"
+         :total="count">
+       </el-pagination>
+    </p>
+
     <el-dialog
       :visible.sync="centerDialogVisible"
       width="600px"
@@ -155,9 +171,7 @@
       </span>
     </el-dialog>
 
-    <p>
-      <el-pagination background layout="prev, pager, next" :total="count" :page-size="limit" @current-change="fetchData" />
-    </p>
+
 
   </div>
 </template>
@@ -187,7 +201,7 @@
         list: [],
         count: 0,
         page: 1,
-        limit: 25,
+        limit: 10,
         keyword: '',
         listLoading: true,
         centerDialogVisible: false,
@@ -229,7 +243,7 @@
        * 添加轮播图
        */
       create() {
-        this.form = { title: '', code: '',license: '', username: '',phone: '',province: '',city: '',area: '',address: '' };
+        this.form = { title: '', code: '',license: '', username: '',phone: '',province: '',city: '',area: '',address: '' }
         this.centerDialogVisible = true
       },
       /**
@@ -249,10 +263,10 @@
           }
         }
         this.listLoading = true
-        company_list(this.page, this.limit).then(response => {
+        console.log(this.page);
+        company_list(this.page, this.limit, this.keyword).then(response => {
           that.list = []
           response.data.forEach(row => {
-            // console.log(row);
             row.license = that.url + row.license
             that.list.push(row)
           })
@@ -292,40 +306,40 @@
         } else {
           // create
           if(!this.form.title){
-            this.$message.error('请输入企业名称');
-            return;
+            this.$message.error('请输入企业名称')
+            return
           }
           if(!this.form.code){
-            this.$message.error('请输入社会统一代码');
-            return;
+            this.$message.error('请输入社会统一代码')
+            return
           }
           if(!this.form.license){
-            this.$message.error('请选择图片');
-            return;
+            this.$message.error('请选择图片')
+            return
           }
           if(!this.form.username){
-            this.$message.error('请输入真实姓名');
-            return;
+            this.$message.error('请输入真实姓名')
+            return
           }
           if(!this.form.phone){
-            this.$message.error('请输入手机号');
-            return;
+            this.$message.error('请输入手机号')
+            return
           }
           if(!this.form.province){
-            this.$message.error('请输入省');
-            return;
+            this.$message.error('请输入省')
+            return
           }
           if(!this.form.city){
-            this.$message.error('请输入市');
-            return;
+            this.$message.error('请输入市')
+            return
           }
           if(!this.form.area){
-            this.$message.error('请输入区');
-            return;
+            this.$message.error('请输入区')
+            return
           }
           if(!this.form.address){
-            this.$message.error('请输入详细地址');
-            return;
+            this.$message.error('请输入详细地址')
+            return
           }
           company_add(form).then(({ code, msg }) => {
             if (code === 0) {
@@ -342,7 +356,6 @@
        * 事件-选择图片
        */
       selectImg(file) {
-        // console.log(file);
         // 验证
         const isRightSize = file.size / 1024 < 500
         if (!isRightSize) {
@@ -383,7 +396,7 @@
       // 搜索
       search() {
         if (this.keyword) {
-          this.fetchData()
+          this.fetchData(1)
         } else {
           this.$message.warning('请输入关键词')
         }

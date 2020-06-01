@@ -11,9 +11,9 @@ export function company_add(data) {
 }
 
 // 查询合伙人
-export function company_list(page, limit) {
+export function company_list(page, limit, keyword) {
   return request({
-    url: '/v1/company/list?' + qs.stringify(page, limit),
+    url: '/v1/company/list?' + qs.stringify({page, limit , keyword}), // page=1&limit=2
     method: 'get'
  })
 }
@@ -49,9 +49,9 @@ export function shareholder_add(data) {
 }
 
 // 查询股东
-export function shareholder_list(page, limit) {
+export function shareholder_list(page, limit ,keyword) {
   return request({
-    url: '/v1/shareholder/list?' + qs.stringify(page, limit),
+    url: '/v1/shareholder/list?' + qs.stringify({page, limit , keyword}),
     method: 'get'
  })
 }
