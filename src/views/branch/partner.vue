@@ -290,7 +290,42 @@
         if (data.licenseFile) {
           form.append('license', data.licenseFile)
         }
-
+        if(!this.form.title){
+          this.$message.error('请输入企业名称')
+          return
+        }
+        if(!this.form.code){
+          this.$message.error('请输入社会统一代码')
+          return
+        }
+        if(!this.form.license){
+          this.$message.error('请选择图片')
+          return
+        }
+        if(!this.form.username){
+          this.$message.error('请输入真实姓名')
+          return
+        }
+        if(!this.form.phone){
+          this.$message.error('请输入手机号')
+          return
+        }
+        if(!this.form.province){
+          this.$message.error('请输入省')
+          return
+        }
+        if(!this.form.city){
+          this.$message.error('请输入市')
+          return
+        }
+        if(!this.form.area){
+          this.$message.error('请输入区')
+          return
+        }
+        if(!this.form.address){
+          this.$message.error('请输入详细地址')
+          return
+        }
         if (this.form.id) {
           // update
           form.append('id', this.form.id)
@@ -305,42 +340,6 @@
           }).catch(() => { })
         } else {
           // create
-          if(!this.form.title){
-            this.$message.error('请输入企业名称')
-            return
-          }
-          if(!this.form.code){
-            this.$message.error('请输入社会统一代码')
-            return
-          }
-          if(!this.form.license){
-            this.$message.error('请选择图片')
-            return
-          }
-          if(!this.form.username){
-            this.$message.error('请输入真实姓名')
-            return
-          }
-          if(!this.form.phone){
-            this.$message.error('请输入手机号')
-            return
-          }
-          if(!this.form.province){
-            this.$message.error('请输入省')
-            return
-          }
-          if(!this.form.city){
-            this.$message.error('请输入市')
-            return
-          }
-          if(!this.form.area){
-            this.$message.error('请输入区')
-            return
-          }
-          if(!this.form.address){
-            this.$message.error('请输入详细地址')
-            return
-          }
           company_add(form).then(({ code, msg }) => {
             if (code === 0) {
               this.$message.success('操作成功')

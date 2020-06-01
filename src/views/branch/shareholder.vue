@@ -69,7 +69,7 @@
       <el-table-column label="管理">
         <template slot-scope="scope">
           <div>
-            <el-button size="small" type="primary" @click="edit(scope.row)">编辑</el-button>
+            <el-button size="small" type="primary" @click="edit(scope.row,scope.$index)">编辑</el-button>
             <el-popconfirm title="确定删除这行信息吗?" @onConfirm="del(scope.row)">
               <el-button slot="reference" size="small" type="danger">删除</el-button>
             </el-popconfirm>
@@ -90,7 +90,7 @@
           <el-input v-model="form.username" />
         </el-form-item>
         <el-form-item label="手机号">
-          <el-input v-model="form.phone" />
+          <el-input type="tel" maxlength="11" v-model="form.phone" />
         </el-form-item>
         <el-form-item label="省">
           <el-input v-model="form.province" />
@@ -203,9 +203,10 @@
         this.centerDialogVisible = true
       },
       /**
-       * 编辑轮播图
+       * 编辑股东
        */
-      edit(obj) {
+      edit(obj,index) {
+        this.current = this.list[index].company == 0 ? '总公司股东' : '子公司股东';
         this.form = obj
         this.centerDialogVisible = true
       },
@@ -245,7 +246,30 @@
         form.append('city', this.form.city)
         form.append('area', this.form.area)
         form.append('address', this.form.address)
-
+        if (!this.form.username) {
+          this.$message.error('请输入股东姓名');
+          return;
+        }
+        if (!this.form.phone) {
+          this.$message.error('请输入手机号');
+          return;
+        }
+        if (!this.form.province) {
+          this.$message.error('请输入省');
+          return;
+        }
+        if (!this.form.city) {
+          this.$message.error('请输入市');
+          return;
+        }
+        if (!this.form.area) {
+          this.$message.error('请输入区');
+          return;
+        }
+        if (!this.form.address) {
+          this.$message.error('请输入详细地址');
+          return;
+        }
         if (this.form.id) {
           // update
           form.append('id', this.form.id)
@@ -264,30 +288,6 @@
           }).catch(() => {})
         } else {
           // create
-          if (!this.form.username) {
-            this.$message.error('请输入股东姓名');
-            return;
-          }
-          if (!this.form.phone) {
-            this.$message.error('请输入手机号');
-            return;
-          }
-          if (!this.form.province) {
-            this.$message.error('请输入省');
-            return;
-          }
-          if (!this.form.city) {
-            this.$message.error('请输入市');
-            return;
-          }
-          if (!this.form.area) {
-            this.$message.error('请输入区');
-            return;
-          }
-          if (!this.form.address) {
-            this.$message.error('请输入详细地址');
-            return;
-          }
           shareholder_add(form).then(({
             code,
             msg

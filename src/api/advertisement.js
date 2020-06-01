@@ -53,22 +53,10 @@ export function advertisement_del(id) {
   })
 }
 
-// 轮播订单
-export function advertisement_order(page, limit, type) {
-  return request({
-    url: '/Advertisement/order?' + qs.stringify({ page, limit, type }),
-    method: 'get'
-  })
-}
-
-/**
- * 轮播图展示状态修改
- * @param {int} id
- * @param {int} status 是否展示
- */
-export function banner_enable(id, status) {
-  return request({
-    url: 'Advertisement/show',
-    params: { id, status }
-  })
-}
+// // 轮播订单
+// export function advertisement_order(page, limit, type) {
+//   return request({
+//     url: '/Advertisement/order?' + qs.stringify({ page, limit, type }),
+//     method: 'get'
+//   })
+// }

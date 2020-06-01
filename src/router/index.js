@@ -272,10 +272,10 @@ export const constantRoutes = [{
       },
       {
         path: 'course',
-        name: '宣传文章管理',
+        name: '培训课程',
         component: () => import('@/views/organization/course'),
         meta: {
-          title: '宣传文章管理',
+          title: '培训课程',
           icon: 'tree'
         }
       }

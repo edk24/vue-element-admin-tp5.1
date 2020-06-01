@@ -13,9 +13,9 @@
       >添加合伙人</el-button>
     </p>
     <el-table v-loading="listLoading" :data="list" element-loading-text="Loading" fit highlight-current-row>
-      <el-table-column align="center" label="ID" width="64">
-        <template slot-scope="scope">
-          {{ scope.$index+1 }}
+      <el-table-column label="序号" type="index" width="50" align="center">
+        <template scope="scope">
+          <span>{{(page - 1) * limit + scope.$index + 1}}</span>
         </template>
       </el-table-column>
       <el-table-column label="商品标题">
@@ -47,7 +47,8 @@
           <el-switch
             v-model="scope.row.is_default"
             active-color="#409EFF"
-            inactive-color="#dddddd">
+            inactive-color="#dddddd"
+            @change="setDefault($event,scope.$index)">
           </el-switch>
         </template>
       </el-table-column>
@@ -139,7 +140,9 @@
     </el-dialog>
 
     <p>
-      <el-pagination background layout="prev, pager, next" :total="count" :page-size="limit" @current-change="fetchData" />
+      <el-pagination background @current-change="fetchData" :current-page.sync="page" :page-size="limit" layout="total, prev, pager, next"
+        :total="count">
+      </el-pagination>
     </p>
 
   </div>
@@ -150,7 +153,8 @@
     exchange_add,
     exchange_list,
     exchange_del,
-    exchange_edit
+    exchange_edit,
+    exchange_default
   } from '@/api/product'
   export default {
     components: {},
@@ -170,7 +174,7 @@
         list: [],
         count: 0,
         page: 1,
-        limit: 25,
+        limit: 10,
         keyword: '',
         listLoading: true,
         centerDialogVisible: false,
@@ -205,15 +209,30 @@
       this.fetchData(1)
     },
     methods: {
+      //设置默认按钮
+      setDefault(e,index){
+        console.log(e);
+        console.log(index);
+        // exchange_default
+        var isDefault = '';
+        isDefault = e?1:0;
+        exchange_default(this.list[index].id).then(res => {
+          if(res.code == 0){
+            this.fetchData(1);
+          }else{
+            this.$message.error(res.data.mgs);
+          }
+        })
+      },
       /**
-       * 添加轮播图
+       * 添加产品
        */
       create() {
         this.form = { title: '', image: '',imageFile: '',price: '', note: '',is_default: ''};
         this.centerDialogVisible = true
       },
       /**
-       * 编辑轮播图
+       * 编辑产品
        */
       edit(obj) {
         this.form = obj
@@ -229,12 +248,11 @@
           }
         }
         this.listLoading = true
-        exchange_list(this.page, this.limit).then(response => {
+        exchange_list(this.page, this.limit, this.keyword).then(response => {
           that.list = []
           response.data.forEach(row => {
             row.is_default = row.is_default == 1 ? true:false
             row.image = that.url + row.image
-            console.log(row);
             that.list.push(row)
           })
           this.count = response.count
@@ -253,7 +271,22 @@
         if (data.imageFile) {
           form.append('image', data.imageFile)
         }
-
+        if(!this.form.title){
+          this.$message.error('请输入商品标题')
+          return
+        }
+        if(!this.form.image){
+          this.$message.error('请选择商品首图')
+          return
+        }
+        if(!this.form.price){
+          this.$message.error('请输入兑换所需积分')
+          return
+        }
+        if(!this.form.note){
+          this.$message.error('请输入商品详情')
+          return
+        }
         if (this.form.id) {
           // update
           form.append('id', this.form.id)
@@ -268,22 +301,6 @@
           }).catch(() => { })
         } else {
           // create
-          if(!this.form.title){
-            this.$message.error('请输入商品标题')
-            return
-          }
-          if(!this.form.image){
-            this.$message.error('请选择商品首图')
-            return
-          }
-          if(!this.form.price){
-            this.$message.error('请输入兑换所需积分')
-            return
-          }
-          if(!this.form.note){
-            this.$message.error('请输入商品详情')
-            return
-          }
           exchange_add(form).then(({ code, msg }) => {
             if (code === 0) {
               this.$message.success('操作成功')
@@ -324,7 +341,7 @@
         reader.readAsDataURL(file.raw)
       },
       /**
-       * 删除合伙人
+       * 删除产品
        */
       del(obj) {
         exchange_del(obj.id).then(({ code, msg }) => {

@@ -11,9 +11,9 @@ export function article_add(data) {
 }
 
 // 查询文章
-export function article_list(page, limit) {
+export function article_list(page, limit , keyword) {
   return request({
-    url: '/v1/prop_article/list?' + qs.stringify(page, limit),
+    url: '/v1/prop_article/list?' + qs.stringify({page, limit, keyword}),
     method: 'get'
  })
 }
@@ -26,7 +26,6 @@ export function article_edit(data) {
     data
   })
 }
-
 
 
 // 删除文章

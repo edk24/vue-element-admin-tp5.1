@@ -11,9 +11,9 @@ export function exchange_add(data) {
 }
 
 // 查询积分兑换产品列表
-export function exchange_list(page, limit) {
+export function exchange_list(page, limit, keyword) {
   return request({
-    url: '/v1/exchange/list?' + qs.stringify(page, limit),
+    url: '/v1/exchange/list?' + qs.stringify({page, limit, keyword}),
     method: 'get'
  })
 }
@@ -35,3 +35,13 @@ export function exchange_del(id) {
     method: 'get'
   })
 }
+
+// 积分兑换产品设置默认
+export function exchange_default(id) {
+  return request({
+    url: '/v1/exchange/default?id=' + id,
+    method: 'get'
+  })
+}
+
+

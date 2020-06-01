@@ -330,6 +330,22 @@ export default {
       if (data.imageFile) {
         form.append('file', data.imageFile)
       }
+      if(!this.form.title){
+        this.$message.error('请输入名称');
+        return;
+      }
+      if(!this.form.explain){
+        this.$message.error('请输入轮播图信息');
+        return;
+      }
+      if(!this.current){
+        this.$message.error('请输入轮播图分类');
+        return;
+      }
+      if(!this.form.url){
+        this.$message.error('请输入跳转链接');
+        return;
+      }
       if (this.form.id) {
         // update
         form.append('id', this.form.id)
@@ -345,24 +361,8 @@ export default {
         }).catch(() => { })
       } else {
         // create
-        if(!this.form.title){
-          this.$message.error('请输入名称');
-          return;
-        }
         if(!this.form.imageFile){
           this.$message.error('请选择图片');
-          return;
-        }
-        if(!this.form.explain){
-          this.$message.error('请输入轮播图信息');
-          return;
-        }
-        if(!this.form.current){
-          this.$message.error('请输入轮播图分类');
-          return;
-        }
-        if(!this.form.url){
-          this.$message.error('请输入跳转链接');
           return;
         }
         advertisement_add(form).then(({ code, msg }) => {
