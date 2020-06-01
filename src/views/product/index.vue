@@ -269,20 +269,20 @@
         } else {
           // create
           if(!this.form.title){
-            this.$message.error('请输入商品标题');
-            return;
+            this.$message.error('请输入商品标题')
+            return
           }
           if(!this.form.image){
-            this.$message.error('请选择商品首图');
-            return;
+            this.$message.error('请选择商品首图')
+            return
           }
           if(!this.form.price){
-            this.$message.error('请输入兑换所需积分');
-            return;
+            this.$message.error('请输入兑换所需积分')
+            return
           }
           if(!this.form.note){
-            this.$message.error('请输入商品详情');
-            return;
+            this.$message.error('请输入商品详情')
+            return
           }
           exchange_add(form).then(({ code, msg }) => {
             if (code === 0) {
@@ -299,7 +299,6 @@
        * 事件-选择图片
        */
       selectImg(file) {
-        // console.log(file);
         // 验证
         const isRightSize = file.size / 1024 < 500
         if (!isRightSize) {
@@ -349,7 +348,7 @@
       all() {
         this.keyword = ''
         this.fetchData()
-      },
+      }
     }
   }
 </script>

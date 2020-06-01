@@ -10,11 +10,15 @@
       <el-button type="primary" @click="create()">添加股东</el-button>
     </p>
     <el-table v-loading="listLoading" :data="list" element-loading-text="Loading" fit highlight-current-row>
-      <el-table-column align="center" label="ID" width="64">
-        <template slot-scope="scope">
-          {{ scope.$index+1 }}
-        </template>
-      </el-table-column>
+     <el-table-column
+             label="序号"
+             type="index"
+             width="50"
+             align="center">
+         <template scope="scope">
+             <span>{{(page - 1) * limit + scope.$index + 1}}</span>
+         </template>
+     </el-table-column>
       <el-table-column label="股东类型">
         <template slot-scope="scope">
           <span v-if="scope.row.company == 0">总公司股东</span>
@@ -109,7 +113,14 @@
     </el-dialog>
 
     <p>
-      <el-pagination background layout="prev, pager, next" :total="count" :page-size="limit" @current-change="fetchData" />
+      <el-pagination
+         background
+         @current-change="fetchData"
+         :current-page.sync="page"
+         :page-size="limit"
+         layout="total, prev, pager, next"
+         :total="count">
+       </el-pagination>
     </p>
 
   </div>
@@ -140,7 +151,7 @@
         list: [],
         count: 0,
         page: 1,
-        limit: 25,
+        limit: 10,
         keyword: '',
         listLoading: true,
         centerDialogVisible: false,
@@ -208,11 +219,14 @@
           }
         }
         this.listLoading = true
-        shareholder_list(this.page, this.limit).then(response => {
+        console.log(this.keyword);
+        shareholder_list(this.page, this.limit, this.keyword).then(response => {
+          console.log(123);
+          console.log(response)
           that.list = []
           response.data.forEach(row => {
-            // console.log(row);
             row.license = that.url + row.license
+            console.log(row);
             that.list.push(row)
           })
           this.count = response.count
@@ -250,10 +264,6 @@
           }).catch(() => {})
         } else {
           // create
-          // if(!this.form.company){
-          //   this.$message.error('请输入股东类型');
-          //   return;
-          // }
           if (!this.form.username) {
             this.$message.error('请输入股东姓名');
             return;
@@ -312,7 +322,7 @@
       // 搜索
       search() {
         if (this.keyword) {
-          this.fetchData()
+          this.fetchData(1)
         } else {
           this.$message.warning('请输入关键词')
         }
