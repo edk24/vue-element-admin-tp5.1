@@ -350,7 +350,7 @@ export const constantRoutes = [{
       }
     ]
   },
-  // 产品管理  --
+  // 反馈管理  --
   {
     path: '/feedback',
     component: Layout,
@@ -372,6 +372,28 @@ export const constantRoutes = [{
     ]
   },
 
+
+  // 论坛管理  --
+  {
+    path: '/forum',
+    component: Layout,
+    name: '论坛管理',
+    alwaysShow: true,
+    meta: {
+      title: '论坛管理',
+      icon: 'table'
+    },
+    children: [{
+        path: 'list',
+        name: '论坛管理',
+        component: () => import('@/views/forum/list'),
+        meta: {
+          title: '论坛管理',
+          icon: 'tree'
+        }
+      }
+    ]
+  },
   // {
   //   path: '/project',
   //   component: Layout,
