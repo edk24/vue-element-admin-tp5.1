@@ -1,8 +1,13 @@
 <template>
   <div class="app-container">
     <p>
-      <el-input v-model="keyword" maxlength="16" style="width:300px;margin-right:15px" placeholder="请输入关键字进行搜索"
-        @keyup.enter.native="search()" />
+      <el-input
+        v-model="keyword"
+        maxlength="16"
+        style="width:300px;margin-right:15px"
+        placeholder="请输入关键字进行搜索"
+        @keyup.enter.native="search()"
+      />
       <el-button type="primary" @click="search()">搜索</el-button>
       <el-button type="primary" @click="all()">全部</el-button>
     </p>
@@ -12,15 +17,13 @@
     <el-table v-loading="listLoading" :data="list" element-loading-text="Loading" fit highlight-current-row>
       <el-table-column label="序号" type="index" width="50" align="center">
         <template scope="scope">
-          <span>{{(page - 1) * limit + scope.$index + 1}}</span>
+          <span>{{ (page - 1) * limit + scope.$index + 1 }}</span>
         </template>
       </el-table-column>
       <el-table-column prop="title" label="标题" width="180" />
-      <el-table-column prop="abstract" label="摘要" width="180">
-      </el-table-column>
+      <el-table-column prop="abstract" label="摘要" width="180" />
 
-      <el-table-column prop="content" label="内容" width="500">
-      </el-table-column>
+      <el-table-column prop="content" label="内容" width="500" />
       <el-table-column prop="create_time" label="创建时间" />
 
       <el-table-column prop="update_time" label="更新时间" />
@@ -38,9 +41,14 @@
     </el-table>
 
     <p>
-      <el-pagination background @current-change="fetchData" :current-page.sync="page" :page-size="limit" layout="total, prev, pager, next"
-        :total="count">
-      </el-pagination>
+      <el-pagination
+        background
+        :current-page.sync="page"
+        :page-size="limit"
+        layout="total, prev, pager, next"
+        :total="count"
+        @current-change="fetchData"
+      />
     </p>
 
     <el-dialog :visible.sync="centerDialogVisible" width="600px" center>
@@ -61,8 +69,6 @@
         <el-button type="primary" @click="submit()">确 定</el-button>
       </span>
     </el-dialog>
-
-
 
   </div>
 </template>
@@ -152,7 +158,7 @@
         }
         this.listLoading = true
         article_list(this.page, this.limit, this.keyword).then(response => {
-          console.log(response);
+          console.log(response)
           that.list = []
           response.data.forEach(row => {
             that.list.push(row)
@@ -170,16 +176,16 @@
         form.append('abstract', this.form.abstract)
         form.append('content', this.form.content)
         if (!this.form.title) {
-          this.$message.error('请输入标题');
-          return;
+          this.$message.error('请输入标题')
+          return
         }
         if (!this.form.abstract) {
-          this.$message.error('请输入摘要');
-          return;
+          this.$message.error('请输入摘要')
+          return
         }
         if (!this.form.content) {
-          this.$message.error('请输入内容');
-          return;
+          this.$message.error('请输入内容')
+          return
         }
         if (this.form.id) {
           // update
@@ -240,7 +246,7 @@
       all() {
         this.keyword = ''
         this.fetchData()
-      },
+      }
     }
   }
 </script>
