@@ -220,13 +220,13 @@
     methods: {
       // 设置默认按钮
       setDefault(e, index) {
-        console.log(e)
-        console.log(index)
-        // exchange_default
-        var isDefault = ''
-        isDefault = e ? 1 : 0
+        // console.log(e)
+        // console.log(index)
+        // // exchange_default
+        // var isDefault = null
+        // isDefault = e ? 1 : 0
         exchange_default(this.list[index].id).then(res => {
-          if (res.code == 0) {
+          if (res.code === 0) {
             this.fetchData(1)
           } else {
             this.$message.error(res.data.mgs)

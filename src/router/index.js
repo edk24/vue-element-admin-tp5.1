@@ -105,6 +105,24 @@ export const constantRoutes = [{
           title: '学生管理',
           icon: 'tree'
         }
+      },
+      {
+        path: 'bank',
+        name: '银行卡',
+        component: () => import('@/views/user/bank'),
+        meta: {
+          title: '银行卡',
+          icon: 'tree'
+        }
+      },
+      {
+        path: 'bankPermission',
+        name: '银行卡审核',
+        component: () => import('@/views/user/bankPermission'),
+        meta: {
+          title: '银行卡审核',
+          icon: 'tree'
+        }
       }
     ]
   },
