@@ -4,8 +4,8 @@
       <el-button type="primary" @click="create()">添加轮播图</el-button>
     </p>
     <el-table :data="list" style="width: 100%">
-      <el-table-column type="index" label="序号" align="center" width="80" />
-      <el-table-column prop="title" label="名称" width="180" />
+      <el-table-column type="index" label="序号" align="center" width="80"/>
+      <el-table-column prop="title" label="名称" width="180"/>
       <el-table-column label="图片" width="250">
         <template slot-scope="scope">
           <el-image class="image" width="200" :src="scope.row.image">
@@ -70,31 +70,32 @@
     <el-dialog :visible.sync="centerDialogVisible" width="600px" center>
       <el-form ref="form" :model="form" label-width="80px">
         <el-form-item label="名称">
-          <el-input v-model="form.title" />
+          <el-input v-model="form.title"/>
         </el-form-item>
         <el-form-item label="图片">
 
-          <el-upload :show-file-list="false" :multiple="false" action="post" :before-upload="selectImg" :on-change="changeImage">
+          <el-upload :show-file-list="false" :multiple="false" action="post" :before-upload="selectImg"
+                     :on-change="changeImage">
             <img v-if="form.image" :src="form.image" class="avatar">
-            <i v-else class="el-icon-plus avatar-uploader-icon" />
+            <i v-else class="el-icon-plus avatar-uploader-icon"/>
           </el-upload>
 
         </el-form-item>
 
         <el-form-item label="详细介绍">
-          <el-input v-model="form.explain" placeholder="请输入轮播图信息" />
+          <el-input v-model="form.explain" placeholder="请输入轮播图信息"/>
         </el-form-item>
 
         <el-form-item label="分类">
 
           <el-select v-model="current" placeholder="请选择分类">
-            <el-option v-for="(item,index) in typeArr" :key="index" :label="item" :value="index" />
+            <el-option v-for="(item,index) in typeArr" :key="index" :label="item" :value="index"/>
 
           </el-select>
         </el-form-item>
 
         <el-form-item label="跳转链接">
-          <el-input v-model="form.url" placeholder="请输入跳转链接" />
+          <el-input v-model="form.url" placeholder="请输入跳转链接"/>
         </el-form-item>
       </el-form>
 
@@ -118,6 +119,7 @@
   import {
     imgsrc
   } from '@/utils/index'
+
   export default {
     data() {
       return {
@@ -153,11 +155,11 @@
           this.list = []
         }
         advertisement_list(this.page, this.limit).then(({
-          code,
-          msg,
-          data,
-          count
-        }) => {
+                                                          code,
+                                                          msg,
+                                                          data,
+                                                          count
+                                                        }) => {
           if (code === 0) {
             data.forEach(row => {
               row.image = imgsrc(row.image)
@@ -168,17 +170,18 @@
           } else {
             this.$message.error(msg || '查询失败')
           }
-        }).catch(() => {})
+        }).catch(() => {
+        })
       },
       /*
        * 获取轮播图位置
        */
       getBannerType() {
         advertisement_type().then(res => {
-          if (res.code == 0) {
-            this.typeArr = res.data;
-            this.current = this.typeArr[0];
-          } else {}
+          if (res.code === 0) {
+            this.typeArr = res.data
+            this.current = this.typeArr[0]
+          }
         })
       },
       /**
@@ -186,32 +189,34 @@
        */
       show_enable(obj) {
         banner_enable(obj.id, obj.is_show).then(({
-          code,
-          msg
-        }) => {
+                                                   code,
+                                                   msg
+                                                 }) => {
           if (code === 0) {
             this.$message.success('修改成功')
           } else {
             this.$message.error(msg || '修改失败')
             return false
           }
-        }).catch(() => {})
+        }).catch(() => {
+        })
       },
       /**
        * 删除轮播
        */
       del(obj) {
         advertisement_del(obj.id).then(({
-          code,
-          msg
-        }) => {
+                                          code,
+                                          msg
+                                        }) => {
           if (code === 0) {
             this.$message.success('操作成功')
             this.fetchData(true)
           } else {
             this.$message.error(msg || '删除失败')
           }
-        }).catch(() => {})
+        }).catch(() => {
+        })
       },
 
       /**
@@ -253,7 +258,7 @@
           imageFile: null, // 新图片文件
           url: '',
           type: 0,
-          id: null,
+          id: null
         }
         this.centerDialogVisible = true
       },
@@ -297,9 +302,9 @@
           // update
           form.append('id', this.form.id)
           advertisement_edit(form).then(({
-            code,
-            msg
-          }) => {
+                                           code,
+                                           msg
+                                         }) => {
             if (code === 0) {
               this.$message.success('操作成功')
               this.fetchData(true)
@@ -308,17 +313,18 @@
               this.$message.error(msg || '操作失败')
             }
 
-          }).catch(() => {})
+          }).catch(() => {
+          })
         } else {
           // create
           if (!this.form.imageFile) {
-            this.$message.error('请选择图片');
+            this.$message.error(' 请选择图片 ')
             return
           }
           advertisement_add(form).then(({
-            code,
-            msg
-          }) => {
+                                          code,
+                                          msg
+                                        }) => {
             if (code === 0) {
               this.$message.success('操作成功')
               this.fetchData(true)
@@ -326,7 +332,8 @@
             } else {
               this.$message.error(msg || '操作失败')
             }
-          }).catch(() => {})
+          }).catch(() => {
+          })
         }
       }
     }
