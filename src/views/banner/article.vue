@@ -158,7 +158,6 @@
         }
         this.listLoading = true
         article_list(this.page, this.limit, this.keyword).then(response => {
-          console.log(response)
           that.list = []
           response.data.forEach(row => {
             that.list.push(row)
@@ -170,7 +169,6 @@
         })
       },
       submit() {
-        const data = this.form
         const form = new FormData()
         form.append('title', this.form.title)
         form.append('abstract', this.form.abstract)

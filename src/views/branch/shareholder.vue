@@ -1,8 +1,13 @@
 <template>
   <div class="app-container">
     <p>
-      <el-input v-model="keyword" maxlength="16" style="width:300px;margin-right:15px" placeholder="请输入关键字进行搜索"
-        @keyup.enter.native="search()" />
+      <el-input
+        v-model="keyword"
+        maxlength="16"
+        style="width:300px;margin-right:15px"
+        placeholder="请输入关键字进行搜索"
+        @keyup.enter.native="search()"
+      />
       <el-button type="primary" @click="search()">搜索</el-button>
       <el-button type="primary" @click="all()">全部</el-button>
     </p>
@@ -10,15 +15,16 @@
       <el-button type="primary" @click="create()">添加股东</el-button>
     </p>
     <el-table v-loading="listLoading" :data="list" element-loading-text="Loading" fit highlight-current-row>
-     <el-table-column
-             label="序号"
-             type="index"
-             width="50"
-             align="center">
-         <template scope="scope">
-             <span>{{(page - 1) * limit + scope.$index + 1}}</span>
-         </template>
-     </el-table-column>
+      <el-table-column
+        label="序号"
+        type="index"
+        width="50"
+        align="center"
+      >
+        <template scope="scope">
+          <span>{{ (page - 1) * limit + scope.$index + 1 }}</span>
+        </template>
+      </el-table-column>
       <el-table-column label="股东类型">
         <template slot-scope="scope">
           <span v-if="scope.row.company == 0">总公司股东</span>
@@ -90,7 +96,7 @@
           <el-input v-model="form.username" />
         </el-form-item>
         <el-form-item label="手机号">
-          <el-input type="tel" maxlength="11" v-model="form.phone" />
+          <el-input v-model="form.phone" type="tel" maxlength="11" />
         </el-form-item>
         <el-form-item label="省">
           <el-input v-model="form.province" />
@@ -114,13 +120,13 @@
 
     <p>
       <el-pagination
-         background
-         @current-change="fetchData"
-         :current-page.sync="page"
-         :page-size="limit"
-         layout="total, prev, pager, next"
-         :total="count">
-       </el-pagination>
+        background
+        :current-page.sync="page"
+        :page-size="limit"
+        layout="total, prev, pager, next"
+        :total="count"
+        @current-change="fetchData"
+      />
     </p>
 
   </div>
@@ -170,7 +176,7 @@
             trigger: 'blur'
           }]
         },
-        current: '总公司股东', //当前股东类型
+        current: '总公司股东', // 当前股东类型
         // 表单
         form: {
           company: '',
@@ -199,14 +205,14 @@
           city: '',
           area: '',
           address: ''
-        };
+        }
         this.centerDialogVisible = true
       },
       /**
        * 编辑股东
        */
-      edit(obj,index) {
-        this.current = this.list[index].company == 0 ? '总公司股东' : '子公司股东';
+      edit(obj, index) {
+        this.current = this.list[index].company === 0 ? '总公司股东' : '子公司股东'
         this.form = obj
         this.centerDialogVisible = true
       },
@@ -220,14 +226,10 @@
           }
         }
         this.listLoading = true
-        console.log(this.keyword);
         shareholder_list(this.page, this.limit, this.keyword).then(response => {
-          console.log(123);
-          console.log(response)
           that.list = []
           response.data.forEach(row => {
             row.license = that.url + row.license
-            console.log(row);
             that.list.push(row)
           })
           this.count = response.count
@@ -237,7 +239,6 @@
         })
       },
       submit() {
-        const data = this.form
         const form = new FormData()
         form.append('company', this.current)
         form.append('username', this.form.username)
@@ -247,28 +248,28 @@
         form.append('area', this.form.area)
         form.append('address', this.form.address)
         if (!this.form.username) {
-          this.$message.error('请输入股东姓名');
-          return;
+          this.$message.error('请输入股东姓名')
+          return
         }
         if (!this.form.phone) {
-          this.$message.error('请输入手机号');
-          return;
+          this.$message.error('请输入手机号')
+          return
         }
         if (!this.form.province) {
-          this.$message.error('请输入省');
-          return;
+          this.$message.error('请输入省')
+          return
         }
         if (!this.form.city) {
-          this.$message.error('请输入市');
-          return;
+          this.$message.error('请输入市')
+          return
         }
         if (!this.form.area) {
-          this.$message.error('请输入区');
-          return;
+          this.$message.error('请输入区')
+          return
         }
         if (!this.form.address) {
-          this.$message.error('请输入详细地址');
-          return;
+          this.$message.error('请输入详细地址')
+          return
         }
         if (this.form.id) {
           // update
@@ -284,7 +285,7 @@
             } else {
               this.$message.error(msg || '操作失败')
             }
-            this.current = "总公司股东"
+            this.current = '总公司股东'
           }).catch(() => {})
         } else {
           // create
@@ -299,7 +300,7 @@
             } else {
               this.$message.error(msg || '操作失败')
             }
-            this.current = "总公司股东"
+            this.current = '总公司股东'
           }).catch(() => {})
         }
       },
@@ -331,7 +332,7 @@
       all() {
         this.keyword = ''
         this.fetchData()
-      },
+      }
     }
   }
 </script>

@@ -382,9 +382,9 @@ export const constantRoutes = [{
       icon: 'table'
     },
     children: [{
-        path: 'list',
+        path: 'index',
         name: '论坛管理',
-        component: () => import('@/views/forum/list'),
+        component: () => import('@/views/forum/index'),
         meta: {
           title: '论坛管理',
           icon: 'tree'
@@ -392,44 +392,27 @@ export const constantRoutes = [{
       }
     ]
   },
-  // {
-  //   path: '/project',
-  //   component: Layout,
-  //   name: '项目管理',
-  //   meta: {
-  //     title: '项目管理',
-  //     tree: 'tree',
-  //     icon: 'component'
-  //   },
-  //   children: [{
-  //       path: 'language',
-  //       name: '开发语言',
-  //       component: () => import('@/views/project/language'),
-  //       meta: {
-  //         title: '开语语言',
-  //         icon: 'tree'
-  //       }
-  //     },
-  //     {
-  //       path: 'system',
-  //       name: '开发终端',
-  //       component: () => import('@/views/project/system'),
-  //       meta: {
-  //         title: '开发终端',
-  //         icon: 'tree'
-  //       }
-  //     },
-  //     {
-  //       path: 'task-type',
-  //       name: '项目类型',
-  //       component: () => import('@/views/project/task-type'),
-  //       meta: {
-  //         title: '项目类型',
-  //         icon: 'tree'
-  //       }
-  //     }
-  //   ]
-  // },
+  {
+    path: '/category',
+    component: Layout,
+    name: '分类管理',
+    alwaysShow: true,
+    meta: {
+      title: '分类管理',
+      tree: 'tree',
+      icon: 'table'
+    },
+    children: [{
+        path: 'index',
+        name: '列表管理',
+        component: () => import('@/views/category/index'),
+        meta: {
+          title: '列表管理',
+          icon: 'tree'
+        }
+      }
+    ]
+  },
 
   // {
   //   path: '/service',

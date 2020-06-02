@@ -12,10 +12,7 @@
       <el-button type="primary" @click="all()">全部</el-button>
     </p>
     <p>
-      <el-button
-        type="primary"
-        @click="create()"
-      >添加合伙人</el-button>
+      <el-button type="primary" @click="create()">添加股东</el-button>
     </p>
     <el-table v-loading="listLoading" :data="list" element-loading-text="Loading" fit highlight-current-row>
       <el-table-column
@@ -28,29 +25,18 @@
           <span>{{ (page - 1) * limit + scope.$index + 1 }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="企业名称">
+      <el-table-column label="股东类型">
         <template slot-scope="scope">
-          {{ scope.row.title }}
+          <span v-if="scope.row.company == 0">总公司股东</span>
+          <span v-if="scope.row.company == 1">子公司股东</span>
         </template>
       </el-table-column>
-      <el-table-column label="社会统一代码">
-        <template slot-scope="scope">
-          {{ scope.row.code }}
-        </template>
-      </el-table-column>
-      <el-table-column label="营业执照" width="110" align="center">
-        <template slot-scope="scope">
-          <el-image class="icon" :src="scope.row.license" />
-        </template>
-      </el-table-column>
-
-      <el-table-column label="真实姓名">
+      <el-table-column label="股东姓名">
         <template slot-scope="scope">
           {{ scope.row.username }}
         </template>
       </el-table-column>
-
-      <el-table-column label="手机号">
+      <el-table-column label="联系电话">
         <template slot-scope="scope">
           {{ scope.row.phone }}
         </template>
@@ -89,7 +75,7 @@
       <el-table-column label="管理">
         <template slot-scope="scope">
           <div>
-            <el-button size="small" type="primary" @click="edit(scope.row)">编辑</el-button>
+            <el-button size="small" type="primary" @click="edit(scope.row,scope.$index)">编辑</el-button>
             <el-popconfirm title="确定删除这行信息吗?" @onConfirm="del(scope.row)">
               <el-button slot="reference" size="small" type="danger">删除</el-button>
             </el-popconfirm>
@@ -98,58 +84,19 @@
       </el-table-column>
     </el-table>
 
-    <!-- <pagination :total="count" :page.sync="page" :limit.sync="limit" @pagination="fetchData" /> -->
-    <p>
-      <el-pagination
-        background
-        :current-page.sync="page"
-        :page-size="limit"
-        layout="total, prev, pager, next"
-        :total="count"
-        @current-change="fetchData"
-      />
-    </p>
-
-    <el-dialog
-      :visible.sync="centerDialogVisible"
-      width="600px"
-      center
-    >
-      <el-form
-        ref="form"
-        :model="form"
-        label-width="80px"
-      >
-        <el-form-item label="企业名称">
-          <el-input v-model="form.title" />
+    <el-dialog :visible.sync="centerDialogVisible" width="600px" center>
+      <el-form ref="form" :model="form" label-width="80px">
+        <el-form-item label="股东类型">
+          <el-select v-model="current" placeholder="股东类型">
+            <el-option label="总公司股东" :value="0" />
+            <el-option label="子公司股东" :value="1" />
+          </el-select>
         </el-form-item>
-        <el-form-item label="社会统一代码">
-          <el-input v-model="form.code" />
-        </el-form-item>
-        <el-form-item label="营业执照">
-          <el-upload
-            :show-file-list="false"
-            :multiple="false"
-            action="post"
-            :before-upload="selectImg"
-            :on-change="changeImage"
-          >
-            <img
-              v-if="form.license"
-              :src="form.license"
-              class="avatar"
-            >
-            <i
-              v-else
-              class="el-icon-plus avatar-uploader-icon"
-            />
-          </el-upload>
-        </el-form-item>
-        <el-form-item label="真实姓名">
+        <el-form-item label="股东姓名">
           <el-input v-model="form.username" />
         </el-form-item>
         <el-form-item label="手机号">
-          <el-input v-model="form.phone" />
+          <el-input v-model="form.phone" type="tel" maxlength="11" />
         </el-form-item>
         <el-form-item label="省">
           <el-input v-model="form.province" />
@@ -165,28 +112,33 @@
         </el-form-item>
       </el-form>
 
-      <span
-        slot="footer"
-        class="dialog-footer"
-      >
+      <span slot="footer" class="dialog-footer">
         <el-button @click="centerDialogVisible = false">取 消</el-button>
-        <el-button
-          type="primary"
-          @click="submit()"
-        >确 定</el-button>
+        <el-button type="primary" @click="submit()">确 定</el-button>
       </span>
     </el-dialog>
+
+    <p>
+      <el-pagination
+        background
+        :current-page.sync="page"
+        :page-size="limit"
+        layout="total, prev, pager, next"
+        :total="count"
+        @current-change="fetchData"
+      />
+    </p>
 
   </div>
 </template>
 
 <script>
   import {
-    company_add,
-    company_list,
-    company_del,
-    company_edit
-  } from '@/api/branch'
+    category_list,
+    category_addd,
+    category_del,
+    category_edit
+  } from '@/api/category'
   export default {
     components: {},
     filters: {
@@ -224,19 +176,17 @@
             trigger: 'blur'
           }]
         },
+        current: '总公司股东', // 当前股东类型
         // 表单
-       form: {
-         title: '',
-         code: '',
-         license: '',
-         licenseFile: '', // 新图片文件
-         username: '',
-         phone: '',
-         province: '',
-         city: '',
-         area: '',
-         address: ''
-       }
+        form: {
+          company: '',
+          username: '',
+          phone: '',
+          province: '',
+          city: '',
+          area: '',
+          address: ''
+        }
       }
     },
     created() {
@@ -244,16 +194,25 @@
     },
     methods: {
       /**
-       * 添加轮播图
+       * 添加数据
        */
       create() {
-        this.form = { title: '', code: '', license: '', username: '', phone: '', province: '', city: '', area: '', address: '' }
+        this.form = {
+          company: '',
+          username: '',
+          phone: '',
+          province: '',
+          city: '',
+          area: '',
+          address: ''
+        }
         this.centerDialogVisible = true
       },
       /**
-       * 编辑轮播图
+       * 编辑数据
        */
-      edit(obj) {
+      edit(obj, index) {
+        this.current = this.list[index].company === 0 ? '总公司股东' : '子公司股东'
         this.form = obj
         this.centerDialogVisible = true
       },
@@ -267,10 +226,13 @@
           }
         }
         this.listLoading = true
-        company_list(this.page, this.limit, this.keyword).then(response => {
+        console.log(this.keyword)
+        category_list(this.page, this.limit, this.keyword).then(response => {
+          console.log(response)
           that.list = []
           response.data.forEach(row => {
             row.license = that.url + row.license
+            console.log(row)
             that.list.push(row)
           })
           this.count = response.count
@@ -280,33 +242,16 @@
         })
       },
       submit() {
-        const data = this.form
         const form = new FormData()
-        form.append('title', this.form.title)
-        form.append('code', this.form.code)
+        form.append('company', this.current)
         form.append('username', this.form.username)
         form.append('phone', this.form.phone)
         form.append('province', this.form.province)
         form.append('city', this.form.city)
         form.append('area', this.form.area)
         form.append('address', this.form.address)
-        if (data.licenseFile) {
-          form.append('license', data.licenseFile)
-        }
-        if (!this.form.title) {
-          this.$message.error('请输入企业名称')
-          return
-        }
-        if (!this.form.code) {
-          this.$message.error('请输入社会统一代码')
-          return
-        }
-        if (!this.form.license) {
-          this.$message.error('请选择图片')
-          return
-        }
         if (!this.form.username) {
-          this.$message.error('请输入真实姓名')
+          this.$message.error('请输入股东姓名')
           return
         }
         if (!this.form.phone) {
@@ -332,7 +277,10 @@
         if (this.form.id) {
           // update
           form.append('id', this.form.id)
-          company_edit(form).then(({ code, msg }) => {
+          category_edit(form).then(({
+            code,
+            msg
+          }) => {
             if (code === 0) {
               this.$message.success('操作成功')
               this.fetchData(true)
@@ -340,60 +288,40 @@
             } else {
               this.$message.error(msg || '操作失败')
             }
-          }).catch(() => { })
+            this.current = '总公司股东'
+          }).catch(() => {})
         } else {
           // create
-          company_add(form).then(({ code, msg }) => {
+          category_add(form).then(({
+            code,
+            msg
+          }) => {
             if (code === 0) {
               this.$message.success('操作成功')
               this.fetchData(true)
-               this.centerDialogVisible = false
+              this.centerDialogVisible = false
             } else {
               this.$message.error(msg || '操作失败')
             }
-          }).catch(() => { })
+            this.current = '总公司股东'
+          }).catch(() => {})
         }
       },
       /**
-       * 事件-选择图片
-       */
-      selectImg(file) {
-        // 验证
-        const isRightSize = file.size / 1024 < 500
-        if (!isRightSize) {
-          this.$message.error('文件大小超过 500KB')
-        }
-        const isAccept = new RegExp('image/*').test(file.type)
-        if (!isAccept) {
-          this.$message.error('应该选择image/*类型的文件')
-        }
-
-        this.form.licenseFile = file
-        return false // don't auto upload
-      },
-
-      // 图片被改变
-      changeImage(file) {
-        // 读预览图片
-        const that = this
-        var reader = new FileReader()
-        reader.onload = (e) => {
-          that.form.license = e.target.result
-        }
-        reader.readAsDataURL(file.raw)
-      },
-      /**
-       * 删除合伙人
+       * 删除数据
        */
       del(obj) {
-        company_del(obj.id).then(({ code, msg }) => {
+        category_del(obj.id).then(({
+          code,
+          msg
+        }) => {
           if (code === 0) {
             this.$message.success('操作成功')
             this.fetchData(true)
           } else {
             this.$message.error(msg || '删除失败')
           }
-        }).catch(() => { })
+        }).catch(() => {})
       },
       // 搜索
       search() {
