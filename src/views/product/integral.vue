@@ -1,8 +1,13 @@
 <template>
   <div class="app-container">
     <p>
-      <el-input v-model="keyword" maxlength="16" style="width:300px;margin-right:15px" placeholder="请输入关键字进行搜索"
-        @keyup.enter.native="search()" />
+      <el-input
+        v-model="keyword"
+        maxlength="16"
+        style="width:300px;margin-right:15px"
+        placeholder="请输入关键字进行搜索"
+        @keyup.enter.native="search()"
+      />
       <el-button type="primary" @click="search()">搜索</el-button>
       <el-button type="primary" @click="all()">全部</el-button>
     </p>
@@ -15,7 +20,7 @@
     <el-table v-loading="listLoading" :data="list" element-loading-text="Loading" fit highlight-current-row>
       <el-table-column label="序号" type="index" width="50" align="center">
         <template scope="scope">
-          <span>{{(page - 1) * limit + scope.$index + 1}}</span>
+          <span>{{ (page - 1) * limit + scope.$index + 1 }}</span>
         </template>
       </el-table-column>
       <el-table-column label="商品标题">
@@ -48,11 +53,10 @@
             v-model="scope.row.is_default"
             active-color="#409EFF"
             inactive-color="#dddddd"
-            @change="setDefault($event,scope.$index)">
-          </el-switch>
+            @change="setDefault($event,scope.$index)"
+          />
         </template>
       </el-table-column>
-
 
       <el-table-column align="center" label="注册时间" width="200">
         <template slot-scope="scope">
@@ -121,8 +125,8 @@
             v-model="current"
             placeholder="请选择"
           >
-            <el-option label="否" :value="0"/>
-            <el-option label="是" :value="1"/>
+            <el-option label="否" :value="0" />
+            <el-option label="是" :value="1" />
           </el-select>
         </el-form-item>
       </el-form>
@@ -140,9 +144,14 @@
     </el-dialog>
 
     <p>
-      <el-pagination background @current-change="fetchData" :current-page.sync="page" :page-size="limit" layout="total, prev, pager, next"
-        :total="count">
-      </el-pagination>
+      <el-pagination
+        background
+        :current-page.sync="page"
+        :page-size="limit"
+        layout="total, prev, pager, next"
+        :total="count"
+        @current-change="fetchData"
+      />
     </p>
 
   </div>
@@ -193,12 +202,12 @@
             trigger: 'blur'
           }]
         },
-        current: '否', //当前选中 是否推送 0-否  1-是
+        current: '否', // 当前选中 是否推送 0-否  1-是
         // 表单
        form: {
          title: '',
          image: '',
-         imageFile: '',  // 新图片文件
+         imageFile: '', // 新图片文件
          price: '',
          note: '',
          is_default: ''
@@ -209,18 +218,18 @@
       this.fetchData(1)
     },
     methods: {
-      //设置默认按钮
-      setDefault(e,index){
-        console.log(e);
-        console.log(index);
+      // 设置默认按钮
+      setDefault(e, index) {
+        console.log(e)
+        console.log(index)
         // exchange_default
-        var isDefault = '';
-        isDefault = e?1:0;
+        var isDefault = ''
+        isDefault = e ? 1 : 0
         exchange_default(this.list[index].id).then(res => {
-          if(res.code == 0){
-            this.fetchData(1);
-          }else{
-            this.$message.error(res.data.mgs);
+          if (res.code == 0) {
+            this.fetchData(1)
+          } else {
+            this.$message.error(res.data.mgs)
           }
         })
       },
@@ -228,7 +237,7 @@
        * 添加产品
        */
       create() {
-        this.form = { title: '', image: '',imageFile: '',price: '', note: '',is_default: ''};
+        this.form = { title: '', image: '', imageFile: '', price: '', note: '', is_default: '' }
         this.centerDialogVisible = true
       },
       /**
@@ -251,7 +260,7 @@
         exchange_list(this.page, this.limit, this.keyword).then(response => {
           that.list = []
           response.data.forEach(row => {
-            row.is_default = row.is_default == 1 ? true:false
+            row.is_default = row.is_default == 1
             row.image = that.url + row.image
             that.list.push(row)
           })
@@ -271,19 +280,19 @@
         if (data.imageFile) {
           form.append('image', data.imageFile)
         }
-        if(!this.form.title){
+        if (!this.form.title) {
           this.$message.error('请输入商品标题')
           return
         }
-        if(!this.form.image){
+        if (!this.form.image) {
           this.$message.error('请选择商品首图')
           return
         }
-        if(!this.form.price){
+        if (!this.form.price) {
           this.$message.error('请输入兑换所需积分')
           return
         }
-        if(!this.form.note){
+        if (!this.form.note) {
           this.$message.error('请输入商品详情')
           return
         }

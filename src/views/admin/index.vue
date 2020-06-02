@@ -25,7 +25,7 @@
       <el-table-column
         label="头像"
         width="110"
-         align="center"
+        align="center"
       >
         <template slot-scope="scope">
           <el-image class="icon" :src="scope.row.avatar" />

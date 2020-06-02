@@ -339,12 +339,22 @@ export const constantRoutes = [{
       title: '产品管理',
       icon: 'table'
     },
-    children: [{
-        path: 'index',
-        name: '产品管理',
-        component: () => import('@/views/product/index'),
+    children: [
+      {
+        path: 'integral',
+        name: '积分产品',
+        component: () => import('@/views/product/integral'),
         meta: {
-          title: '产品管理',
+          title: '积分产品',
+          icon: 'tree'
+        }
+      },
+      {
+        path: 'general',
+        name: '普通产品',
+        component: () => import('@/views/product/general'),
+        meta: {
+          title: '普通产品',
           icon: 'tree'
         }
       }

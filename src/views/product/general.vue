@@ -11,46 +11,49 @@
       <el-button type="primary" @click="search()">搜索</el-button>
       <el-button type="primary" @click="all()">全部</el-button>
     </p>
-    <!-- <p>
+    <p>
       <el-button
         type="primary"
         @click="create()"
-      >添加孩子</el-button>
-    </p> -->
+      >添加产品</el-button>
+    </p>
     <el-table v-loading="listLoading" :data="list" element-loading-text="Loading" fit highlight-current-row>
-      <el-table-column
-        label="序号"
-        type="index"
-        width="50"
-        align="center"
-      >
+      <el-table-column label="序号" type="index" width="50" align="center">
         <template scope="scope">
           <span>{{ (page - 1) * limit + scope.$index + 1 }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="姓名">
+      <el-table-column label="产品标题">
         <template slot-scope="scope">
-          {{ scope.row.name }}
+          {{ scope.row.title }}
         </template>
       </el-table-column>
-      <el-table-column label="性别">
+      <el-table-column label="产品展示图" width="200" align="center">
         <template slot-scope="scope">
-          <span v-if="scope.row.sex === 1">男</span>
-          <span v-else>女</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="班级">
-        <template slot-scope="scope">
-          {{ scope.row.class }}
-        </template>
-      </el-table-column>
-      <el-table-column label="生日">
-        <template slot-scope="scope">
-          {{ scope.row.birthday }}
+          <el-image class="icon" :src="scope.row.image" />
         </template>
       </el-table-column>
 
-      <el-table-column align="center" label="创建时间" width="200">
+      <el-table-column label="产品价格">
+        <template slot-scope="scope">
+          {{ scope.row.price }}
+        </template>
+
+      </el-table-column>
+
+      <el-table-column label="最高可抵用积分">
+        <template slot-scope="scope">
+          {{ scope.row.point }}
+        </template>
+      </el-table-column>
+
+      <el-table-column label="产品详情">
+        <template slot-scope="scope">
+          {{ scope.row.content }}
+        </template>
+      </el-table-column>
+
+      <el-table-column align="center" label="注册时间" width="200">
         <template slot-scope="scope">
           <span>{{ scope.row.create_time }}</span>
         </template>
@@ -74,18 +77,6 @@
       </el-table-column>
     </el-table>
 
-    <!-- <pagination :total="count" :page.sync="page" :limit.sync="limit" @pagination="fetchData" /> -->
-    <p>
-      <el-pagination
-        background
-        :current-page.sync="page"
-        :page-size="limit"
-        layout="total, prev, pager, next"
-        :total="count"
-        @current-change="fetchData"
-      />
-    </p>
-
     <el-dialog
       :visible.sync="centerDialogVisible"
       width="600px"
@@ -96,13 +87,10 @@
         :model="form"
         label-width="80px"
       >
-        <el-form-item label="企业名称">
+        <el-form-item label="产品标题">
           <el-input v-model="form.title" />
         </el-form-item>
-        <el-form-item label="社会统一代码">
-          <el-input v-model="form.code" />
-        </el-form-item>
-        <el-form-item label="营业执照">
+        <el-form-item label="产品展示图">
           <el-upload
             :show-file-list="false"
             :multiple="false"
@@ -111,8 +99,8 @@
             :on-change="changeImage"
           >
             <img
-              v-if="form.license"
-              :src="form.license"
+              v-if="form.image"
+              :src="form.image"
               class="avatar"
             >
             <i
@@ -121,23 +109,14 @@
             />
           </el-upload>
         </el-form-item>
-        <el-form-item label="真实姓名">
-          <el-input v-model="form.username" />
+        <el-form-item label="产品价格">
+          <el-input v-model="form.price" />
         </el-form-item>
-        <el-form-item label="手机号">
-          <el-input v-model="form.phone" />
+        <el-form-item label="最高可抵用积分">
+          <el-input v-model="form.point" />
         </el-form-item>
-        <el-form-item label="省">
-          <el-input v-model="form.province" />
-        </el-form-item>
-        <el-form-item label="市">
-          <el-input v-model="form.city" />
-        </el-form-item>
-        <el-form-item label="区">
-          <el-input v-model="form.area" />
-        </el-form-item>
-        <el-form-item label="详细地址">
-          <el-input v-model="form.address" />
+        <el-form-item label="商品详情">
+          <el-input v-model="form.content" />
         </el-form-item>
       </el-form>
 
@@ -153,13 +132,27 @@
       </span>
     </el-dialog>
 
+    <p>
+      <el-pagination
+        background
+        :current-page.sync="page"
+        :page-size="limit"
+        layout="total, prev, pager, next"
+        :total="count"
+        @current-change="fetchData"
+      />
+    </p>
+
   </div>
 </template>
 
 <script>
   import {
-    user_child
-  } from '@/api/user'
+    goods_add,
+    goods_list,
+    goods_del,
+    goods_edit
+  } from '@/api/product'
   export default {
     components: {},
     filters: {
@@ -197,18 +190,15 @@
             trigger: 'blur'
           }]
         },
+        current: '否', // 当前选中 是否推送 0-否  1-是
         // 表单
        form: {
          title: '',
-         code: '',
-         license: '',
-         licenseFile: '', // 新图片文件
-         username: '',
-         phone: '',
-         province: '',
-         city: '',
-         area: '',
-         address: ''
+         image: '',
+         imageFile: '', // 新图片文件
+         price: '',
+         point: '',
+         content: ''
        }
       }
     },
@@ -217,14 +207,21 @@
     },
     methods: {
       /**
-       * 添加轮播图
+       * 添加产品
        */
       create() {
-        this.form = { title: '', code: '', license: '', username: '', phone: '', province: '', city: '', area: '', address: '' }
+        this.form = {
+         title: '',
+         image: '',
+         imageFile: '', // 新图片文件
+         price: '',
+         point: '',
+         content: '' 
+        }
         this.centerDialogVisible = true
       },
       /**
-       * 编辑轮播图
+       * 编辑产品
        */
       edit(obj) {
         this.form = obj
@@ -240,10 +237,11 @@
           }
         }
         this.listLoading = true
-        user_child(this.page, this.limit, this.keyword).then(response => {
+        goods_list(this.page, this.limit, this.keyword).then(response => {
           that.list = []
           response.data.forEach(row => {
-            row.avatar = that.url + row.avatar
+            row.image = that.url + row.image
+            console.log(row)
             that.list.push(row)
           })
           this.count = response.count
@@ -256,56 +254,36 @@
         const data = this.form
         const form = new FormData()
         form.append('title', this.form.title)
-        form.append('code', this.form.code)
-        form.append('username', this.form.username)
-        form.append('phone', this.form.phone)
-        form.append('province', this.form.province)
-        form.append('city', this.form.city)
-        form.append('area', this.form.area)
-        form.append('address', this.form.address)
-        if (data.licenseFile) {
-          form.append('license', data.licenseFile)
+        form.append('price', this.form.price)
+        form.append('point', this.form.point)
+        form.append('content', this.form.content)
+        if (data.imageFile) {
+          form.append('image', data.imageFile)
         }
         if (!this.form.title) {
-          this.$message.error('请输入企业名称')
+          this.$message.error('请输入产品标题')
           return
         }
-        if (!this.form.code) {
-          this.$message.error('请输入社会统一代码')
+        if (!this.form.image) {
+          this.$message.error('请选择产品展示图')
           return
         }
-        if (!this.form.license) {
-          this.$message.error('请选择图片')
+        if (!this.form.price) {
+          this.$message.error('请输入产品价格')
           return
         }
-        if (!this.form.username) {
-          this.$message.error('请输入真实姓名')
+        if (!this.form.point) {
+          this.$message.error('请输入最高可抵用积分')
           return
         }
-        if (!this.form.phone) {
-          this.$message.error('请输入手机号')
-          return
-        }
-        if (!this.form.province) {
-          this.$message.error('请输入省')
-          return
-        }
-        if (!this.form.city) {
-          this.$message.error('请输入市')
-          return
-        }
-        if (!this.form.area) {
-          this.$message.error('请输入区')
-          return
-        }
-        if (!this.form.address) {
-          this.$message.error('请输入详细地址')
+        if (!this.form.content) {
+          this.$message.error('请输入产品详情')
           return
         }
         if (this.form.id) {
           // update
           form.append('id', this.form.id)
-          company_edit(form).then(({ code, msg }) => {
+          goods_edit(form).then(({ code, msg }) => {
             if (code === 0) {
               this.$message.success('操作成功')
               this.fetchData(true)
@@ -316,7 +294,7 @@
           }).catch(() => { })
         } else {
           // create
-          company_add(form).then(({ code, msg }) => {
+          goods_add(form).then(({ code, msg }) => {
             if (code === 0) {
               this.$message.success('操作成功')
               this.fetchData(true)
@@ -341,7 +319,7 @@
           this.$message.error('应该选择image/*类型的文件')
         }
 
-        this.form.licenseFile = file
+        this.form.imageFile = file
         return false // don't auto upload
       },
 
@@ -351,15 +329,15 @@
         const that = this
         var reader = new FileReader()
         reader.onload = (e) => {
-          that.form.license = e.target.result
+          that.form.image = e.target.result
         }
         reader.readAsDataURL(file.raw)
       },
       /**
-       * 删除合伙人
+       * 删除产品
        */
       del(obj) {
-        company_del(obj.id).then(({ code, msg }) => {
+        goods_del(obj.id).then(({ code, msg }) => {
           if (code === 0) {
             this.$message.success('操作成功')
             this.fetchData(true)
@@ -371,7 +349,7 @@
       // 搜索
       search() {
         if (this.keyword) {
-          this.fetchData(1)
+          this.fetchData()
         } else {
           this.$message.warning('请输入关键词')
         }
