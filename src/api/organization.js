@@ -9,25 +9,21 @@ export function train_list(page, limit, keyword) {
   })
 }
 
-
 // 删除机构
 export function train_del(id) {
   return request({
-    url: '/v1/train/'+ id,
+    url: '/v1/train/' + id,
     method: 'delete'
   })
 }
-
-
 // 编辑机构信息
 export function train_edit(id, data) {
-  //data = qs.stringify(data)
   console.log(typeof data)
   return request({
-    url: '/v1/train/'+id,
+    url: '/v1/train/' + id,
     method: 'put',
-    headers:{
-      "Content-Type":"application/json; charset=utf-8"
+    headers: {
+      'Content-Type': 'application/json; charset=utf-8'
     },
     data
   })
