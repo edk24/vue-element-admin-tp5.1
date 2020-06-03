@@ -89,3 +89,27 @@ export function user_get_child(id) {
     method: 'get'
   })
 }
+
+// 查询银行卡列表
+export function bank_list(page, limit, keyword, status) {
+  return request({
+    url: '/v1/bank/list?' + qs.stringify({ limit, page, keyword, status }),
+    method: 'get'
+  })
+}
+
+// 银行卡审核列表
+export function bank_status(data) {
+  return request({
+    url: '/v1/bank/status',
+    method: 'post',
+    data: qs.stringify(data)
+  })
+}
+
+// 银行卡删除
+export function bank_del(id) {
+  return request({
+    url: '/v1/bank/del?' + qs.stringify({ id })
+  })
+}

@@ -87,10 +87,10 @@
         :model="form"
         label-width="80px"
       >
-        <el-form-item label="产品标题">
+        <el-form-item label="产品标题:" label-width="130px">
           <el-input v-model="form.title" />
         </el-form-item>
-        <el-form-item label="产品展示图">
+        <el-form-item label="产品展示图:" label-width="130px">
           <el-upload
             :show-file-list="false"
             :multiple="false"
@@ -109,13 +109,13 @@
             />
           </el-upload>
         </el-form-item>
-        <el-form-item label="产品价格">
+        <el-form-item label="产品价格:" label-width="130px">
           <el-input v-model="form.price" />
         </el-form-item>
-        <el-form-item label="最高可抵用积分">
+        <el-form-item label="最高可抵用积分:" label-width="130px">
           <el-input v-model="form.point" />
         </el-form-item>
-        <el-form-item label="商品详情">
+        <el-form-item label="商品详情:" label-width="130px">
           <el-input v-model="form.content" />
         </el-form-item>
       </el-form>
@@ -216,7 +216,7 @@
          imageFile: '', // 新图片文件
          price: '',
          point: '',
-         content: '' 
+         content: ''
         }
         this.centerDialogVisible = true
       },

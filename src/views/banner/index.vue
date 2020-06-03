@@ -28,21 +28,6 @@
           <!-- <span v-if="scope.row.type===0">首页</span> -->
         </template>
       </el-table-column>
-      <!-- <el-table-column
-        prop="is_show"
-        label="是否展示"
-      >
-        <template slot-scope="scope">
-          <el-switch
-            v-model="scope.row.is_show"
-            active-color="#13ce66"
-            inactive-color="#ff4949"
-            :active-value="1"
-            :inactive-value="0"
-            @change="show_enable(scope.row)"
-          />
-        </template>
-      </el-table-column> -->
 
       <el-table-column prop="to_type" label="跳转链接">
         <template slot-scope="scope">
@@ -69,10 +54,10 @@
 
     <el-dialog :visible.sync="centerDialogVisible" width="600px" center>
       <el-form ref="form" :model="form" label-width="80px">
-        <el-form-item label="名称">
+        <el-form-item label="名称:">
           <el-input v-model="form.title" />
         </el-form-item>
-        <el-form-item label="图片">
+        <el-form-item label="图片:">
 
           <el-upload
             :show-file-list="false"
@@ -87,11 +72,11 @@
 
         </el-form-item>
 
-        <el-form-item label="详细介绍">
+        <el-form-item label="详细介绍:">
           <el-input v-model="form.explain" placeholder="请输入轮播图信息" />
         </el-form-item>
 
-        <el-form-item label="分类">
+        <el-form-item label="分类:">
 
           <el-select v-model="current" placeholder="请选择分类">
             <el-option v-for="(item,index) in typeArr" :key="index" :label="item" :value="index" />
@@ -99,7 +84,7 @@
           </el-select>
         </el-form-item>
 
-        <el-form-item label="跳转链接">
+        <el-form-item label="跳转链接:">
           <el-input v-model="form.url" placeholder="请输入跳转链接" />
         </el-form-item>
       </el-form>
@@ -159,12 +144,7 @@
           this.page = 1
           this.list = []
         }
-        advertisement_list(this.page, this.limit).then(({
-                                                          code,
-                                                          msg,
-                                                          data,
-                                                          count
-                                                        }) => {
+        advertisement_list(this.page, this.limit).then(({ code, msg, data, count }) => {
           if (code === 0) {
             data.forEach(row => {
               row.image = imgsrc(row.image)
@@ -193,10 +173,7 @@
        * 展示开关
        */
       show_enable(obj) {
-        banner_enable(obj.id, obj.is_show).then(({
-                                                   code,
-                                                   msg
-                                                 }) => {
+        banner_enable(obj.id, obj.is_show).then(({ code, msg }) => {
           if (code === 0) {
             this.$message.success('修改成功')
           } else {
@@ -210,10 +187,7 @@
        * 删除轮播
        */
       del(obj) {
-        advertisement_del(obj.id).then(({
-                                          code,
-                                          msg
-                                        }) => {
+        advertisement_del(obj.id).then(({ code, msg }) => {
           if (code === 0) {
             this.$message.success('操作成功')
             this.fetchData(true)

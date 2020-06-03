@@ -53,13 +53,13 @@
 
     <el-dialog :visible.sync="centerDialogVisible" width="600px" center>
       <el-form ref="form" :model="form" label-width="80px">
-        <el-form-item label="名称">
+        <el-form-item label="名称:">
           <el-input v-model="form.title" />
         </el-form-item>
-        <el-form-item label="摘要">
+        <el-form-item label="摘要:">
           <el-input v-model="form.abstract" />
         </el-form-item>
-        <el-form-item label="内容">
+        <el-form-item label="内容:">
           <el-input v-model="form.content" />
         </el-form-item>
       </el-form>

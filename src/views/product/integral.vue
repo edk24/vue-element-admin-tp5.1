@@ -15,7 +15,7 @@
       <el-button
         type="primary"
         @click="create()"
-      >添加合伙人</el-button>
+      >添加产品</el-button>
     </p>
     <el-table v-loading="listLoading" :data="list" element-loading-text="Loading" fit highlight-current-row>
       <el-table-column label="序号" type="index" width="50" align="center">
@@ -92,10 +92,10 @@
         :model="form"
         label-width="80px"
       >
-        <el-form-item label="商品标题">
+        <el-form-item label="商品标题:" label-width="130px">
           <el-input v-model="form.title" />
         </el-form-item>
-        <el-form-item label="商品首图">
+        <el-form-item label="商品首图:" label-width="130px">
           <el-upload
             :show-file-list="false"
             :multiple="false"
@@ -114,13 +114,13 @@
             />
           </el-upload>
         </el-form-item>
-        <el-form-item label="兑换所需积分">
+        <el-form-item label="兑换所需积分:" label-width="130px">
           <el-input v-model="form.price" />
         </el-form-item>
-        <el-form-item label="商品详情">
+        <el-form-item label="商品详情:" label-width="130px">
           <el-input v-model="form.note" />
         </el-form-item>
-        <el-form-item label="是否是默认推送的产品">
+        <el-form-item label="是否是默认推送:" label-width="130px">
           <el-select
             v-model="current"
             placeholder="请选择"

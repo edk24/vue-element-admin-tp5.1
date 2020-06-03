@@ -170,10 +170,10 @@ export const constantRoutes = [{
     },
     children: [{
         path: 'withdrawal',
-        name: '提现管理',
+        name: '提现审核',
         component: () => import('@/views/finance/withdrawal'),
         meta: {
-          title: '提现管理',
+          title: '提现审核',
           icon: 'tree'
         }
       },
@@ -441,36 +441,6 @@ export const constantRoutes = [{
       }
     ]
   },
-
-  // {
-  //   path: '/service',
-  //   component: Layout,
-  //   name: '服务商管理',
-  //   meta: {
-  //     title: '服务商管理',
-  //     tree: 'tree',
-  //     icon: 'international'
-  //   },
-  //   children: [{
-  //       path: 'index',
-  //       name: '服务商列表',
-  //       component: () => import('@/views/company/index'),
-  //       meta: {
-  //         title: '服务商列表',
-  //         icon: 'tree'
-  //       }
-  //     },
-  //     {
-  //       path: 'complaint',
-  //       name: '投诉列表',
-  //       component: () => import('@/views/company/tousu'),
-  //       meta: {
-  //         title: '投诉列表',
-  //         icon: 'tree'
-  //       }
-  //     }
-  //   ]
-  // },
 
   // {
   //   path: '/system',
