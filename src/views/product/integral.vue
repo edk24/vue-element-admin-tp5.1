@@ -260,7 +260,7 @@
         exchange_list(this.page, this.limit, this.keyword).then(response => {
           that.list = []
           response.data.forEach(row => {
-            row.is_default = row.is_default == 1
+            row.is_default = row.is_default === 1
             row.image = that.url + row.image
             that.list.push(row)
           })
