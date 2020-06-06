@@ -13,7 +13,7 @@ export function login(data) {
 // 获取用户信息
 export function getInfo() {
   return request({
-    url: '/v1/user/info',
+    url: '/v1/admin/info',
     method: 'get'
   })
 }
