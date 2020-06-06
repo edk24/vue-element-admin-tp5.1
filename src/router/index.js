@@ -442,6 +442,28 @@ export const constantRoutes = [{
     ]
   },
 
+  {
+    path: '/chat',
+    component: Layout,
+    name: '客服管理',
+    alwaysShow: true,
+    meta: {
+      title: '客服管理',
+      tree: 'tree',
+      icon: 'table'
+    },
+    children: [{
+        path: 'chat',
+        name: '聊天管理',
+        component: () => import('@/views/chat/chat'),
+        meta: {
+          title: '聊天管理',
+          icon: 'tree'
+        }
+      }
+    ]
+  },
+
   // {
   //   path: '/system',
   //   component: Layout,
