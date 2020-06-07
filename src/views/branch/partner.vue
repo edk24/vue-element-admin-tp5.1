@@ -1,8 +1,13 @@
 <template>
   <div class="app-container">
     <p>
-      <el-input v-model="keyword" maxlength="16" style="width:300px;margin-right:15px" placeholder="请输入关键字进行搜索"
-        @keyup.enter.native="search()" />
+      <el-input
+        v-model="keyword"
+        maxlength="16"
+        style="width:300px;margin-right:15px"
+        placeholder="请输入关键字进行搜索"
+        @keyup.enter.native="search()"
+      />
       <el-button type="primary" @click="search()">搜索</el-button>
       <el-button type="primary" @click="all()">全部</el-button>
     </p>
@@ -14,13 +19,14 @@
     </p>
     <el-table v-loading="listLoading" :data="list" element-loading-text="Loading" fit highlight-current-row>
       <el-table-column
-              label="序号"
-              type="index"
-              width="50"
-              align="center">
-          <template scope="scope">
-              <span>{{(page - 1) * limit + scope.$index + 1}}</span>
-          </template>
+        label="序号"
+        type="index"
+        width="50"
+        align="center"
+      >
+        <template scope="scope">
+          <span>{{ (page - 1) * limit + scope.$index + 1 }}</span>
+        </template>
       </el-table-column>
       <el-table-column label="企业名称">
         <template slot-scope="scope">
@@ -95,13 +101,13 @@
     <!-- <pagination :total="count" :page.sync="page" :limit.sync="limit" @pagination="fetchData" /> -->
     <p>
       <el-pagination
-         background
-         @current-change="fetchData"
-         :current-page.sync="page"
-         :page-size="limit"
-         layout="total, prev, pager, next"
-         :total="count">
-       </el-pagination>
+        background
+        :current-page.sync="page"
+        :page-size="limit"
+        layout="total, prev, pager, next"
+        :total="count"
+        @current-change="fetchData"
+      />
     </p>
 
     <el-dialog
@@ -114,11 +120,40 @@
         :model="form"
         label-width="80px"
       >
+        <el-form-item label="手机号">
+          <el-input v-model="form.phone" maxlength="11" @input="phone_to_admin" />
+        </el-form-item>
+        <el-form-item>
+          <el-select v-model="form.user_id" placeholder="请选择" @change="check_user">
+            <el-option
+              v-for="(item,index) in phone_user"
+              :key="index"
+              :label="item.phone"
+              :value="index"
+            />
+          </el-select>
+        </el-form-item>
         <el-form-item label="企业名称">
           <el-input v-model="form.title" />
         </el-form-item>
-        <el-form-item label="社会统一代码">
+        <el-form-item label="社会代码">
           <el-input v-model="form.code" />
+        </el-form-item>
+        <el-form-item label="真实姓名">
+          <el-input v-model="form.username" />
+        </el-form-item>
+
+        <el-form-item label="省">
+          <el-input v-model="form.province" />
+        </el-form-item>
+        <el-form-item label="市">
+          <el-input v-model="form.city" />
+        </el-form-item>
+        <el-form-item label="区">
+          <el-input v-model="form.area" />
+        </el-form-item>
+        <el-form-item label="详细地址">
+          <el-input v-model="form.address" />
         </el-form-item>
         <el-form-item label="营业执照">
           <el-upload
@@ -139,24 +174,7 @@
             />
           </el-upload>
         </el-form-item>
-        <el-form-item label="真实姓名">
-          <el-input v-model="form.username" />
-        </el-form-item>
-        <el-form-item label="手机号">
-          <el-input v-model="form.phone" />
-        </el-form-item>
-        <el-form-item label="省">
-          <el-input v-model="form.province" />
-        </el-form-item>
-        <el-form-item label="市">
-          <el-input v-model="form.city" />
-        </el-form-item>
-        <el-form-item label="区">
-          <el-input v-model="form.area" />
-        </el-form-item>
-        <el-form-item label="详细地址">
-          <el-input v-model="form.address" />
-        </el-form-item>
+
       </el-form>
 
       <span
@@ -171,8 +189,6 @@
       </span>
     </el-dialog>
 
-
-
   </div>
 </template>
 
@@ -183,6 +199,7 @@
     company_del,
     company_edit
   } from '@/api/branch'
+  import { phoneUser } from '@/api/admin'
   export default {
     components: {},
     filters: {
@@ -225,14 +242,16 @@
          title: '',
          code: '',
          license: '',
-         licenseFile: '',  // 新图片文件
+         licenseFile: '', // 新图片文件
          username: '',
          phone: '',
          province: '',
          city: '',
          area: '',
-         address:''
-       }
+         address: ''
+       },
+        // 手机号搜索的用户列表
+        phone_user: []
       }
     },
     created() {
@@ -243,7 +262,7 @@
        * 添加轮播图
        */
       create() {
-        this.form = { title: '', code: '',license: '', username: '',phone: '',province: '',city: '',area: '',address: '' }
+        this.form = { title: '', code: '', license: '', username: '', phone: '', province: '', city: '', area: '', address: '' }
         this.centerDialogVisible = true
       },
       /**
@@ -263,7 +282,7 @@
           }
         }
         this.listLoading = true
-        console.log(this.page);
+        console.log(this.page)
         company_list(this.page, this.limit, this.keyword).then(response => {
           that.list = []
           response.data.forEach(row => {
@@ -290,39 +309,39 @@
         if (data.licenseFile) {
           form.append('license', data.licenseFile)
         }
-        if(!this.form.title){
+        if (!this.form.title) {
           this.$message.error('请输入企业名称')
           return
         }
-        if(!this.form.code){
+        if (!this.form.code) {
           this.$message.error('请输入社会统一代码')
           return
         }
-        if(!this.form.license){
+        if (!this.form.license) {
           this.$message.error('请选择图片')
           return
         }
-        if(!this.form.username){
+        if (!this.form.username) {
           this.$message.error('请输入真实姓名')
           return
         }
-        if(!this.form.phone){
+        if (!this.form.phone) {
           this.$message.error('请输入手机号')
           return
         }
-        if(!this.form.province){
+        if (!this.form.province) {
           this.$message.error('请输入省')
           return
         }
-        if(!this.form.city){
+        if (!this.form.city) {
           this.$message.error('请输入市')
           return
         }
-        if(!this.form.area){
+        if (!this.form.area) {
           this.$message.error('请输入区')
           return
         }
-        if(!this.form.address){
+        if (!this.form.address) {
           this.$message.error('请输入详细地址')
           return
         }
@@ -405,6 +424,29 @@
         this.keyword = ''
         this.fetchData()
       },
+      // 手机号查询用户列表
+      phone_to_admin() {
+        if (!this.form.phone) {
+          this.phone_user = []
+          this.form.user_id = ''
+          return false
+        }
+        var phone = this.form.phone
+        this.form.phone = phone.replace(/\D/g, '')
+        phoneUser(this.form.phone).then(data => {
+          if (data.data.length < 1) {
+            this.phone_user = []
+            this.form.user_id = ''
+            return false
+          }
+          this.phone_user = data.data
+          this.form.user_id = 0
+        })
+      },
+      // 添加合伙人 选择用户改变电话号码
+      check_user(data) {
+        this.form.phone = this.phone_user[data].phone
+      }
     }
   }
 </script>

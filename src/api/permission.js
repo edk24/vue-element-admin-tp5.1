@@ -3,7 +3,7 @@ import qs from 'qs'
 // 查询权限列表
 export function get_permission_list() {
   return request({
-    url: 'v1/permission/list',
+    url: '/v1/permission/list',
     method: 'get'
   })
 }
@@ -11,7 +11,7 @@ export function get_permission_list() {
 // 查询权限列表 (树结构)
 export function get_permission_tree() {
   return request({
-    url: 'v1/permission/all',
+    url: '/v1/permission/all',
     method: 'get'
   })
 }

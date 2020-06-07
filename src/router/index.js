@@ -65,9 +65,9 @@ export const constantRoutes = [{
         }
       },
       {
-        path: 'menu',
+        path: 'permission',
         name: '菜单管理',
-        component: () => import('@/views/admin/menu'),
+        component: () => import('@/views/admin/permission'),
         meta: {
           title: '菜单管理',
           icon: 'tree'
