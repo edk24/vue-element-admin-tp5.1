@@ -17,7 +17,7 @@ const service = axios.create({
 // 请求拦截器
 service.interceptors.request.use(
   config => {
-    console.log(config)
+    // console.log(config)
     if (store.getters.token) {
       // 让每个请求都带有令牌
       // ['X-Token'] 是自定义标题键
@@ -29,7 +29,7 @@ service.interceptors.request.use(
   },
   error => {
     // 做一些请求错误
-    console.log(error)
+    // console.log(error)
     return Promise.reject(error)
   }
 )

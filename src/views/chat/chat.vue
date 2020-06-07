@@ -21,8 +21,9 @@
             class="item"
             @click="changeUser(a)"
           >
-            <img class="avatar" :src="item.avatar" alt="">
+            <img class="avatar" :src="item.avatar" alt>
             <div class="nickname">{{ item.nickname }}</div>
+            <div v-if="item.unRead" class="read" />
           </div>
         </div>
         <!-- 用户列表 end -->
@@ -32,7 +33,8 @@
           <div class="top">
             <div v-for="(item,b) in list" :key="b" class="row">
               <div v-if="item.from == toId" class="other item">
-                <img class="avatar" :src="userList[currentUser].avatar">
+                <img class="avatar" :src="otherAvatar">
+
                 <div class="box">
                   <div v-if="item.type === 'text'" class="text" v-html="item.msg" />
                 </div>
@@ -55,8 +57,9 @@
               <span class="el-icon-picture icon4" />
             </div>
             <div class="control">
+              <audio id="myaudio" muted src="@/assets/san.mp3" controls="controls" autostart="false" loop="false" hidden="true" />
               <textarea v-model="tempMessage" class="message" @keyup.enter="send()" />
-              <div class="submit" @click="send()"> 发送 </div>
+              <div class="submit" @click="send()">发送</div>
             </div>
           </div>
           <!-- 控制区域 end -->
@@ -81,25 +84,40 @@ export default {
       ws: {},
       token: '',
       isDone: true, // 第一次是否加载完成
-      toId: 7,
+      toId: null,
       myId: 1,
-      toInfo: {},
-      myInfo: {}
+      otherAvatar: '', // 聊天对象头像
+      myInfo: {},
+      firstLoad: true, // 页面第一次加载
+      from: ''
     }
   },
   created() {
+    this.ws.onclose
     this.initWebSocket()
     // if (this.isDone) {
     //   this.isDone = false
     // }
 
     // 获取uid=1 的客服信息
-    // this.getUser(1)
     // this.getUser(3)
   },
+  beforeDestroy() {
+    console.log('销毁之前')
+    this.ws.onclose
+  },
+  // destroyed() {
+  //   console.log('销毁')
+  //   this.ws.onclose
+  // },
   methods: {
     changeUser(index) {
       this.currentUser = index
+      this.toId = this.userList[index].id
+      this.userList[index].unRead = false
+      localStorage.setItem('xkl-chat-user', JSON.stringify(this.userList))
+      console.log(this.toId)
+      this.getHistory(this.toId)
     },
     initWebSocket() {
       // 初始化weosocket
@@ -107,40 +125,92 @@ export default {
       const wsuri = 'ws://47.108.63.117:9502'
       // 连接服务端
       this.ws = new WebSocket(wsuri)
-      // 指定事件回调
-      // this.ws.onopen = this.websocketOnOpen
-      // this.ws.onmessage = this.websocketOnMessage
-      // this.ws.onerror = this.websocketOnError
-      // this.ws.onclose = this.websocketClose
       var that = this
       // 【用于指定连接成功后的回调函数】
       this.ws.onopen = function() {
         that.login()
-        console.log('open')
         // 【用于指定收到服务器数据后的回调函数】
         that.ws.onmessage = function(res) {
           // console.log(res)
-          // console.log(JSON.parse(res.data))
+          console.log(JSON.parse(res.data))
           // 回调名称--call  回调结果--result
           var call = JSON.parse(res.data).call
           var result = JSON.parse(res.data).result
           // 登录之后获得token
           if (call === 'login.do') {
             that.token = result.token
-            that.getUnReadMessage()
+            console.log(that.toId)
+            if (that.toId) {
+              // 登录之后 拉取历史记录
+              that.getHistory(that.toId)
+            }
+            // 查询客服信息
+            that.getUser(1)
           } else if (call === 'chat.history') {
-            result.forEach((item) => {
-              // 返回的数据是倒序 所以用unshift
-              that.list.unshift(JSON.parse(item))
-            })
+            console.log('历史记录')
+            this.list = []
+            if (result) {
+              result.forEach(item => {
+                // 返回的数据是倒序 所以用unshift
+                that.list.unshift(JSON.parse(item))
+              })
+            }
           } else if (call === 'chat.recv') {
+            // 接受到消息 播放提示音
+            var myAuto = document.getElementById('myaudio')
+            myAuto.play()
+            // 关闭提示音
+            setTimeout(function() {
+              myAuto.pause()
+            }, 600)
             console.log('服务器推送的消息')
+            console.log(result)
             that.list.push(JSON.parse(res.data).result)
-            console.log(JSON.parse(res.data))
+            var userList = JSON.parse(localStorage.getItem('xkl-chat-user'))
+            console.log(userList)
+            userList.forEach((item) => {
+              // 当前聊天对象等于接收消息对象 不显示未读标志
+              if (result.from === that.toId) {
+                return
+              }
+              if (item.id === result.from) {
+                that.from = item.id
+                item.unRead = true
+              }
+            })
+            that.userList = userList
+            localStorage.setItem('xkl-chat-user', JSON.stringify(userList))
+            // console.log(JSON.parse(res.data))
           } else if (call === 'chat.unread') {
             console.log('多人未读消息')
-            // that.list.push(JSON.parse(res.data).result)
-            console.log(JSON.parse(res.data))
+            // 获得对象中的键---key
+            var keyArr = []
+            var idArr = []
+            var getUid = /[a-z]/g
+            keyArr = Object.keys(JSON.parse(res.data).result)
+            // console.log(keyArr)
+            that.toId = idArr[0]
+            // 查看缓存有没有数据
+            if (localStorage.getItem('xkl-chat-user')) {
+              console.log('缓存')
+              that.userList = JSON.parse(localStorage.getItem('xkl-chat-user'))
+              console.log(that.userList)
+              that.toId = that.userList[0].id
+              // 登录之后 拉取历史记录
+              that.getHistory(that.toId)
+            } else {
+              console.log('赋值')
+              keyArr.forEach(item => {
+                item = item.replace(getUid, '')
+                idArr.push(item)
+                console.log('id:' + item)
+                that.getUser(parseInt(item))
+              })
+              console.log(JSON.parse(localStorage.getItem('xkl-chat-user')))
+              console.log('------------------------')
+              this.toId = JSON.parse(localStorage.getItem('xkl-chat-user'))[0].id
+              that.getHistory(that.toId)
+            }
           }
         }
       }
@@ -156,22 +226,23 @@ export default {
         origin: 's' // s=单聊  g=群聊
       }
       this.sendBody('chat.send', data)
+      this.tempMessage = ''
     },
     // 发送体
     sendBody(call, data) {
-       var temp = {
-          call: call,
-          body: data,
-          token: this.token
-        }
-      if (call === 'login.do') {
-        console.log('login.do')
-        this.ws.send(JSON.stringify(temp))
-      } else {
+      var temp = {
+        call: call,
+        body: data,
+        token: this.token
+      }
+      if (call === 'chat.send') {
         console.log('点击发送了')
         console.log(this.getText(data))
         this.list.push(this.getText(data))
         this.message = ''
+      } else if (call === 'chat.history') {
+        console.log('history')
+        // this.list.push(this.getText(data))
       }
       this.ws.send(JSON.stringify(temp))
       console.log(temp)
@@ -189,10 +260,9 @@ export default {
     },
     login() {
       this.sendBody('login.do', {
-        user: '18230771274',
+        user: '18230771271',
         pass: 'e10adc3949ba59abbe56e057f20f883e'
       })
-      console.log('login')
     },
     websocketOnOpen() {
       // 连接建立之后执行send方法发送数据
@@ -234,39 +304,55 @@ export default {
         limit: 20, // 拉取数量 建议不要超过20条
         offset: 0 // 偏移
       }
+      this.getUser(this.toId)
       this.sendBody('chat.history', data)
     },
-    // 拉取多人未读消息
-    getUnReadMessage() {
-      this.sendBody('chat.unread', '')
+    getLocalUser() {
+      var arr = []
+      localStorage.setItem('userList', JSON.stringify(arr))
     },
     getUser(id) {
-      getUserInfo(id).then(res => {
-        if (res.code === 0) {
-          res.data.avatar = this.url + res.data.avatar
-          if (id === 1) {
-            this.myInfo = res.data
-            console.log(this.myInfo)
-          } else {
-            this.userList.push(res.data)
+      getUserInfo(id)
+        .then(res => {
+          if (res.code === 0) {
+            // console.log(res.data)
+            res.data.avatar = this.url + res.data.avatar
+            if (id === 1) {
+              this.myInfo = res.data
+              console.log(this.myInfo)
+            } else {
+              // 如果是第一次加载 则加载聊天对象的头像
+              if (this.toId) {
+                this.otherAvatar = res.data.avatar
+                console.log(res.data.nickname)
+                return
+              }
+              res.data.unRead = false
+              this.userList.push(res.data)
+              console.log(this.userList)
+              // this.toId = this.userList[0].id
+              localStorage.setItem(
+                'xkl-chat-user',
+                JSON.stringify(this.userList)
+              )
+            }
           }
-        }
-      }).catch(err => {
-        console.log(err.message)
-      })
+        })
+        .catch(err => {
+          console.log(err.message)
+        })
     }
   }
 }
 </script>
 
 <style lang="scss">
-
- @mixin box($direction:row,$horizontal:space-between,$vertical:center) {
-   display: flex;
-   flex-direction: $direction;
-   justify-content: $horizontal;
-   align-items: $vertical;
- }
+@mixin box($direction: row, $horizontal: space-between, $vertical: center) {
+  display: flex;
+  flex-direction: $direction;
+  justify-content: $horizontal;
+  align-items: $vertical;
+}
 
 .window {
   margin: 80px auto;
@@ -300,9 +386,9 @@ export default {
       border-right: 1px solid #cccccc;
       box-sizing: border-box;
       .item {
-        display: flex;
-        align-items: center;
+        @include box(row,space-between,center);
         padding: 10px 20px;
+        cursor: pointer;
         &.on {
           background-color: #f1f1f1;
           font-weight: 700;
@@ -310,11 +396,23 @@ export default {
         &:hover {
           background-color: #f1f1f1;
         }
-        .avatar{
-          margin-right: 20px;
+        .avatar {
           display: block;
           width: 40px;
           height: 40px;
+          border-radius: 50%;
+        }
+        .nickname{
+          overflow: hidden;
+          text-overflow:ellipsis;
+          white-space: nowrap;
+          width: 70%;
+          margin: 0 auto;
+        }
+        .read{
+          width: 12px;
+          height: 12px;
+          background-color: #f00;
           border-radius: 50%;
         }
       }
@@ -326,14 +424,14 @@ export default {
         overflow-y: auto;
         .row {
           padding: 10px;
-          .item{
+          .item {
             display: flex;
-            .avatar{
+            .avatar {
               width: 40px;
               height: 40px;
               border-radius: 50%;
             }
-            .box{
+            .box {
               max-width: 80%;
               padding: 10px;
               background-color: #dddddd;
@@ -341,14 +439,14 @@ export default {
             }
           }
         }
-        .other{
-          .avatar{
+        .other {
+          .avatar {
             margin-right: 10px;
           }
         }
-        .my{
-          justify-content: flex-end!important;
-          .avatar{
+        .my {
+          justify-content: flex-end !important;
+          .avatar {
             margin-left: 10px;
           }
         }
@@ -380,7 +478,7 @@ export default {
             border: none;
             resize: none;
           }
-          .submit{
+          .submit {
             position: absolute;
             bottom: 10px;
             right: 10px;
@@ -389,7 +487,7 @@ export default {
             line-height: 34px;
             text-align: center;
             color: #ffffff;
-            background: linear-gradient(to right,#00A7EC,#0000FF);
+            background: linear-gradient(to right, #00a7ec, #0000ff);
             border-radius: 2px;
             cursor: pointer;
             user-select: none;
