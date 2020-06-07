@@ -105,6 +105,24 @@ export const constantRoutes = [{
           title: '学生管理',
           icon: 'tree'
         }
+      },
+      {
+        path: 'bank',
+        name: '银行卡',
+        component: () => import('@/views/user/bank'),
+        meta: {
+          title: '银行卡',
+          icon: 'tree'
+        }
+      },
+      {
+        path: 'bankPermission',
+        name: '银行卡审核',
+        component: () => import('@/views/user/bankPermission'),
+        meta: {
+          title: '银行卡审核',
+          icon: 'tree'
+        }
       }
     ]
   },
@@ -152,10 +170,10 @@ export const constantRoutes = [{
     },
     children: [{
         path: 'withdrawal',
-        name: '提现管理',
+        name: '提现审核',
         component: () => import('@/views/finance/withdrawal'),
         meta: {
-          title: '提现管理',
+          title: '提现审核',
           icon: 'tree'
         }
       },
@@ -339,12 +357,22 @@ export const constantRoutes = [{
       title: '产品管理',
       icon: 'table'
     },
-    children: [{
-        path: 'index',
-        name: '产品管理',
-        component: () => import('@/views/product/index'),
+    children: [
+      {
+        path: 'integral',
+        name: '积分产品',
+        component: () => import('@/views/product/integral'),
         meta: {
-          title: '产品管理',
+          title: '积分产品',
+          icon: 'tree'
+        }
+      },
+      {
+        path: 'general',
+        name: '普通产品',
+        component: () => import('@/views/product/general'),
+        meta: {
+          title: '普通产品',
           icon: 'tree'
         }
       }
@@ -371,8 +399,6 @@ export const constantRoutes = [{
       }
     ]
   },
-
-
   // 论坛管理  --
   {
     path: '/forum',
@@ -384,9 +410,9 @@ export const constantRoutes = [{
       icon: 'table'
     },
     children: [{
-        path: 'list',
+        path: 'index',
         name: '论坛管理',
-        component: () => import('@/views/forum/list'),
+        component: () => import('@/views/forum/index'),
         meta: {
           title: '论坛管理',
           icon: 'tree'
@@ -394,74 +420,49 @@ export const constantRoutes = [{
       }
     ]
   },
-  // {
-  //   path: '/project',
-  //   component: Layout,
-  //   name: '项目管理',
-  //   meta: {
-  //     title: '项目管理',
-  //     tree: 'tree',
-  //     icon: 'component'
-  //   },
-  //   children: [{
-  //       path: 'language',
-  //       name: '开发语言',
-  //       component: () => import('@/views/project/language'),
-  //       meta: {
-  //         title: '开语语言',
-  //         icon: 'tree'
-  //       }
-  //     },
-  //     {
-  //       path: 'system',
-  //       name: '开发终端',
-  //       component: () => import('@/views/project/system'),
-  //       meta: {
-  //         title: '开发终端',
-  //         icon: 'tree'
-  //       }
-  //     },
-  //     {
-  //       path: 'task-type',
-  //       name: '项目类型',
-  //       component: () => import('@/views/project/task-type'),
-  //       meta: {
-  //         title: '项目类型',
-  //         icon: 'tree'
-  //       }
-  //     }
-  //   ]
-  // },
+  {
+    path: '/category',
+    component: Layout,
+    name: '分类管理',
+    alwaysShow: true,
+    meta: {
+      title: '分类管理',
+      tree: 'tree',
+      icon: 'table'
+    },
+    children: [{
+        path: 'index',
+        name: '列表管理',
+        component: () => import('@/views/category/index'),
+        meta: {
+          title: '列表管理',
+          icon: 'tree'
+        }
+      }
+    ]
+  },
 
-  // {
-  //   path: '/service',
-  //   component: Layout,
-  //   name: '服务商管理',
-  //   meta: {
-  //     title: '服务商管理',
-  //     tree: 'tree',
-  //     icon: 'international'
-  //   },
-  //   children: [{
-  //       path: 'index',
-  //       name: '服务商列表',
-  //       component: () => import('@/views/company/index'),
-  //       meta: {
-  //         title: '服务商列表',
-  //         icon: 'tree'
-  //       }
-  //     },
-  //     {
-  //       path: 'complaint',
-  //       name: '投诉列表',
-  //       component: () => import('@/views/company/tousu'),
-  //       meta: {
-  //         title: '投诉列表',
-  //         icon: 'tree'
-  //       }
-  //     }
-  //   ]
-  // },
+  {
+    path: '/chat',
+    component: Layout,
+    name: '客服管理',
+    alwaysShow: true,
+    meta: {
+      title: '客服管理',
+      tree: 'tree',
+      icon: 'table'
+    },
+    children: [{
+        path: 'chat',
+        name: '聊天管理',
+        component: () => import('@/views/chat/chat'),
+        meta: {
+          title: '聊天管理',
+          icon: 'tree'
+        }
+      }
+    ]
+  },
 
   // {
   //   path: '/system',

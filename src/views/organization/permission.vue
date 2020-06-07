@@ -191,10 +191,6 @@ export default {
     }
   },
   created() {
-    user_list(1, 10).then(res => {
-      console.log(res)
-    }).catch(() => {})
-
     this.fetchData(1)
   },
   methods: {

@@ -1,19 +1,15 @@
 <template>
   <div class="app-container">
     <p>
-      <!-- <el-input
+      <el-input
         v-model="keyword"
         maxlength="16"
         style="width:300px;margin-right:15px"
         placeholder="请输入关键字,例如用户名/开户行/手机号"
         @keyup.enter.native="search()"
       />
-      <el-button type="primary" @click="search()">搜索</el-button> -->
+      <el-button type="primary" @click="search()">搜索</el-button>
       <el-button type="primary" @click="all()">全部</el-button>
-      <el-button type="info" @click="wait()">申请中</el-button>
-      <el-button type="success" @click="success()">提现成功</el-button>
-      <el-button type="danger" @click="fail()">提现失败</el-button>
-
     </p>
     <el-table v-loading="listLoading" :data="list" element-loading-text="Loading" fit highlight-current-row>
       <el-table-column
@@ -26,44 +22,37 @@
           <span>{{ (page - 1) * limit + scope.$index + 1 }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="申请金额" width="120">
+      <el-table-column label="用户姓名" width="120">
         <template slot-scope="scope">
-          {{ scope.row.money }}
+          {{ scope.row.username }}
         </template>
       </el-table-column>
-      <el-table-column label="实际到账金额" width="120">
+      <el-table-column label="银行卡号" width="200">
         <template slot-scope="scope">
-          {{ scope.row.real_money }}
+          {{ scope.row.bank_code }}
         </template>
       </el-table-column>
-      <el-table-column label="手续费比例" width="120">
+      <el-table-column label="开户行" width="120">
         <template slot-scope="scope">
-          {{ scope.row.percent }}
+          {{ scope.row.bank_deposit }}
         </template>
       </el-table-column>
-
-      <el-table-column label="手续费" width="120">
+      <el-table-column label="开户支行" width="240">
         <template slot-scope="scope">
-          {{ scope.row.procedure_fee }}
+          {{ scope.row.bank_branch }}
         </template>
       </el-table-column>
-
-      <el-table-column label="提现备注" width="200">
+      <el-table-column label="银行预留手机号码">
         <template slot-scope="scope">
-          {{ scope.row.remark }}
+          {{ scope.row.bank_phone }}
         </template>
       </el-table-column>
-      <el-table-column label="提现状态" width="100">
+      <el-table-column label="审核状态" width="100">
         <template slot-scope="scope">
-          <span v-if="scope.row.status === 0">申请中</span>
-          <span v-if="scope.row.status === 1">提现成功</span>
-          <span v-if="scope.row.status === 2">提现失败</span>
+          {{ scope.row.status }}
         </template>
-      </el-table-column>
-
-      <el-table-column align="center" label="拒绝理由" width="200">
         <template slot-scope="scope">
-          <span>{{ scope.row.reason }}</span>
+          <span v-if="scope.row.status === 0">未审核</span>
         </template>
       </el-table-column>
 
@@ -73,7 +62,7 @@
         </template>
       </el-table-column>
 
-      <el-table-column align="center" label="更新时间" width="200">
+      <el-table-column align="center" label="更新时间时间" width="200">
         <template slot-scope="scope">
           <span>{{ scope.row.update_time }}</span>
         </template>
@@ -82,10 +71,10 @@
       <el-table-column label="管理">
         <template slot-scope="scope">
           <div>
-            <el-button size="small" type="primary" @click="edit(scope.row,scope.$index)">查看</el-button>
-            <el-popconfirm title="确定删除这行信息吗?" @onConfirm="del(scope.row)">
-              <!-- <el-button slot="reference" size="small" type="danger">删除</el-button> -->
-            </el-popconfirm>
+            <el-button size="small" type="primary" @click="edit(scope.row,scope.$index)">审核</el-button>
+            <!-- <el-popconfirm title="确定删除这行信息吗?" @onConfirm="del(scope.row)">
+              <el-button slot="reference" size="small" type="danger">删除</el-button>
+            </el-popconfirm> -->
           </div>
         </template>
       </el-table-column>
@@ -103,55 +92,73 @@
     </p>
 
     <el-dialog
-      title="提现审核"
       :visible.sync="centerDialogVisible"
-      width="400px"
+      width="600px"
       center
       @close="intiHandle"
     >
       <div class="box">
         <div class="row">
-          <div class="key">提现金额：</div>
-          <span class="val" style="color: #ff0000;">￥{{ userInfo.money }}</span>
+          <span class="key">真实姓名：</span>
+          <span
+            class="val"
+          >{{ userInfo.realname }}</span>
         </div>
         <div class="row">
-          <div class="key">实际到账金额：</div>
-          <span class="val" style="color: #ff0000;">￥{{ userInfo.real_money }}</span>
+          <span class="key">身份证号：</span>
+          <span class="val">{{ userInfo.id_number }}</span>
         </div>
         <div class="row">
-          <div class="key">手续费：</div>
-          <span class="val" style="color: #ff0000;">￥{{ userInfo.procedure_fee }}</span>
+          <div class="key key1">身份证照片：</div>
+          <img class="poster" :src="userInfo.card_image" alt="">
         </div>
         <div class="row">
-          <div class="key">收款方式：</div>
-          <span class="val">{{ userInfo.beneficiary_type }}</span>
+          <div class="key key1">手持身份证照片：</div>
+          <img class="poster" :src="userInfo.hand_image" alt="">
         </div>
         <div class="row">
-          <div class="key">收款银行：</div>
-          <span class="val">{{ userInfo.bank_name }}</span>
+          <span class="key">学校：</span>
+          <span v-if="userInfo.school_name" class="val">{{ userInfo.school_name }}</span>
+          <span v-else class="val">无</span>
         </div>
         <div class="row">
-          <div class="key">收款卡号：</div>
-          <span class="val">{{ userInfo.bank_number }}</span>
+          <span>班级：</span>
+          <span v-if="userInfo.class" class="val">{{ userInfo.class }}</span>
+          <span v-else class="val">无</span>
         </div>
-        <div class="row">
-          <div class="key">收款人姓名：</div>
-          <span class="val">{{ userInfo.bank_user }}</span>
+        <div
+          class="row"
+        >
+          <span>省：</span>
+          <span class="val">{{ userInfo.province }}</span>
         </div>
-        <div class="row">
-          <div class="key">状态：</div>
-          <span v-if="userInfo.status === 0" class="val">待提现</span>
-          <span v-if="userInfo.status === 1" class="val">提现成功</span>
-          <span v-if="userInfo.status === 2" class="val">提现失败</span>
+        <div
+          class="row"
+        >
+          <span>市：</span>
+          <span class="val">{{ userInfo.city }}</span>
+        </div>
+        <div
+          class="row"
+        >
+          <span>区：</span>
+          <span class="val">{{ userInfo.area }}</span>
+        </div>
+        <div
+          class="row"
+        >
+          <span>详细地址：</span>
+          <span class="val">{{ userInfo.address }}</span>
+        </div>
+        <div class="note">
+          <textarea v-model="note" class="text" placeholder="如有驳回,请输入驳回的理由" cols="30" rows="6" />
         </div>
       </div>
-      <div v-if="userInfo.status === 0" class="row">
-        <textarea v-model="note" class="note" placeholder="若拒绝，请填写拒绝反馈" cols="30" rows="6" />
-      </div>
-      <span v-if="userInfo.status === 0" slot="footer" class="dialog-footer">
-        <el-button type="danger" @click="refuse">拒 绝</el-button>
-        <el-button type="success" @click="pass">通 过</el-button>
+      <span slot="footer" class="dialog-footer">
+        <el-button type="danger" @click="refuse()">驳 回</el-button>
+        <el-button type="success" @click="pass()">通 过</el-button>
       </span>
+
     </el-dialog>
 
   </div>
@@ -159,9 +166,9 @@
 
 <script>
   import {
-    withdrawal_list,
-    withdrawal_permission
-  } from '@/api/finance'
+    bank_list,
+    bank_status
+  } from '@/api/user'
   export default {
     components: {},
     filters: {
@@ -184,7 +191,7 @@
         limit: 10,
         keyword: '',
         id: 0, // 银行卡id
-        status: '',
+        status: 0,
         note: '',
         listLoading: true,
         centerDialogVisible: false,
@@ -204,7 +211,7 @@
       // 关闭对话窗初始化数据
       intiHandle() {
         this.userInfo = {}
-        console.log(this.userInfo)
+        this.note = ''
       },
       /**
        * 查看数据
@@ -216,15 +223,15 @@
         this.getData(index)
       },
       getData(index) {
-          console.log(index)
-            this.userInfo = this.list[index]
-            this.userInfo.bank_name = this.list[index].beneficiary_info.bank
-            this.userInfo.bank_number = this.list[index].beneficiary_info.numbe
-            this.userInfo.bank_user = this.list[index].beneficiary_info.user
-            console.log(this.userInfo)
+            if (this.list[index].user.school) {
+                this.list[index].user.school_name = this.list[index].user.school.title
+            } else {
+               this.list[index].user.school_name = null
+            }
+            this.userInfo = this.list[index].user
       },
       // 拉取数据
-      fetchData(page, status) {
+      fetchData(page) {
         const that = this
         if (page) {
           this.page = page
@@ -232,21 +239,12 @@
             that.page = 1
           }
         }
-        var data = {}
-        if (status) {
-            data.page = this.page
-            data.limit = this.limit
-            data.status = this.status
-        } else {
-            data.page = this.page
-            data.limit = this.limit
-            data.query_all = 1
-        }
         this.listLoading = true
-        withdrawal_list(data).then(response => {
+        bank_list(this.page, this.limit, this.keyword, this.status).then(response => {
           that.list = []
           response.data.forEach(row => {
-            console.log(row)
+            row.user.card_image = that.url + row.user.card_image
+            row.user.hand_image = that.url + row.user.hand_image
             that.list.push(row)
           })
           this.count = response.count
@@ -266,23 +264,7 @@
       // 查询全部
       all() {
         this.keyword = ''
-        this.status = null
         this.fetchData()
-      },
-      // 未审核----查询未核的数据
-      wait() {
-        this.status = 0
-        this.fetchData(1, 'status')
-      },
-      // 成功----查询审核成功的数据
-      success() {
-        this.status = 1
-        this.fetchData(1, 'status')
-      },
-      // 失败 -----查询审核失败的数据
-      fail() {
-        this.status = 2
-        this.fetchData(1, 'status')
       },
       // 审核驳回
       refuse() {
@@ -297,20 +279,19 @@
         this.permission(1)
       },
       permission(status) {
-          var data = {}
-          var text = ''
-          if (status === 2) {
-              text = '驳回成功'
-              data.status = status
-              data.reason = this.note
-          } else {
-              text = '提现成功'
-              data.status = status
+          var data = {
+              id: this.id,
+              status: status,
+              reason: this.note
           }
-          withdrawal_permission(this.id, data).then(res => {
+          bank_status(data).then(res => {
               console.log(res)
               if (res.code === 0) {
-                  this.$message.success(text)
+                  if (status === 2) {
+                      this.$message.success('驳回成功')
+                  } else {
+                      this.$message.success('审核成功')
+                  }
                   this.fetchData()
               }
               this.note = ''
@@ -362,15 +343,10 @@
     height: 50px;
     border-radius: 3px;
   }
-  .row{
-      width: 100%;
-      display: flex;
-      align-items: center;
-     margin-bottom: 10px;
-  }
+    .row{
+        margin-bottom: 10px;
+    }
   .key{
-      width: 40%;
-      text-align: right;
       margin-right: 10px;
   }
   .val{
@@ -382,9 +358,16 @@
       height: 200px;
   }
   .note{
-      padding: 10px;
+      width: 100%;
+      border: 1px solid #dddddd;
       box-sizing: border-box;
+  }
+  .text{
       width: 100%;
       resize: none;
+      padding: 10px;
+      box-sizing: border-box;
+      outline: none;
+      border: none;
   }
 </style>

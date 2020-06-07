@@ -1,18 +1,23 @@
 <template>
   <div class="app-container">
     <p>
-      <el-input v-model="keyword" maxlength="16" style="width:300px;margin-right:15px" placeholder="请输入关键字进行搜索"
-        @keyup.enter.native="search()" />
+      <el-input
+        v-model="keyword"
+        maxlength="16"
+        style="width:300px;margin-right:15px"
+        placeholder="请输入关键字进行搜索"
+        @keyup.enter.native="search()"
+      />
       <el-button type="primary" @click="search()">搜索</el-button>
       <el-button type="primary" @click="all()">全部</el-button>
     </p>
     <p>
-      <el-button type="primary" @click="create()">添加合伙人</el-button>
+      <!-- <el-button type="primary" @click="create()">添加合伙人</el-button> -->
     </p>
     <el-table v-loading="listLoading" :data="list" element-loading-text="Loading" fit highlight-current-row>
       <el-table-column label="序号" type="index" width="50" align="center">
         <template scope="scope">
-          <span>{{(page - 1) * limit + scope.$index + 1}}</span>
+          <span>{{ (page - 1) * limit + scope.$index + 1 }}</span>
         </template>
       </el-table-column>
       <el-table-column label="机构名称">
@@ -108,7 +113,7 @@
           <el-input v-model="form.contact" />
         </el-form-item>
         <el-form-item label="联系人电话">
-          <el-input type="tel" maxlength="11" v-model="form.phone" />
+          <el-input v-model="form.phone" type="tel" maxlength="11" />
         </el-form-item>
         <el-form-item label="对推广员返点">
           <el-input v-model="form.rebate" />
@@ -122,9 +127,14 @@
     </el-dialog>
 
     <p>
-      <el-pagination background @current-change="fetchData" :current-page.sync="page" :page-size="limit" layout="total, prev, pager, next"
-        :total="count">
-      </el-pagination>
+      <el-pagination
+        background
+        :current-page.sync="page"
+        :page-size="limit"
+        layout="total, prev, pager, next"
+        :total="count"
+        @current-change="fetchData"
+      />
     </p>
 
   </div>
@@ -135,7 +145,7 @@
     exchange_add,
     train_list,
     train_del,
-    train_edit,
+    train_edit
   } from '@/api/organization'
   export default {
     components: {},
@@ -174,7 +184,7 @@
             trigger: 'blur'
           }]
         },
-        current: '否', //当前选中 是否推送 0-否  1-是
+        current: '否', // 当前选中 是否推送 0-否  1-是
         // 表单
         form: {
           name: '',
@@ -184,7 +194,7 @@
           address: '',
           contact: '',
           phone: '',
-          rebate: '',
+          rebate: ''
         }
       }
     },
@@ -204,8 +214,8 @@
           // address: '',
           contact: '',
           phone: '',
-          rebate: '',
-        };
+          rebate: ''
+        }
         this.centerDialogVisible = true
       },
       /**
@@ -237,7 +247,6 @@
         })
       },
       submit() {
-        const data = this.form
         // const form = new FormData()
         // form.append('name', JSON.stringify(this.form.name))
         // form.append('province', this.form.province)
@@ -252,12 +261,12 @@
           contact: this.form.contact,
           phone: this.form.phone,
           rebate: this.form.rebate
-        };
+        }
         if (!this.form.name) {
           this.$message.error('请输入机构名称')
           return
         }
-        console.log(form);
+        console.log(form)
         // if(!this.form.province){
         //   this.$message.error('请输入省')
         //   return
@@ -289,7 +298,7 @@
         if (this.form.id) {
           // update
          // form.append('id', this.form.id)
-          train_edit(this.form.id,form).then(({
+          train_edit(this.form.id, form).then(({
             code,
             msg
           }) => {
