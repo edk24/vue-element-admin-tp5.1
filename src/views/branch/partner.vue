@@ -297,6 +297,9 @@
       },
       submit() {
         const data = this.form
+        console.log(data.user_id)
+        console.log(this.phone_user[data.user_id].id)
+        return
         const form = new FormData()
         form.append('title', this.form.title)
         form.append('code', this.form.code)
@@ -306,6 +309,9 @@
         form.append('city', this.form.city)
         form.append('area', this.form.area)
         form.append('address', this.form.address)
+        form.append('user_id', this.phone_user[this.form.user_id])
+        console.log(JSON.stringify(form))
+        return
         if (data.licenseFile) {
           form.append('license', data.licenseFile)
         }
@@ -346,8 +352,6 @@
           return
         }
         if (this.form.id) {
-          // update
-          form.append('id', this.form.id)
           company_edit(form).then(({ code, msg }) => {
             if (code === 0) {
               this.$message.success('操作成功')
