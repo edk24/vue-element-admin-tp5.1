@@ -359,7 +359,7 @@ export function removeClass(ele, cls) {
  * @param {string} path
  */
 export function imgsrc(path) {
-  console.log(path.split(10))
+  // console.log(path.split(10))
   if (path.split(10) === 'data:image') {
     return path
   }

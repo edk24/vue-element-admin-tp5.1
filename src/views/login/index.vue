@@ -49,7 +49,7 @@
 
 <script>
 import { validUsername } from '@/utils/validate'
-
+import md5 from 'js-md5'
 export default {
   name: 'Login',
   data() {
@@ -72,6 +72,7 @@ export default {
         phone: '18230771271',
         password: '123456'
       },
+      // md5用法  					password:md5.hex_md5(this.passwd),
       loginRules: {
         phone: [{ required: true, trigger: 'blur', validator: validateUsername }],
         password: [{ required: true, trigger: 'blur', validator: validatePassword }]
@@ -105,6 +106,7 @@ export default {
       this.$refs.loginForm.validate(valid => {
         if (valid) {
           this.loading = true
+          this.loginForm.password = md5(this.loginForm.password)
           this.$store.dispatch('user/login', this.loginForm).then(() => {
             this.$router.push({ path: this.redirect || '/' })
             this.loading = false
