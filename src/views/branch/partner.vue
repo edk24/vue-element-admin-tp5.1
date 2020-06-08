@@ -297,9 +297,6 @@
       },
       submit() {
         const data = this.form
-        console.log(data.user_id)
-        console.log(this.phone_user[data.user_id].id)
-        return
         const form = new FormData()
         form.append('title', this.form.title)
         form.append('code', this.form.code)
