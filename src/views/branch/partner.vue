@@ -120,11 +120,40 @@
         :model="form"
         label-width="80px"
       >
+        <el-form-item label="手机号">
+          <el-input v-model="form.phone" maxlength="11" @input="phone_to_admin" />
+        </el-form-item>
+        <el-form-item>
+          <el-select v-model="form.user_id" placeholder="请选择" @change="check_user">
+            <el-option
+              v-for="(item,index) in phone_user"
+              :key="index"
+              :label="item.phone"
+              :value="index"
+            />
+          </el-select>
+        </el-form-item>
         <el-form-item label="企业名称">
           <el-input v-model="form.title" />
         </el-form-item>
-        <el-form-item label="社会统一代码">
+        <el-form-item label="社会代码">
           <el-input v-model="form.code" />
+        </el-form-item>
+        <el-form-item label="真实姓名">
+          <el-input v-model="form.username" />
+        </el-form-item>
+
+        <el-form-item label="省">
+          <el-input v-model="form.province" />
+        </el-form-item>
+        <el-form-item label="市">
+          <el-input v-model="form.city" />
+        </el-form-item>
+        <el-form-item label="区">
+          <el-input v-model="form.area" />
+        </el-form-item>
+        <el-form-item label="详细地址">
+          <el-input v-model="form.address" />
         </el-form-item>
         <el-form-item label="营业执照">
           <el-upload
@@ -145,24 +174,7 @@
             />
           </el-upload>
         </el-form-item>
-        <el-form-item label="真实姓名">
-          <el-input v-model="form.username" />
-        </el-form-item>
-        <el-form-item label="手机号">
-          <el-input v-model="form.phone" />
-        </el-form-item>
-        <el-form-item label="省">
-          <el-input v-model="form.province" />
-        </el-form-item>
-        <el-form-item label="市">
-          <el-input v-model="form.city" />
-        </el-form-item>
-        <el-form-item label="区">
-          <el-input v-model="form.area" />
-        </el-form-item>
-        <el-form-item label="详细地址">
-          <el-input v-model="form.address" />
-        </el-form-item>
+
       </el-form>
 
       <span
@@ -187,6 +199,7 @@
     company_del,
     company_edit
   } from '@/api/branch'
+  import { phoneUser } from '@/api/admin'
   export default {
     components: {},
     filters: {
@@ -236,7 +249,9 @@
          city: '',
          area: '',
          address: ''
-       }
+       },
+        // 手机号搜索的用户列表
+        phone_user: []
       }
     },
     created() {
@@ -267,6 +282,7 @@
           }
         }
         this.listLoading = true
+        console.log(this.page)
         company_list(this.page, this.limit, this.keyword).then(response => {
           that.list = []
           response.data.forEach(row => {
@@ -290,6 +306,7 @@
         form.append('city', this.form.city)
         form.append('area', this.form.area)
         form.append('address', this.form.address)
+        form.append('user_id', this.phone_user[this.form.user_id])
         if (data.licenseFile) {
           form.append('license', data.licenseFile)
         }
@@ -330,8 +347,6 @@
           return
         }
         if (this.form.id) {
-          // update
-          form.append('id', this.form.id)
           company_edit(form).then(({ code, msg }) => {
             if (code === 0) {
               this.$message.success('操作成功')
@@ -407,6 +422,29 @@
       all() {
         this.keyword = ''
         this.fetchData()
+      },
+      // 手机号查询用户列表
+      phone_to_admin() {
+        if (!this.form.phone) {
+          this.phone_user = []
+          this.form.user_id = ''
+          return false
+        }
+        var phone = this.form.phone
+        this.form.phone = phone.replace(/\D/g, '')
+        phoneUser(this.form.phone).then(data => {
+          if (data.data.length < 1) {
+            this.phone_user = []
+            this.form.user_id = ''
+            return false
+          }
+          this.phone_user = data.data
+          this.form.user_id = 0
+        })
+      },
+      // 添加合伙人 选择用户改变电话号码
+      check_user(data) {
+        this.form.phone = this.phone_user[data].phone
       }
     }
   }
