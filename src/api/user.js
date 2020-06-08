@@ -7,7 +7,7 @@ export function login(data) {
     url: '/v1/user/login',
     method: 'post',
     data: qs.stringify(data)
-  })
+})
 }
 
 // 获取用户信息
