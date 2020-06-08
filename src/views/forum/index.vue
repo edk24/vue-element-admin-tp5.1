@@ -104,10 +104,34 @@
         </el-form-item>
         <p>帖子评论</p>
 
-        <el-collapse v-model="comment">  <!--   accordion手风琴     -->
-          <el-collapse-item v-for="(item, index) in comment" :key="index" :title="item.content">
-            <div v-for="(vo, key) in item.children" :key="key">{{vo.content}}</div>
-          </el-collapse-item>
+        <el-collapse v-model="comment">
+
+          <el-collapse accordion>
+            <el-collapse-item v-for="(item, index) in comment" :key="index">
+              <template slot="title" style="position: relative;">
+                <span>{{ item.content }}</span>
+                <span style="position:absolute;right: 160px;">评论者：{{ item.user.nickname }}</span>
+                <el-button type="text" style="position:absolute;right: 60px;" >删除</el-button>
+              </template>
+              <div v-for="(vo, key) in item.children" :key="key">
+                  <div v-if="vo.target_reply === null" style="display: flex;justify-content: space-between">
+                    <span>{{ vo.content }}</span>
+                    <div class="box" style="border: 1px solid #f00;display: flex;width:40%;justify-content: space-around">
+                      <span>评论者：{{ vo.user.nickname }}</span>
+                      <el-button type="text">删除</el-button>
+                    </div>
+                  </div>
+                  <div v-if="vo.target_reply != null">
+                    <span>{{ vo.content }}</span>
+                    <span>回复者：{{ vo.user.nickname }}@{{ vo.target_reply.nickname }}</span>
+                    <el-button type="text">删除</el-button>
+                  </div>
+              </div>
+            </el-collapse-item>
+          </el-collapse><!--   accordion手风琴     -->
+<!--          <el-collapse-item v-for="(item, index) in comment" :key="index" :title="item.content + item.id">-->
+<!--            <div v-for="(vo, key) in item.children" :key="key">{{vo.content}}</div>-->
+<!--          </el-collapse-item>-->
         </el-collapse>
 
       </el-form>
