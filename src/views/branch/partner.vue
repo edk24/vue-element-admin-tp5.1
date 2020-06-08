@@ -307,8 +307,6 @@
         form.append('area', this.form.area)
         form.append('address', this.form.address)
         form.append('user_id', this.phone_user[this.form.user_id])
-        console.log(JSON.stringify(form))
-        return
         if (data.licenseFile) {
           form.append('license', data.licenseFile)
         }
