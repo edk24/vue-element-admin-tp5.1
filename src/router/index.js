@@ -411,10 +411,10 @@ export const constantRoutes = [{
     },
     children: [{
         path: 'index',
-        name: '论坛管理',
+        name: '论坛列表',
         component: () => import('@/views/forum/index'),
         meta: {
-          title: '论坛管理',
+          title: '论坛列表',
           icon: 'tree'
         }
       }
