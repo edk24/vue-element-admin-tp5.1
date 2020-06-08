@@ -49,12 +49,7 @@
 
 <script>
 import { validUsername } from '@/utils/validate'
-<<<<<<< HEAD
-import md5 from 'js-md5'
-
-=======
 import md5 from '@/utils/md5.js'
->>>>>>> 26c804c635ad8824cd2ec6e7902a74af493e5e98
 export default {
   name: 'Login',
   data() {
