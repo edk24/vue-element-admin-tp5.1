@@ -4,7 +4,7 @@ import qs from 'qs'
 // 获取角色列表
 export function role_getlist(page, limit) {
   return request({
-    url: '/role/list?' + qs.stringify({ page, limit })
+    url: '/v1/role/list?' + qs.stringify({ page, limit })
   })
 }
 
@@ -12,7 +12,7 @@ export function role_getlist(page, limit) {
 export function role_add(data) {
   data = qs.stringify(data)
   return request({
-    url: '/role/add',
+    url: '/v1/role/add',
     method: 'post',
     data
   })
@@ -22,7 +22,7 @@ export function role_add(data) {
 export function role_update(data) {
   data = qs.stringify(data)
   return request({
-    url: '/role/update',
+    url: '/v1/role/update',
     method: 'post',
     data
   })
@@ -31,13 +31,13 @@ export function role_update(data) {
 // 角色删除
 export function role_del(id) {
   return request({
-    url: '/role/del?id=' + id
+    url: '/v1/role/del?id=' + id
   })
 }
 
 // 角色信息
 export function role_info(id) {
   return request({
-    url: '/role/info?id=' + id
+    url: '/v1/role/info?id=' + id
   })
 }

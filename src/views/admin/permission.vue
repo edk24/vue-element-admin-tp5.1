@@ -79,11 +79,11 @@ export default {
       // get tree
       get_permission_tree().then(({ code, msg, data }) => {
         this.data = data
-      }).catch(() => {})
+      })
       // get all
       get_permission_list().then(({ code, msg, data }) => {
         this.all_permission = data
-      }).catch(() => {})
+      })
     },
     // 删除节点
     remove(node, data) {

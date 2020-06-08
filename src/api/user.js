@@ -13,22 +13,22 @@ export function login(data) {
 // 获取用户信息
 export function getInfo() {
   return request({
-    url: '/v1/user/info',
+    url: '/v1/admin/info',
     method: 'get'
   })
 }
 // 注销
 export function logout() {
   return request({
-    url: '/admin/out',
-    method: 'post'
+    url: '/v1/user/logout',
+    method: 'get'
   })
 }
 
-// 查询用户列表
-export function user_list(page, limit, keyword) {
+// 查询管理员用户列表
+export function user_list(page, limit) {
   return request({
-    url: '/user/list?' + qs.stringify({ limit, page, phone: keyword })
+    url: '/v1/admin/list?' + qs.stringify(limit, page)
   })
 }
 
@@ -63,5 +63,53 @@ export function user_do_audit(user_id, type, real_content) {
     url: '/user/do_audit',
     method: 'post',
     data
+  })
+}
+
+// 查询家长列表-家长
+export function user_parent(page, limit, keyword) {
+  return request({
+    url: '/v1/user/list?' + qs.stringify({ limit, page, keyword }),
+    method: 'get'
+  })
+}
+
+// 查询孩子列表
+export function user_child(page, limit, keyword) {
+  return request({
+    url: '/v1/user/getAllSon?' + qs.stringify({ limit, page, keyword }),
+    method: 'get'
+  })
+}
+
+// 查询孩子列表
+export function user_get_child(id) {
+  return request({
+    url: '/v1/user/getSonByUid?uid=' + id,
+    method: 'get'
+  })
+}
+
+// 查询银行卡列表
+export function bank_list(page, limit, keyword, status) {
+  return request({
+    url: '/v1/bank/list?' + qs.stringify({ limit, page, keyword, status }),
+    method: 'get'
+  })
+}
+
+// 银行卡审核列表
+export function bank_status(data) {
+  return request({
+    url: '/v1/bank/status',
+    method: 'post',
+    data: qs.stringify(data)
+  })
+}
+
+// 银行卡删除
+export function bank_del(id) {
+  return request({
+    url: '/v1/bank/del?' + qs.stringify({ id })
   })
 }

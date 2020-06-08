@@ -10,7 +10,7 @@
     >
       <el-table-column
         align="center"
-        label="ID"
+        label="序号"
         width="95"
       >
         <template slot-scope="scope">

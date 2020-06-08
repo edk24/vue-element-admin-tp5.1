@@ -3,7 +3,7 @@ import qs from 'qs'
 // 查询权限列表
 export function get_permission_list() {
   return request({
-    url: '/permission/list',
+    url: '/v1/permission/list',
     method: 'get'
   })
 }
@@ -11,7 +11,7 @@ export function get_permission_list() {
 // 查询权限列表 (树结构)
 export function get_permission_tree() {
   return request({
-    url: '/permission/all',
+    url: '/v1/permission/all',
     method: 'get'
   })
 }
@@ -19,7 +19,7 @@ export function get_permission_tree() {
 // 删除权限
 export function permission_del(id) {
   return request({
-    url: '/permission/del?id=' + id,
+    url: 'v1/permission/del?id=' + id,
     method: 'get'
   })
 }
@@ -28,7 +28,7 @@ export function permission_del(id) {
 export function permission_update(data) {
   data = qs.stringify(data)
   return request({
-    url: '/permission/update',
+    url: 'v1/permission/update',
     method: 'post',
     data
   })
@@ -38,7 +38,7 @@ export function permission_update(data) {
 export function permission_add(data) {
   data = qs.stringify(data)
   return request({
-    url: '/permission/add',
+    url: 'v1/permission/add',
     method: 'post',
     data
   })
