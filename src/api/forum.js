@@ -13,6 +13,18 @@ const forum = {
       url: '/v1/forum/posts_detail?id=' + id,
       method: 'get'
     })
+  },
+  posts_del: function(id) {
+    return request({
+      url: '/v1/forum/posts_del?id=' + id,
+      method: 'get'
+    })
+  },
+  comment_del: function(id) {
+    return request({
+      url: '/v1/forum/comment_del?id=' + id,
+      method: 'get'
+    })
   }
 }
 
