@@ -113,13 +113,16 @@
           </el-select>
         </el-form-item>
         <el-form-item label="分类描述">
-          <el-input
-            type="textarea"
-            :autosize="{ minRows: 2, maxRows: 5}"
-            placeholder="请输入内容"
-            style="font-size: 16px"
-            v-model="temp.desc">
-          </el-input>
+<!--          <tinymce v-model="temp.desc" height="300" />-->
+<!--          <quill-editor ref="QuillEditor" v-model="temp.desc" :options="quillOption" />-->
+          <editor-bar v-model="temp.desc" :isClear="isClear" @change="change"></editor-bar>
+<!--          <el-input-->
+<!--            type="textarea"-->
+<!--            :autosize="{ minRows: 2, maxRows: 5}"-->
+<!--            placeholder="请输入内容"-->
+<!--            style="font-size: 16px"-->
+<!--            v-model="temp.desc">-->
+<!--          </el-input>-->
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -135,8 +138,12 @@
 </template>
 
 <script>
+  import EditorBar from '@/components/wangEnduit'
   import { category } from '@/api/category'
   import Pagination from '@/components/Pagination'
+  import Tinymce from '@/components/Tinymce'
+  import { quillEditor } from 'vue-quill-editor'
+  import quillConfig from '@/utils/quill-config.js'
   const type = [
     { key: 'all', name: '全部' },
     { key: 'forum', name: '论坛' },
@@ -144,9 +151,12 @@
     { key: 'learn', name: '学生课程' }
   ]
   export default {
-    components: { Pagination },
+    components: { Pagination, quillEditor, Tinymce, EditorBar },
     data() {
       return {
+        isClear: false,
+        detail: '',
+        quillOption: quillConfig,
         type,
         imgsrc: process.env.VUE_APP_BASE_API,
         tableKey: 0,
@@ -184,6 +194,9 @@
       this.getList()
     },
     methods: {
+      change(val) {
+        console.log(val)
+      },
       search() {
         // if (this.listQuery.keyword) {
           this.getList()

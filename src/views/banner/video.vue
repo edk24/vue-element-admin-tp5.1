@@ -38,13 +38,11 @@
         </template>
       </el-table-column>
 
-
 <!--      <el-table-column label="视频" prop="video">-->
 <!--        <div class="whole">-->
 <!--          <video src="http://xkl.gzyczx.net/uploads/static/uploads/prop_video/1591683430.mp4" controls="controls"></video>-->
 <!--        </div>-->
 <!--      </el-table-column>-->
-
 
       <el-table-column label="封面图片" prop="type" align="center" width="200" :class-name="getSortClass('id')">
         <template slot-scope="{row}">
@@ -99,7 +97,7 @@
     <!-- 弹窗页面   -->
     <el-dialog :title="textMap[dialogStatus]" width="500" :visible.sync="dialogFormVisible">
       <el-form ref="dataForm" :rules="rules" :model="temp" label-position="left"  label-width="100px" style="padding:0 5px;margin-right:5px;margin-left:50px;">
-        <el-form-item label="分类名称" prop="title">
+        <el-form-item label="视频标题" prop="title">
           <el-input v-model="temp.title"/>
         </el-form-item>
         <el-form-item label="分类图片">
@@ -115,21 +113,30 @@
             <i v-else class="el-icon-plus avatar-uploader-icon" />
           </el-upload>
         </el-form-item>
-        <el-form-item label="所属分类" >
-          <el-select v-model="temp.type" placeholder="所属分类">
-            <el-option label="论坛" value="forum" />
-            <el-option label="商品分类" value="goods" />
-            <el-option label="学生课程" value="learn" />
-          </el-select>
+        <el-form-item label="上传视频" >
+          <el-upload class="avatar-uploader"
+                     action="上传地址"
+                     :data="{FoldPath:'上传目录',SecretKey:'安全验证'}"
+                     :on-progress="uploadVideoProcess"
+                     :on-success="handleVideoSuccess"
+                      :before-upload="beforeUploadVideo"
+                     v-bind:show-file-list="false">
+            <video v-if="videoForm.showVideoPath !='' && !videoFlag"
+                   :src="videoForm.showVideoPath"
+                   class="avatar video-avatar"
+                   controls="controls">
+              您的浏览器不支持视频播放
+            </video>
+            <i v-else-if="videoForm.showVideoPath =='' && !videoFlag"
+               class="el-icon-plus avatar-uploader-icon"></i>
+            <el-progress v-if="videoFlag == true"
+                         type="circle"
+                         v-bind:percentage="videoUploadPercent"
+                         style="margin-top:7px;"></el-progress>
+          </el-upload>
         </el-form-item>
         <el-form-item label="分类描述">
-          <el-input
-            type="textarea"
-            :autosize="{ minRows: 2, maxRows: 5}"
-            placeholder="请输入内容"
-            style="font-size: 16px"
-            v-model="temp.desc">
-          </el-input>
+
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -143,8 +150,8 @@
     </el-dialog>
 
     <el-dialog :title="textMap[dialogStatus]" :visible.sync="playDialogFormVisible">
-      <div class="whole" style="align-content: center">
-        <video src="http://xkl.gzyczx.net/uploads/static/uploads/prop_video/1591683430.mp4" controls="controls"></video>
+      <div class="whole">
+        <video style="display: block;margin: 0 auto;" :src="temp.video_url" controls="controls"></video>
       </div>
     </el-dialog>
   </div>
@@ -204,6 +211,7 @@
           if (code === 0) {
             data.forEach(row => {
               row.image = this.imgsrc + row.image
+              row.video_url = this.imgsrc + row.video_url
               this.list.push(row)
             })
             this.total = count
@@ -228,7 +236,9 @@
           imageFile: ''
         }
       },
-      play() {
+      play(row) {
+        this.temp = Object.assign({}, row)
+        console.log(row)
         this.dialogStatus = 'play'
         this.playDialogFormVisible = true
       },
@@ -339,6 +349,7 @@
       },
       // 图片被改变
       changeImage(file) {
+
         // 读图片预览
         const that = this
         var reader = new FileReader()
@@ -346,6 +357,44 @@
           that.temp.image = e.target.result
         }
         reader.readAsDataURL(file.raw)
+      },
+      //上传前回调
+      beforeUploadVideo(file) {
+        var fileSize = file.size / 1024 / 1024 < 50;
+        if (['video/mp4', 'video/ogg', 'video/flv', 'video/avi', 'video/wmv', 'video/rmvb', 'video/mov'].indexOf(file.type) == -1) {
+          layer.msg("请上传正确的视频格式");
+          return false;
+        }
+        if (!fileSize) {
+          layer.msg("视频大小不能超过50MB");
+          return false;
+        }
+        this.isShowUploadVideo = false;
+      },
+      //进度条
+      uploadVideoProcess(event, file, fileList) {
+        this.videoFlag = true;
+        this.videoUploadPercent = file.percentage.toFixed(0) * 1;
+      },
+      //上传成功回调
+      handleVideoSuccess(res, file) {
+        this.isShowUploadVideo = true
+        this.videoFlag = false
+        this.videoUploadPercent = 0
+
+        //前台上传地址
+        //if (file.status == 'success' ) {
+        //    this.videoForm.showVideoPath = file.url;
+        //} else {
+        //     layer.msg("上传失败，请重新上传");
+        //}
+
+        //后台上传地址
+        if (res.Code == 0) {
+          this.videoForm.showVideoPath = res.Data
+        } else {
+          layer.msg(res.Message)
+        }
       }
     }
   }
