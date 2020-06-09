@@ -30,67 +30,63 @@
       style="width: 100%;margin-top: 10px;"
     >
       <el-table-column label="序号" type="index" width="50" align="center">
-        <template scope="scope">
-          <span>{{ (listQuery.page - 1) * listQuery.limit + scope.$index + 1 }}</span>
-        </template>
-      </el-table-column>
-<!--      <el-table-column type="index" label="序号" sortable="custom" align="center" width="80" :class-name="getSortClass('id')" />-->
-      <el-table-column label="分类名称" prop="title" align="center" :class-name="getSortClass('id')">
-        <template slot-scope="{row}">
-          <span>{{ row.title }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="分类图片" prop="type" align="center" width="150" :class-name="getSortClass('id')">
-        <template slot-scope="{row}">
-          <el-image class="image" :src="row.image">
-            <div slot="error" class="image-slot">
-              暂未上传
-            </div>
-          </el-image>
-        </template>
-      </el-table-column>
-      <el-table-column label="所属类别" prop="note" align="center" width="250" :class-name="getSortClass('id')">
-        <template slot-scope="{row}">
-          <span v-if="row.type === 'learn'">学习课程</span>
-          <span v-if="row.type === 'forum'">论坛</span>
-          <span v-if="row.type === 'goods'">商品分类</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="分类描述" prop="note" align="center" width="250" :class-name="getSortClass('id')">
-        <template slot-scope="{row}">
-          <span>{{ row.desc }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="创建时间" prop="create_time" align="center" width="250" :class-name="getSortClass('id')">
-        <template slot-scope="{row}">
-          <span>{{ row.create_time }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="修改时间" prop="update_time" align="center" width="250" :class-name="getSortClass('id')">
-        <template slot-scope="{row}">
-          <span>{{ row.update_time }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="操作" fixed="right" align="center" width="350" class-name="small-padding fixed-width">
-        <template slot-scope="{row,$index}">
-          <el-button type="primary" size="mini" @click="handleUpdate(row)">
-            编辑
-          </el-button>
-          <el-popconfirm title="确定删除这行信息吗?"  @onConfirm="handleDelete(row,$index)">
-            <el-button slot="reference" size="small" type="danger">删除</el-button>
-          </el-popconfirm>
-        </template>
-      </el-table-column>
-    </el-table>
+        <!--      <el-table-column type="index" label="序号" sortable="custom" align="center" width="80" :class-name="getSortClass('id')" />-->
+        <el-table-column label="分类名称" prop="title" align="center" :class-name="getSortClass('id')">
+          <template slot-scope="{row}">
+            <span>{{ row.title }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="分类图片" prop="type" align="center" width="150" :class-name="getSortClass('id')">
+          <template slot-scope="{row}">
+            <el-image class="image" :src="row.image">
+              <div slot="error" class="image-slot">
+                暂未上传
+              </div>
+            </el-image>
+          </template>
+        </el-table-column>
+        <el-table-column label="所属类别" prop="note" align="center" width="250" :class-name="getSortClass('id')">
+          <template slot-scope="{row}">
+            <span v-if="row.type === 'learn'">学习课程</span>
+            <span v-if="row.type === 'forum'">论坛</span>
+            <span v-if="row.type === 'goods'">商品分类</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="分类描述" prop="note" align="center" width="250" :class-name="getSortClass('id')">
+          <template slot-scope="{row}">
+            <span>{{ row.desc }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="创建时间" prop="create_time" align="center" width="250" :class-name="getSortClass('id')">
+          <template slot-scope="{row}">
+            <span>{{ row.create_time }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="修改时间" prop="update_time" align="center" width="250" :class-name="getSortClass('id')">
+          <template slot-scope="{row}">
+            <span>{{ row.update_time }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="操作" fixed="right" align="center" width="350" class-name="small-padding fixed-width">
+          <template slot-scope="{row,$index}">
+            <el-button type="primary" size="mini" @click="handleUpdate(row)">
+              编辑
+            </el-button>
+            <el-popconfirm title="确定删除这行信息吗?" @onConfirm="handleDelete(row,$index)">
+              <el-button slot="reference" size="small" type="danger">删除</el-button>
+            </el-popconfirm>
+          </template>
+        </el-table-column>
+      </el-table-column></el-table>
 
     <!-- 分页 -->
     <pagination v-show="total>0" :total="total" :page.sync="listQuery.page" :limit.sync="listQuery.limit" @pagination="getList" />
 
     <!-- 弹窗页面   -->
     <el-dialog :title="textMap[dialogStatus]" width="500" :visible.sync="dialogFormVisible">
-      <el-form ref="dataForm" :rules="rules" :model="temp" label-position="left"  label-width="100px" style="padding:0 5px;margin-right:5px;margin-left:50px;">
+      <el-form ref="dataForm" :rules="rules" :model="temp" label-position="left" label-width="100px" style="padding:0 5px;margin-right:5px;margin-left:50px;">
         <el-form-item label="分类名称" prop="title">
-          <el-input v-model="temp.title"/>
+          <el-input v-model="temp.title" />
         </el-form-item>
         <el-form-item label="分类图片">
           <el-upload
@@ -105,7 +101,7 @@
             <i v-else class="el-icon-plus avatar-uploader-icon" />
           </el-upload>
         </el-form-item>
-        <el-form-item label="所属分类" >
+        <el-form-item label="所属分类">
           <el-select v-model="temp.type" placeholder="所属分类">
             <el-option label="论坛" value="forum" />
             <el-option label="商品分类" value="goods" />
@@ -113,16 +109,16 @@
           </el-select>
         </el-form-item>
         <el-form-item label="分类描述">
-<!--          <tinymce v-model="temp.desc" height="300" />-->
-<!--          <quill-editor ref="QuillEditor" v-model="temp.desc" :options="quillOption" />-->
-          <editor-bar v-model="temp.desc" :isClear="isClear" @change="change"></editor-bar>
-<!--          <el-input-->
-<!--            type="textarea"-->
-<!--            :autosize="{ minRows: 2, maxRows: 5}"-->
-<!--            placeholder="请输入内容"-->
-<!--            style="font-size: 16px"-->
-<!--            v-model="temp.desc">-->
-<!--          </el-input>-->
+          <!--          <tinymce v-model="temp.desc" height="300" />-->
+          <!--          <quill-editor ref="QuillEditor" v-model="temp.desc" :options="quillOption" />-->
+          <editor-bar v-model="temp.desc" :is-clear="isClear" @change="change" />
+          <!--          <el-input-->
+          <!--            type="textarea"-->
+          <!--            :autosize="{ minRows: 2, maxRows: 5}"-->
+          <!--            placeholder="请输入内容"-->
+          <!--            style="font-size: 16px"-->
+          <!--            v-model="temp.desc">-->
+          <!--          </el-input>-->
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -141,8 +137,8 @@
   import EditorBar from '@/components/wangEnduit'
   import { category } from '@/api/category'
   import Pagination from '@/components/Pagination'
-  import Tinymce from '@/components/Tinymce'
-  import { quillEditor } from 'vue-quill-editor'
+  // import Tinymce from '@/components/Tinymce'
+  // import { quillEditor } from 'vue-quill-editor'
   import quillConfig from '@/utils/quill-config.js'
   const type = [
     { key: 'all', name: '全部' },
@@ -151,7 +147,8 @@
     { key: 'learn', name: '学生课程' }
   ]
   export default {
-    components: { Pagination, quillEditor, Tinymce, EditorBar },
+    // components: { Pagination, quillEditor, Tinymce, EditorBar },
+    components: { Pagination, EditorBar },
     data() {
       return {
         isClear: false,
@@ -172,7 +169,7 @@
         dialogStatus: '',
         dialogFormVisible: false,
         rules: {
-          title: [{ required: true, message: '分类名称不能为空', trigger: 'change' }],
+          title: [{ required: true, message: '分类名称不能为空', trigger: 'change' }]
         },
         temp: {
           imageFile: '',

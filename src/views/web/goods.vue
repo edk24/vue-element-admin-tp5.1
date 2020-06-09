@@ -1,43 +1,30 @@
 <template>
   <div class="app-container">
-    <!--    按钮-->
-    <div>
-      <el-button type="primary">添加</el-button>
-    </div>
-    <div class="app-container">
-      <el-table :data="data" stripe style="width: 100%;">
-        <el-table-column type="index" width="80" />
-      </el-table>
-    </div>
-<!--    添加、修改弹出-->
-    <div>
-
-    </div>
+    <editor-bar v-model="content" style="width: auto" :is-clear="isClear" @change="change" />
   </div>
 </template>
 
 <script>
+  import EditorBar from '@/components/wangEnduit'
     export default {
+      components: { EditorBar },
         data() {
           return {
+            isClear: false,
+            detail: '',
             data: {},
             page: 1,
             limit: 10,
-            count: 0
+            count: 0,
+            content: ''
           }
         },
       created() {
 
       },
       methods: {
-          // 获取数据
-        get_list(page) {
-          if (page) {
-            if (page <= 1) {
-              page = 1
-            }
-            this.page = page
-          }
+        change() {
+          console.log(12)
         }
       }
     }

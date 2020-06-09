@@ -1,23 +1,14 @@
 <template lang="html">
   <div class="editor">
-    <div ref="toolbar" class="toolbar">
-    </div>
-    <div ref="editor" class="text">
-    </div>
+    <div ref="toolbar" class="toolbar" />
+    <div ref="editor" class="text" />
   </div>
 </template>
 
 <script>
   import E from 'wangeditor'
   export default {
-    name: 'editoritem',
-    data() {
-      return {
-        // uploadPath,
-        editor: null,
-        info_: null
-      }
-    },
+    name: 'Editoritem',
     model: {
       prop: 'value',
       event: 'change'
@@ -30,6 +21,13 @@
       isClear: {
         type: Boolean,
         default: false
+      }
+    },
+    data() {
+      return {
+        // uploadPath,
+        editor: null,
+        info_: null
       }
     },
     watch: {
@@ -45,7 +43,7 @@
           this.editor.txt.html(this.value)
         }
       }
-      //value为编辑框输入的内容，这里我监听了一下值，当父组件调用得时候，如果给value赋值了，子组件将会显示父组件赋给的值
+      // value为编辑框输入的内容，这里我监听了一下值，当父组件调用得时候，如果给value赋值了，子组件将会显示父组件赋给的值
     },
     mounted() {
       this.seteditor()
@@ -103,13 +101,13 @@
           },
           customInsert: (insertImg, result, editor) => {
             // 图片上传成功，插入图片的回调
-            //result为上传图片成功的时候返回的数据，这里我打印了一下发现后台返回的是data：[{url:"路径的形式"},...]
+            // result为上传图片成功的时候返回的数据，这里我打印了一下发现后台返回的是data：[{url:"路径的形式"},...]
             // console.log(result.data[0].url)
-            //insertImg()为插入图片的函数
-            //循环插入图片
+            // insertImg()为插入图片的函数
+            // 循环插入图片
             // for (let i = 0; i < 1; i++) {
             // console.log(result)
-            let url = process.env.VUE_APP_BASE_API + result.data
+            const url = process.env.VUE_APP_BASE_API + result.data
             insertImg(url)
             // }
           }
