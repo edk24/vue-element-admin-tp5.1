@@ -5,6 +5,7 @@ const getDefaultState = () => {
   }
 }
 const state = getDefaultState()
+const url = process.env.VUE_APP_BASE_API
 
 /*富文本编辑图片上传配置*/
 const uploadConfig = {
