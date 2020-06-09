@@ -29,8 +29,12 @@
       highlight-current-row
       style="width: 100%;margin-top: 10px;"
     >
-      <el-table-column label="序号" type="index" width="50" align="center">
-        <!--      <el-table-column type="index" label="序号" sortable="custom" align="center" width="80" :class-name="getSortClass('id')" />-->
+<!--      <el-table-column label="序号" type="index" width="50" align="center">-->
+<!--        <template scope="scope">-->
+<!--          <span>{{ (listQuery.page - 1) * listQuery.limit + scope.$index + 1 }}</span>-->
+<!--        </template>-->
+<!--      </el-table-column>-->
+        <el-table-column type="index" label="序号" sortable="custom" align="center" width="80" :class-name="getSortClass('id')" />
         <el-table-column label="分类名称" prop="title" align="center" :class-name="getSortClass('id')">
           <template slot-scope="{row}">
             <span>{{ row.title }}</span>
