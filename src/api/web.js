@@ -39,3 +39,12 @@ export function about() {
     url: '/v1/web/about'
   })
 }
+
+// 修改官网配置信息
+export function update_config(data) {
+  return request({
+    url: '/v1/Web/ConfigUpdate',
+    method: 'post',
+    data
+  })
+}
