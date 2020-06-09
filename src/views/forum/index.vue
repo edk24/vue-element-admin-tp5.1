@@ -73,7 +73,7 @@
           <el-button type="primary" size="mini" @click="detail(row)">
             查看详情
           </el-button>
-          <el-popconfirm title="帖子下的所有评论都删除，谨慎操作！"  @onConfirm="handleDelete(row,$index)">
+          <el-popconfirm title="帖子下的所有评论都删除，谨慎操作！"  @onConfirm="posts_del(row,$index)">
             <el-button slot="reference" size="small" type="danger">删除</el-button>
           </el-popconfirm>
         </template>
@@ -103,35 +103,28 @@
           <el-input type="textarea" v-model="temp.content" readonly=""></el-input>
         </el-form-item>
         <p>帖子评论</p>
-
         <el-collapse v-model="comment">
-
           <el-collapse accordion>
             <el-collapse-item v-for="(item, index) in comment" :key="index">
               <template slot="title" style="position: relative;">
                 <span>{{ item.content }}</span>
                 <span style="position:absolute;right: 160px;">评论者：{{ item.user.nickname }}</span>
-                <el-button type="text" style="position:absolute;right: 60px;" >删除</el-button>
+                <el-button type="text" style="position:absolute;right: 60px;" @click="comment_del(item.id)">删除</el-button>
               </template>
               <div v-for="(vo, key) in item.children" :key="key">
-                  <div v-if="vo.target_reply === null" style="display: flex;justify-content: space-between">
+                  <div v-if="vo.target_reply === null">
                     <span>{{ vo.content }}</span>
-                    <div class="box" style="border: 1px solid #f00;display: flex;width:40%;justify-content: space-around">
-                      <span>评论者：{{ vo.user.nickname }}</span>
-                      <el-button type="text">删除</el-button>
-                    </div>
+                      <span style="position: absolute;right: 160px">回复者：{{ vo.user.nickname }}</span>
+                      <el-button type="text" style="position: absolute;right: 60px;line-height: 0px;" @click="comment_del(vo.id)">删除</el-button>
                   </div>
                   <div v-if="vo.target_reply != null">
                     <span>{{ vo.content }}</span>
-                    <span>回复者：{{ vo.user.nickname }}@{{ vo.target_reply.nickname }}</span>
-                    <el-button type="text">删除</el-button>
+                    <span style="position: absolute;right: 160px">回复者：{{ vo.user.nickname }}@{{ vo.target_reply.nickname }}</span>
+                    <el-button type="text" style="position: absolute;right: 60px;line-height: 0px;" @click="comment_del(vo.id)">删除</el-button>
                   </div>
               </div>
             </el-collapse-item>
-          </el-collapse><!--   accordion手风琴     -->
-<!--          <el-collapse-item v-for="(item, index) in comment" :key="index" :title="item.content + item.id">-->
-<!--            <div v-for="(vo, key) in item.children" :key="key">{{vo.content}}</div>-->
-<!--          </el-collapse-item>-->
+          </el-collapse>
         </el-collapse>
 
       </el-form>
@@ -211,6 +204,56 @@
           // console.log()
           data.comment.forEach(function(row) {
             console.log(row.children)
+          })
+        })
+      },
+      posts_del(row, index) {
+        forum.posts_del(row.id).then(({ code, msg, data, count }) => {
+          if (code === 0) {
+            this.list.splice(index, 1)
+            this.$notify({
+              title: 'Success',
+              message: '删除成功',
+              type: 'success',
+              duration: 2000
+            })
+          } else {
+            this.$message({
+              type: 'error',
+              message: '删除失败!'
+            })
+          }
+        }).catch(error => {
+          console.log(error)
+        })
+      },
+      comment_del(id) {
+        this.$confirm('此操作将永久删除该评论, 是否继续?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning',
+          center: true
+        }).then(() => {
+          forum.comment_del(id).then(({ code, msg, data, count }) => {
+            if (code === 0) {
+              this.dialogFormVisible = false
+              this.$message({
+                type: 'success',
+                message: '删除成功!'
+              })
+            } else {
+              this.$message({
+                type: 'error',
+                message: '删除失败!'
+              })
+            }
+          }).catch(error => {
+            console.log(error)
+          })
+        }).catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消删除'
           })
         })
       },
