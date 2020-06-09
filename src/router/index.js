@@ -488,6 +488,22 @@ export const constantRoutes = [{
         title: '关于我们',
         icon: 'tree'
       }
+    }, {
+      path: 'web_category',
+      name: '产品分类',
+      component: () => import('@/views/web/category'),
+      meta: {
+        title: '产品分类',
+        icon: 'tree'
+      }
+    }, {
+      path: 'web_goods',
+      name: '产品管理',
+      component: () => import('@/views/web/goods'),
+      meta: {
+        title: '产品管理',
+        icon: 'tree'
+      }
     }]
   },
 

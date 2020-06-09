@@ -1,27 +1,41 @@
 <template>
-  <div>
-    <el-table :data="data" stripe style="width: 100%">
-      <el-table-column type="index" label="序号" align="center" width="80" />
-      <el-table-column prop="title" label="标题" width="200" />
-      <el-table-column>
-        <template slot-scope="scope">
-          <div>
-            <div v-if="scope.row.type !== 'img'">
-              {{ scope.row.value }}
-            </div>
-            <el-image v-else style="width: 300px" :src="scope.row.value" fit="fill" />
-          </div>
-        </template>
-      </el-table-column>
-      <el-table-column prop="note" label="备注" />
-      <el-table-column label="管理" width="200">
-        <template slot-scope="scope">
-          <div>
-            <el-button size="small" type="primary" @click="data_update_popup(scope.row)">编辑</el-button>
-          </div>
-        </template>
-      </el-table-column>
-    </el-table>
+  <div class="app-container">
+    <template>
+      <el-tabs v-model="activeName" @tab-click="handleClick">
+        <el-tab-pane label="关于我们" name="about">
+          <el-table :data="data" stripe style="width: 100%">
+            <el-table-column type="index" label="序号" align="center" width="80" />
+            <el-table-column prop="title" label="标题" width="200" />
+            <el-table-column>
+              <template slot-scope="scope">
+                <div>
+                  <div v-if="scope.row.type !== 'img'">
+                    {{ scope.row.value }}
+                  </div>
+                  <el-image v-else style="width: 300px" :src="scope.row.value" fit="fill" />
+                </div>
+              </template>
+            </el-table-column>
+            <el-table-column prop="note" label="备注" />
+            <el-table-column label="管理" width="200">
+              <template slot-scope="scope">
+                <div>
+                  <el-button size="small" type="primary" @click="data_update_popup(scope.row)">编辑</el-button>
+                </div>
+              </template>
+            </el-table-column>
+          </el-table>
+        </el-tab-pane>
+        <el-tab-pane label="产品中心" name="goods" />
+        <el-tab-pane label="新闻动态" name="news" />
+        <el-tab-pane label="工程案例" name="cases" />
+        <el-tab-pane label="招商加盟" name="shop" />
+        <el-tab-pane label="服务支持" name="server" />
+
+        <el-tab-pane label="联系我们" name="contact" />
+      </el-tabs>
+    </template>
+
     <el-dialog title="信息修改" :visible.sync="UpdateFormShow">
       <el-form :model="UpdateForm">
         <el-form-item v-if="UpdateForm.type === 'input'" label="内容">
@@ -93,7 +107,8 @@
           UpdateFormShow: false,
           ImageFormShow: false,
           http: process.env.VUE_APP_BASE_API,
-          imageFile: ''
+          imageFile: '',
+          activeName: 'about'
         }
       },
       created() {
@@ -157,7 +172,7 @@
          */
         selectImg(file) {
           // 验证
-          const isRightSize = file.size / 1024 < 500
+          // const isRightSize = file.size / 1024 < 500
           const isAccept = new RegExp('image/*').test(file.type)
           if (!isAccept) {
             this.$message.error('应该选择image/*类型的文件')
@@ -176,6 +191,10 @@
             that.UpdateForm.value = e.target.result
           }
           reader.readAsDataURL(file.raw)
+        },
+
+        handleClick(tab, event) {
+          console.log(this.activeName)
         }
       }
     }

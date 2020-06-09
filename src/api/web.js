@@ -1,10 +1,10 @@
 import request from '@/utils/request'
 import qs from 'qs'
-
+const api = '/v1/Web/'
 // 轮播列表
 export function banner_list(page, limit, type = 0) {
   return request({
-    url: '/v1/Web/Banner?' + qs.stringify({ page, limit, type })
+    url: api + '/Banner?' + qs.stringify({ page, limit, type })
   })
 }
 
@@ -44,6 +44,40 @@ export function about() {
 export function update_config(data) {
   return request({
     url: '/v1/Web/ConfigUpdate',
+    method: 'post',
+    data
+  })
+}
+
+// 获取产品分类列表
+export function category_list(page, limit) {
+  return request({
+    url: '/v1/Web/TypeList?page=' + page + '&limit=' + limit
+  })
+}
+
+// 产品分类添加
+export function category_add(data) {
+  return request({
+    url: '/v1/Web/TypeAdd',
+    method: 'post',
+    data
+  })
+}
+
+// 修改产品分类
+export function category_update(data) {
+  return request({
+    url: '/v1/Web/TypeUpdate',
+    method: 'post',
+    data
+  })
+}
+
+// 获取产品列表
+export function goods_add(data) {
+  return request({
+    url: api + 'GoodsAdd',
     method: 'post',
     data
   })
