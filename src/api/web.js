@@ -81,11 +81,40 @@ export function category_update(data) {
   })
 }
 
-// 获取产品列表
+// 分类删除
+export function category_delete(id) {
+  return request({
+    url: api + 'TypeDelete?id=' + id
+  })
+}
+
+// 产品添加
 export function goods_add(data) {
   return request({
     url: api + 'GoodsAdd',
     method: 'post',
     data
+  })
+}
+// 获取产品列表
+export function goods_list(page, limit, keyword = '') {
+  return request({
+    url: api + 'GoodsList?page=' + page + '&limit=' + limit + '&keyword=' + keyword
+  })
+}
+
+// 产品修改
+export function goods_update(data) {
+  return request({
+    url: api + 'GoodsUpdate',
+    method: 'post',
+    data
+  })
+}
+
+// 产品删除
+export function goods_delete(id) {
+  return request({
+    url: api + 'GoodsDelete?id=' + id
   })
 }
