@@ -38,11 +38,11 @@
         </template>
       </el-table-column>
 
-<!--      <el-table-column label="视频" prop="video">-->
-<!--        <div class="whole">-->
-<!--          <video src="http://xkl.gzyczx.net/uploads/static/uploads/prop_video/1591683430.mp4" controls="controls"></video>-->
-<!--        </div>-->
-<!--      </el-table-column>-->
+      <!--      <el-table-column label="视频" prop="video">-->
+      <!--        <div class="whole">-->
+      <!--          <video src="http://xkl.gzyczx.net/uploads/static/uploads/prop_video/1591683430.mp4" controls="controls"></video>-->
+      <!--        </div>-->
+      <!--      </el-table-column>-->
 
       <el-table-column label="封面图片" prop="type" align="center" width="200" :class-name="getSortClass('id')">
         <template slot-scope="{row}">
@@ -84,7 +84,7 @@
           <el-button type="primary" size="mini" @click="handleUpdate(row)">
             编辑
           </el-button>
-          <el-popconfirm title="确定删除这行信息吗?"  @onConfirm="handleDelete(row,$index)">
+          <el-popconfirm title="确定删除这行信息吗?" @onConfirm="handleDelete(row,$index)">
             <el-button slot="reference" size="small" type="danger">删除</el-button>
           </el-popconfirm>
         </template>
@@ -96,9 +96,9 @@
 
     <!-- 弹窗页面   -->
     <el-dialog :title="textMap[dialogStatus]" width="500" :visible.sync="dialogFormVisible">
-      <el-form ref="dataForm" :rules="rules" :model="temp" label-position="left"  label-width="100px" style="padding:0 5px;margin-right:5px;margin-left:50px;">
+      <el-form ref="dataForm" :rules="rules" :model="temp" label-position="left" label-width="100px" style="padding:0 5px;margin-right:5px;margin-left:50px;">
         <el-form-item label="视频标题" prop="title">
-          <el-input v-model="temp.title"/>
+          <el-input v-model="temp.title" />
         </el-form-item>
         <el-form-item label="封面图片">
           <el-upload
@@ -113,21 +113,25 @@
             <i v-else class="el-icon-plus avatar-uploader-icon" />
           </el-upload>
         </el-form-item>
-        <el-form-item label="上传视频" >
-          <el-input type="file"/>
-<!--          <el-upload-->
-<!--            class="upload-demo"-->
-<!--            drag-->
-<!--            action="post"-->
-<!--            name="video"-->
-<!--            multiple>-->
-<!--            <i class="el-icon-upload"></i>-->
-<!--            <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>-->
-<!--            <div class="el-upload__tip" slot="tip">只能上传jpg/png文件，且不超过500kb</div>-->
-<!--          </el-upload>-->
+        <el-form-item label="上传视频">
+          <el-upload
+            class="upload-demo"
+            name="video"
+            :action="action"
+            :on-success="handleVideoSuccess"
+            :on-preview="handlePreview"
+            :on-remove="handleRemove"
+            :before-remove="beforeRemove"
+            :limit="1"
+            :on-exceed="handleExceed"
+            :file-list="fileList"
+          >
+            <el-button size="small" type="primary">点击上传</el-button>
+            <div slot="tip" class="el-upload__tip">只能上传一个视频文件</div>
+          </el-upload>
         </el-form-item>
         <el-form-item label="分类描述">
-          <el-input type="textarea" autosize v-model="temp.title"/>
+          <el-input v-model="temp.desc" type="textarea" :autosize="{ minRows: 2 }" />
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -142,7 +146,7 @@
 
     <el-dialog :title="textMap[dialogStatus]" :visible.sync="playDialogFormVisible">
       <div class="whole">
-        <video style="display: block;margin: 0 auto;" :src="temp.video_url" controls="controls"></video>
+        <video style="display: block;margin: 0 auto;" :src="temp.video_url" controls="controls" />
       </div>
     </el-dialog>
   </div>
@@ -155,6 +159,9 @@
     components: { Pagination },
     data() {
       return {
+        videoRes: '',
+        fileList: [{ name: '视频已上传', url: '' }],
+        action: process.env.VUE_APP_BASE_API + '/v1/uploads/video',
         imgsrc: process.env.VUE_APP_BASE_API,
         tableKey: 0,
         list: null,
@@ -169,16 +176,13 @@
         dialogFormVisible: false,
         playDialogFormVisible: false,
         rules: {
-          title: [{ required: true, message: '不能为空', trigger: 'change' }],
+          title: [{ required: true, message: '不能为空', trigger: 'change' }]
         },
         temp: {
-          imageFile: '',
           id: undefined,
-          timestamp: new Date(),
-          create_time: new Date(),
           title: '',
-          type: '',
-          type_title: ''
+          desc: '',
+          imageFile: ''
         },
         textMap: {
           update: '编辑',
@@ -224,7 +228,7 @@
           title: '',
           desc: '',
           image: '',
-          imageFile: ''
+          imageFile: null
         }
       },
       play(row) {
@@ -235,6 +239,7 @@
       },
       handleCreate() {
         this.resetTemp()
+        this.fileList = []
         this.dialogStatus = 'create'
         this.dialogFormVisible = true
         this.$nextTick(() => {
@@ -242,6 +247,7 @@
         })
       },
       handleUpdate(row) {
+        this.videoRes = true
         this.temp = Object.assign({}, row) // copy obj
         this.dialogStatus = 'update'
         this.dialogFormVisible = true
@@ -256,8 +262,16 @@
             const data = new FormData()
             data.append('id', tempData.id)
             data.append('title', tempData.title)
+            if (this.videoRes === '') {
+              return this.$message.error('没有上传视频')
+            }
+            data.append('url', this.videoRes.url)
+            data.append('video_url', this.videoRes.video_url)
+            data.append('len', this.videoRes.len)
             if (this.temp.imageFile != null) {
               data.append('image', this.temp.imageFile)
+            } else {
+              data.append('image', this.videoRes.image)
             }
             data.append('desc', tempData.desc)
             prop.video_edit(data).then(response => {
@@ -283,20 +297,25 @@
             const data = new FormData()
             data.append('id', tempData.id)
             data.append('title', tempData.title)
-            data.append('type', tempData.type)
-            if (tempData.type === undefined) {
-              return this.$message.error('必须选择分类')
+            if (this.videoRes === '') {
+              return this.$message.error('没有上传视频')
             }
+            data.append('url', this.videoRes.url)
+            data.append('video_url', this.videoRes.video_url)
+            data.append('len', this.videoRes.len)
             if (this.temp.imageFile != null) {
               data.append('image', this.temp.imageFile)
+            } else {
+              data.append('image', this.videoRes.image)
             }
-            category.add(data).then(() => {
+            data.append('desc', tempData.desc)
+            prop.video_add(data).then(() => {
               this.temp.create_time = new Date(this.temp.timestamp)
               this.list.push(this.temp)
               this.dialogFormVisible = false
               this.$notify({
                 title: 'Success',
-                message: 'Created Successfully',
+                message: '添加成功',
                 type: 'success',
                 duration: 2000
               })
@@ -305,7 +324,7 @@
         })
       },
       handleDelete(row, index) {
-        category.del(row.id).then(({ code, msg }) => {
+        prop.video_del(row.id).then(({ code, msg }) => {
           if (code === 0) {
             this.list.splice(index, 1)
             this.$notify({
@@ -320,6 +339,19 @@
         }).catch(error => {
           console.log(error)
         })
+      },
+      handleRemove(file, fileList) {
+        console.log(file, fileList)
+      },
+      handlePreview(file) {
+        console.log(file)
+      },
+      handleExceed(files, fileList) {
+        this.$message.warning(`当前限制选择 1 个文件，本次选择了 ${files.length} 个文件，共选择了 ${files.length + fileList.length} 个文件`)
+      },
+      beforeRemove(file, fileList) {
+        this.videoRes = ''
+        return this.$confirm(`确定移除 ${ file.name }？`)
       },
       /**
        * 事件-选择图片
@@ -340,7 +372,6 @@
       },
       // 图片被改变
       changeImage(file) {
-
         // 读图片预览
         const that = this
         var reader = new FileReader()
@@ -349,43 +380,27 @@
         }
         reader.readAsDataURL(file.raw)
       },
-      //上传前回调
+      // 上传前回调
       beforeUploadVideo(file) {
-        var fileSize = file.size / 1024 / 1024 < 50;
+        var fileSize = file.size / 1024 / 1024 < 50
         if (['video/mp4', 'video/ogg', 'video/flv', 'video/avi', 'video/wmv', 'video/rmvb', 'video/mov'].indexOf(file.type) == -1) {
-          layer.msg("请上传正确的视频格式");
-          return false;
+          layer.msg('请上传正确的视频格式')
+          return false
         }
         if (!fileSize) {
-          layer.msg("视频大小不能超过50MB");
-          return false;
+          layer.msg('视频大小不能超过50MB')
+          return false
         }
-        this.isShowUploadVideo = false;
+        this.isShowUploadVideo = false
       },
-      //进度条
+      // 进度条
       uploadVideoProcess(event, file, fileList) {
-        this.videoFlag = true;
-        this.videoUploadPercent = file.percentage.toFixed(0) * 1;
+        this.videoFlag = true
+        this.videoUploadPercent = file.percentage.toFixed(0) * 1
       },
-      //上传成功回调
+      // 上传成功回调
       handleVideoSuccess(res, file) {
-        this.isShowUploadVideo = true
-        this.videoFlag = false
-        this.videoUploadPercent = 0
-
-        //前台上传地址
-        //if (file.status == 'success' ) {
-        //    this.videoForm.showVideoPath = file.url;
-        //} else {
-        //     layer.msg("上传失败，请重新上传");
-        //}
-
-        //后台上传地址
-        if (res.Code == 0) {
-          this.videoForm.showVideoPath = res.Data
-        } else {
-          layer.msg(res.Message)
-        }
+        this.videoRes = res.data
       }
     }
   }
