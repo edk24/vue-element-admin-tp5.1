@@ -526,117 +526,16 @@ export const constantRoutes = [{
         title: '产品管理',
         icon: 'tree'
       }
+    }, {
+      path: 'web_news',
+      name: '产品管理',
+      component: () => import('@/views/web/news'),
+      meta: {
+        title: '新闻管理',
+        icon: 'tree'
+      }
     }]
   },
-
-  // {
-  //   path: '/system',
-  //   component: Layout,
-  //   name: '系统管理',
-  //   meta: {
-  //     title: '系统管理',
-  //     tree: 'tree',
-  //     icon: 'component'
-  //   },
-  //   children: [{
-  //       path: 'setting',
-  //       name: '系统设置',
-  //       component: () => import('@/views/admin/index'),
-  //       meta: {
-  //         title: '系统设置',
-  //         icon: 'tree'
-  //       }
-  //     },
-  //     {
-  //       path: 'feedback',
-  //       name: '意见反馈',
-  //       component: () => import('@/views/system/feedback'),
-  //       meta: {
-  //         title: '意见反馈',
-  //         icon: 'tree'
-  //       }
-  //     },
-  //     {
-  //       path: 'kefu',
-  //       name: '在线客服',
-  //       component: () => import('@/views/admin/index'),
-  //       meta: {
-  //         title: '在线客服',
-  //         icon: 'tree'
-  //       }
-  //     }
-  //   ]
-  // },
-  // {
-  //   path: '/tender',
-  //   component: Layout,
-  //   name: '任务管理',
-  //   meta: { title: '任务管理', tree: 'tree', icon: 's-order' },
-  //   children: [
-  //     { path: 'index', name: '招标任务列表', component: () => import('@/views/tender/index'), meta: { title: '招标任务列表', icon: 'tree' }},
-  //     { path: 'back', name: '待审核任务', component: () => import('@/views/tender/index'), meta: { title: '待审核任务', icon: 'tree' }}
-  //   ]
-  // },
-
-  // {
-  //   path: '/task',
-  //   component: Layout,
-  //   name: '需求管理',
-  //   meta: {
-  //     title: '需求管理',
-  //     tree: 'tree',
-  //     icon: 's-order'
-  //   },
-  //   children: [{
-  //       path: 'bidding',
-  //       name: 'bidding',
-  //       component: () => import('@/views/task/bidding'),
-  //       meta: {
-  //         title: '竞标列表',
-  //         icon: 'tree'
-  //       }
-  //     },
-  //     {
-  //       path: 'audit',
-  //       name: 'audit',
-  //       component: () => import('@/views/task/audit'),
-  //       meta: {
-  //         title: '待审核列表',
-  //         icon: 'tree'
-  //       }
-  //     },
-  //     {
-  //       path: 'back',
-  //       name: '退款申请',
-  //       component: () => import('@/views/admin/index'),
-  //       meta: {
-  //         title: '退款申请',
-  //         icon: 'tree'
-  //       }
-  //     }
-  //   ]
-  // },
-  // {
-  //   path: '/goods',
-  //   component: Layout,
-  //   name: '商品管理',
-  //   meta: {
-  //     title: '商品管理',
-  //     tree: 'tree',
-  //     icon: 's-order'
-  //   },
-  //   children: [{
-  //     path: 'index',
-  //     name: '商品列表',
-  //     component: () => import('@/views/goods/index'),
-  //     meta: {
-  //       title: '商品列表',
-  //       icon: 'tree'
-  //     }
-  //   }
-  // ]
-  // },
-  // 404 page must be placed at the end !!!
   {
     path: '*',
     redirect: '/404',

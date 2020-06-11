@@ -11,7 +11,9 @@
 
       <el-table-column label="操作" align="center">
         <template scope="scope">
-          <el-button type="danger">删除</el-button>
+          <el-popconfirm title="确定删除这条数据?" @onConfirm="data_del(scope.row)">
+            <el-button type="danger">删除</el-button>
+          </el-popconfirm>
           <el-button type="primary" @click="show_update(scope.row)">编辑</el-button>
         </template>
       </el-table-column>
@@ -48,7 +50,7 @@
   </div>
 </template>
 <script>
-  import { category_add, category_list, category_update } from '@/api/web'
+  import { category_add, category_delete, category_list, category_update } from '@/api/web'
     export default {
         data() {
           return {
@@ -122,6 +124,17 @@
         page_change(data) {
           this.page = data
           this.get_list()
+        },
+        // 数据删除
+        data_del(data) {
+          category_delete(data.id).then(res => {
+            if (res.code === 0) {
+              this.$message.success('操作成功')
+              this.get_list()
+            } else {
+              this.$message.error(res.msg)
+            }
+          })
         }
       }
     }
