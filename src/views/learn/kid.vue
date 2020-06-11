@@ -15,6 +15,9 @@
         />
         <el-button type="primary" @click="search()">搜索</el-button>
 
+        <!--        <el-select v-model="temp.category.id" style="width: 140px" class="filter-item" @change="handleFilter">-->
+        <!--          <el-option v-for="item in listQuery.learn_cate" :key="item.id" :label="item.title" :value="item.id" />-->
+        <!--        </el-select>-->
       </p>
     </div>
 
@@ -38,26 +41,46 @@
         </template>
       </el-table-column>
 
-      <!--      <el-table-column label="视频" prop="video">-->
-      <!--        <div class="whole">-->
-      <!--          <video src="http://xkl.gzyczx.net/uploads/static/uploads/prop_video/1591683430.mp4" controls="controls"></video>-->
-      <!--        </div>-->
-      <!--      </el-table-column>-->
+      <el-table-column label="分类" prop="category">
+        <template slot-scope="{row}">
+          <span>{{ row.cate.title }}</span>
+        </template>
+      </el-table-column>
+
+      <el-table-column label="年级" prop="category">
+        <template slot-scope="{row}">
+          <span>{{ row.grade }}</span>
+        </template>
+      </el-table-column>
 
       <el-table-column label="封面图片" prop="type" align="center" width="200" :class-name="getSortClass('id')">
         <template slot-scope="{row}">
-          <el-image class="image" :src="row.image">
+          <el-image class="image" :src="row.images">
             <div slot="error" class="image-slot">
               暂未上传
             </div>
           </el-image>
         </template>
       </el-table-column>
-      <el-table-column label="视频时长" prop="type" align="center" width="160" :class-name="getSortClass('id')">
+
+      <el-table-column label="发布人" prop="type" align="center" width="160" :class-name="getSortClass('id')">
+        <template slot-scope="{row}">
+          <span>{{ row.author }}</span>
+        </template>
+      </el-table-column>
+
+      <el-table-column label="浏览量" prop="type" align="center" width="160" :class-name="getSortClass('id')">
+        <template slot-scope="{row}">
+          <span>{{ row.look_num }}</span>
+        </template>
+      </el-table-column>
+
+      <el-table-column label="视频时长" prop="type" align="center" width="180" :class-name="getSortClass('id')">
         <template slot-scope="{row}">
           <span>{{ row.len }}秒</span>
         </template>
       </el-table-column>
+
       <el-table-column label="状态" prop="type" align="center" width="160" :class-name="getSortClass('id')">
         <template slot-scope="{row}">
           <span v-if="row.status === 0">待转码</span>
@@ -66,16 +89,17 @@
           <span v-else-if="row.status === 3">转码失败</span>
         </template>
       </el-table-column>
+
       <el-table-column label="创建时间" prop="create_time" align="center" width="250" :class-name="getSortClass('id')">
         <template slot-scope="{row}">
           <span>{{ row.create_time }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="修改时间" prop="update_time" align="center" width="250" :class-name="getSortClass('id')">
-        <template slot-scope="{row}">
-          <span>{{ row.update_time }}</span>
-        </template>
-      </el-table-column>
+      <!--      <el-table-column label="修改时间" prop="update_time" align="center" width="250" :class-name="getSortClass('id')">-->
+      <!--        <template slot-scope="{row}">-->
+      <!--          <span>{{ row.update_time }}</span>-->
+      <!--        </template>-->
+      <!--      </el-table-column>-->
       <el-table-column label="操作" fixed="right" align="center" width="350" class-name="small-padding fixed-width">
         <template slot-scope="{row,$index}">
           <el-button type="success" size="mini" @click="play(row)">
@@ -97,8 +121,29 @@
     <!-- 弹窗页面   -->
     <el-dialog :title="textMap[dialogStatus]" width="500" :visible.sync="dialogFormVisible">
       <el-form ref="dataForm" :rules="rules" :model="temp" label-position="left" label-width="100px" style="padding:0 5px;margin-right:5px;margin-left:50px;">
-        <el-form-item label="视频标题" prop="title">
+        <el-form-item label="视频名称" prop="title">
           <el-input v-model="temp.title" />
+        </el-form-item>
+        <el-form-item label="视频分类" prop="category">
+          <el-select v-model="temp.category" style="width: 140px" class="filter-item">
+            <el-option v-for="item in learn_cate" :key="item.id" :label="item.title" :value="item.id" />
+          </el-select>
+        </el-form-item>
+        <el-form-item label="视频简介" prop="desc">
+          <el-input
+            v-model="temp.desc"
+            type="textarea"
+            :autosize="{ minRows: 2, maxRows: 5}"
+            placeholder="请输入内容"
+          />
+        </el-form-item>
+        <el-form-item label="发布人" prop="author">
+          <el-input v-model="temp.author" />
+        </el-form-item>
+        <el-form-item label="年级">
+          <el-select v-model="temp.grade" style="width: 140px" class="filter-item">
+            <el-option v-for="item in grade" :key="item.key" :label="item.key" :value="item.key" />
+          </el-select>
         </el-form-item>
         <el-form-item label="封面图片">
           <el-upload
@@ -109,9 +154,10 @@
             :on-change="changeImage"
             style="width: 200px; height: 200px"
           >
-            <img v-if="temp.image" style="width: 200px; height: 200px" :src="temp.image" class="avatar">
+            <img v-if="temp.images" style="width: 200px; height: 200px" :src="temp.images" class="avatar">
             <i v-else class="el-icon-plus avatar-uploader-icon" />
           </el-upload>
+          <div>默认截取视频的某一帧为封面，也可以自己上传</div>
         </el-form-item>
         <el-form-item label="上传视频">
           <el-upload
@@ -130,8 +176,8 @@
             <div slot="tip" class="el-upload__tip">只能上传一个视频文件</div>
           </el-upload>
         </el-form-item>
-        <el-form-item label="分类描述">
-          <el-input v-model="temp.desc" type="textarea" :autosize="{ minRows: 2 }" />
+        <el-form-item label="视频内容">
+          <el-input v-model="temp.content" type="textarea" :autosize="{ minRows: 2 }" />
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -153,13 +199,27 @@
 </template>
 
 <script>
-  import { prop } from '@/api/prop'
+  import { learn } from '@/api/learn'
   import Pagination from '@/components/Pagination'
+  const type = [
+    { key: 'all', name: '全部' },
+    { key: 'forum', name: '论坛' },
+    { key: 'goods', name: '商品分类' },
+    { key: 'learn', name: '学生课程' }
+  ]
+  const grade = [
+    { key: '小学' },
+    { key: '初中' },
+    { key: '高中' }
+  ]
   export default {
     components: { Pagination },
     data() {
       return {
+        type: type,
         videoRes: '',
+        grade: grade,
+        learn_cate: [],
         fileList: [{ name: '视频已上传', url: '' }],
         action: process.env.VUE_APP_BASE_API + '/v1/uploads/video',
         imgsrc: process.env.VUE_APP_BASE_API,
@@ -170,13 +230,16 @@
         listQuery: {
           page: 1,
           limit: 10,
-          keyword: ''
+          keyword: '',
+          type: '4'
         },
         dialogStatus: '',
         dialogFormVisible: false,
         playDialogFormVisible: false,
         rules: {
-          title: [{ required: true, message: '不能为空', trigger: 'change' }]
+          title: [{ required: true, message: '不能为空', trigger: 'change' }],
+          desc: [{ required: true, message: '不能为空', trigger: 'change' }],
+          author: [{ required: true, message: '不能为空', trigger: 'change' }]
         },
         temp: {
           id: undefined,
@@ -194,18 +257,31 @@
     },
     created() {
       this.getList()
+      this.getCate()
     },
     methods: {
       search() {
         this.getList()
       },
+      handleFilter() {
+        this.listQuery.page = 1
+        this.getList()
+      },
+      getCate() {
+        learn.cate().then(({ code, msg, data, count }) => {
+          this.learn_cate = data
+          // data.forEach(row => {
+          //   this.listQuery.learn_cate.push(row)
+          // })
+        })
+      },
       getList() {
         this.listLoading = false
         this.list = []
-        prop.video_list(this.listQuery.page, this.listQuery.limit, this.listQuery.keyword).then(({ code, msg, data, count }) => {
+        learn.list(this.listQuery.page, this.listQuery.limit, this.listQuery.keyword, this.listQuery.type).then(({ code, msg, data, count }) => {
           if (code === 0) {
             data.forEach(row => {
-              row.image = this.imgsrc + row.image
+              row.images = this.imgsrc + row.images
               row.video_url = this.imgsrc + row.video_url
               this.list.push(row)
             })
@@ -227,7 +303,7 @@
           id: undefined,
           title: '',
           desc: '',
-          image: '',
+          images: '',
           imageFile: null
         }
       },
@@ -269,33 +345,36 @@
               const data = new FormData()
               data.append('id', tempData.id)
               data.append('title', tempData.title)
+              data.append('category', tempData.category)
+              data.append('content', tempData.content)
+              data.append('grade', tempData.grade)
               if (that.videoRes === '') {
                 return that.$message.error('没有上传视频')
               }
               if (that.videoRes !== 'init') {
-                data.append('url', that.videoRes.url)
+                data.append('video', that.videoRes.url)
                 data.append('video_url', that.videoRes.video_url)
                 data.append('len', that.videoRes.len)
               }
               if (that.temp.imageFile != null) {
-                data.append('image', that.temp.imageFile)
+                data.append('images', that.temp.imageFile)
               } else {
                 if (that.videoRes !== 'init') {
-                  data.append('image', that.videoRes.image)
+                  data.append('images', that.videoRes.image)
                 }
               }
               data.append('desc', tempData.desc)
-              prop.video_edit(data).then(response => {
+              learn.edit(data).then(response => {
                 // const index = that.list.findIndex(v => v.id === that.temp.id)
                 // that.list.splice(index, 1, tempData)
-                  that.dialogFormVisible = false
-                  that.getList()
-                  that.$notify({
-                    title: 'Success',
-                    message: '修改成功',
-                    type: 'success',
-                    duration: 2000
-                  })
+                that.dialogFormVisible = false
+                that.getList()
+                that.$notify({
+                  title: 'Success',
+                  message: '修改成功',
+                  type: 'success',
+                  duration: 2000
+                })
               }).catch(error => {
                 console.log(error)
               })
@@ -310,22 +389,32 @@
             const data = new FormData()
             data.append('id', tempData.id)
             data.append('title', tempData.title)
+            data.append('author', tempData.author)
+            if (tempData.category === undefined) {
+              return this.$message.warning('请选择分类')
+            }
+            data.append('category', tempData.category)
+            data.append('content', tempData.content)
+            if (tempData.grade === undefined) {
+              return this.$message.warning('请选择年级')
+            }
+            data.append('grade', tempData.grade)
             if (this.videoRes === '') {
               return this.$message.error('没有上传视频')
             }
-            data.append('url', this.videoRes.url)
+            data.append('video', this.videoRes.url)
             data.append('video_url', this.videoRes.video_url)
             data.append('len', this.videoRes.len)
             if (this.temp.imageFile != null) {
-              data.append('image', this.temp.imageFile)
+              data.append('images', this.temp.imageFile)
             } else {
-              data.append('image', this.videoRes.image)
-              // this.temp.image = this.videoRes.image
+              data.append('images', this.videoRes.image)
             }
             data.append('desc', tempData.desc)
-            prop.video_add(data).then(() => {
-              this.dialogFormVisible = false
+            data.append('type', this.listQuery.type)
+            learn.add(data).then(() => {
               this.getList()
+              this.dialogFormVisible = false
               this.$notify({
                 title: 'Success',
                 message: '添加成功',
@@ -337,7 +426,7 @@
         })
       },
       handleDelete(row, index) {
-        prop.video_del(row.id).then(({ code, msg }) => {
+        learn.del(row.id).then(({ code, msg }) => {
           if (code === 0) {
             this.list.splice(index, 1)
             this.$notify({
@@ -389,7 +478,7 @@
         const that = this
         var reader = new FileReader()
         reader.onload = (e) => {
-          that.temp.image = e.target.result
+          that.temp.images = e.target.result
         }
         reader.readAsDataURL(file.raw)
       },

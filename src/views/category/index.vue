@@ -115,14 +115,14 @@
         <el-form-item label="分类描述">
           <!--          <tinymce v-model="temp.desc" height="300" />-->
           <!--          <quill-editor ref="QuillEditor" v-model="temp.desc" :options="quillOption" />-->
-          <editor-bar v-model="temp.desc" :is-clear="isClear" @change="change" />
-          <!--          <el-input-->
-          <!--            type="textarea"-->
-          <!--            :autosize="{ minRows: 2, maxRows: 5}"-->
-          <!--            placeholder="请输入内容"-->
-          <!--            style="font-size: 16px"-->
-          <!--            v-model="temp.desc">-->
-          <!--          </el-input>-->
+<!--          <editor-bar v-model="temp.desc" :is-clear="isClear" @change="change" />-->
+                    <el-input
+                      type="textarea"
+                      :autosize="{ minRows: 2, maxRows: 5}"
+                      placeholder="请输入内容"
+                      style="font-size: 16px"
+                      v-model="temp.desc">
+                    </el-input>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
