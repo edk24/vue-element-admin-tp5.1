@@ -412,10 +412,10 @@ export const constantRoutes = [{
     },
     children: [{
         path: 'index',
-        name: '用户反馈',
+        name: '意见反馈',
         component: () => import('@/views/feedback/index'),
         meta: {
-          title: '用户反馈',
+          title: '意见反馈',
           icon: 'tree'
         }
       }
