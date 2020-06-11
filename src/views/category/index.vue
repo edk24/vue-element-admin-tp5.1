@@ -40,7 +40,7 @@
             <span>{{ row.title }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="分类图片" prop="type" align="center" width="150" :class-name="getSortClass('id')">
+        <el-table-column label="分类图片" prop="type" align="center" width="150" style="height: 150px;" :class-name="getSortClass('id')">
           <template slot-scope="{row}">
             <el-image class="image" :src="row.image">
               <div slot="error" class="image-slot">
@@ -81,7 +81,7 @@
             </el-popconfirm>
           </template>
         </el-table-column>
-      </el-table-column></el-table>
+      </el-table>
 
     <!-- 分页 -->
     <pagination v-show="total>0" :total="total" :page.sync="listQuery.page" :limit.sync="listQuery.limit" @pagination="getList" />

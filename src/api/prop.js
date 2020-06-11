@@ -14,6 +14,19 @@ const prop = {
       method: 'post',
       data
     })
+  },
+  video_add: function(data) {
+    return request({
+      url: '/v1/prop_video/upload_prop_video',
+      method: 'post',
+      data
+    })
+  },
+  video_del: function(id) {
+    return request({
+      url: '/v1/prop_video/del?id=' + id,
+      method: 'get'
+    })
   }
 }
 
