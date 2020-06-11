@@ -301,7 +301,7 @@
               })
             }
           })
-        }, 1500)
+        }, 1200)
       },
       createData() {
         this.$refs['dataForm'].validate((valid) => {
