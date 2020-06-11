@@ -56,6 +56,13 @@ export function category_list(page, limit) {
   })
 }
 
+// 获取产品分类列表 关键字查询所有
+export function category_all(keyword = '') {
+  return request({
+    url: '/v1/Web/TypeAll?keyword=' + keyword
+  })
+}
+
 // 产品分类添加
 export function category_add(data) {
   return request({
