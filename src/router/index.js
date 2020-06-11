@@ -411,10 +411,10 @@ export const constantRoutes = [{
     },
     children: [{
         path: 'index',
-        name: '论坛管理',
+        name: '论坛列表',
         component: () => import('@/views/forum/index'),
         meta: {
-          title: '论坛管理',
+          title: '论坛列表',
           icon: 'tree'
         }
       }
@@ -468,40 +468,43 @@ export const constantRoutes = [{
     component: Layout,
     name: '官网管理',
     meta: {
-      title: '权限管理',
+      title: '官网管理',
       tree: 'tree',
       icon: 'user'
     },
     children: [{
-      path: 'user',
-      name: '管理员管理',
-      component: () => import('@/views/admin/index'),
+      path: 'web_banner',
+      name: '轮播图管理',
+      component: () => import('@/views/web/banner'),
       meta: {
-        title: '管理员管理',
+        title: '轮播图管理',
         icon: 'tree'
       }
-    },
-      {
-        path: 'index',
-        name: '角色管理',
-        component: () => import('@/views/admin/role'),
-        meta: {
-          title: '角色管理',
-          icon: 'tree'
-        }
-      },
-      {
-        path: 'permission',
-        name: '菜单管理',
-        component: () => import('@/views/admin/permission'),
-        meta: {
-          title: '菜单管理',
-          icon: 'tree'
-        }
+    }, {
+      path: 'web_about',
+      name: '关于我们',
+      component: () => import('@/views/web/about'),
+      meta: {
+        title: '关于我们',
+        icon: 'tree'
       }
-      // 不展示  一般
-      // { path: 'permission', name: '权限管理', component: () => import('@/views/admin/permission'), meta: { title: '权限管理', icon: 'tree' }}
-    ]
+    }, {
+      path: 'web_category',
+      name: '产品分类',
+      component: () => import('@/views/web/category'),
+      meta: {
+        title: '产品分类',
+        icon: 'tree'
+      }
+    }, {
+      path: 'web_goods',
+      name: '产品管理',
+      component: () => import('@/views/web/goods'),
+      meta: {
+        title: '产品管理',
+        icon: 'tree'
+      }
+    }]
   },
 
   // {
