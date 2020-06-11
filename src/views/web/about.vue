@@ -26,13 +26,78 @@
             </el-table-column>
           </el-table>
         </el-tab-pane>
-        <el-tab-pane label="产品中心" name="goods" />
-        <el-tab-pane label="新闻动态" name="news" />
-        <el-tab-pane label="工程案例" name="cases" />
-        <el-tab-pane label="招商加盟" name="shop" />
-        <el-tab-pane label="服务支持" name="server" />
-
-        <el-tab-pane label="联系我们" name="contact" />
+        <el-tab-pane label="招商加盟" name="shop" >
+          <el-table :data="data" stripe style="width: 100%">
+            <el-table-column type="index" label="序号" align="center" width="80" />
+            <el-table-column prop="title" label="标题" width="200" />
+            <el-table-column>
+              <template slot-scope="scope">
+                <div>
+                  <div v-if="scope.row.type !== 'img'">
+                    {{ scope.row.value }}
+                  </div>
+                  <el-image v-else style="width: 300px" :src="scope.row.value" fit="fill" />
+                </div>
+              </template>
+            </el-table-column>
+            <el-table-column prop="note" label="备注" />
+            <el-table-column label="管理" width="200">
+              <template slot-scope="scope">
+                <div>
+                  <el-button size="small" type="primary" @click="data_update_popup(scope.row)">编辑</el-button>
+                </div>
+              </template>
+            </el-table-column>
+          </el-table>
+        </el-tab-pane>
+        <el-tab-pane label="服务支持" name="server" >
+          <el-table :data="data" stripe style="width: 100%">
+            <el-table-column type="index" label="序号" align="center" width="80" />
+            <el-table-column prop="title" label="标题" width="200" />
+            <el-table-column>
+              <template slot-scope="scope">
+                <div>
+                  <div v-if="scope.row.type !== 'img'">
+                    {{ scope.row.value }}
+                  </div>
+                  <el-image v-else style="width: 300px" :src="scope.row.value" fit="fill" />
+                </div>
+              </template>
+            </el-table-column>
+            <el-table-column prop="note" label="备注" />
+            <el-table-column label="管理" width="200">
+              <template slot-scope="scope">
+                <div>
+                  <el-button size="small" type="primary" @click="data_update_popup(scope.row)">编辑</el-button>
+                </div>
+              </template>
+            </el-table-column>
+          </el-table>
+        </el-tab-pane>
+        <el-tab-pane label="联系我们" name="contact" >
+          <el-table :data="data" stripe style="width: 100%">
+            <el-table-column type="index" label="序号" align="center" width="80" />
+            <el-table-column prop="title" label="标题" width="200" />
+            <el-table-column>
+              <template slot-scope="scope">
+                <div>
+                  <div v-if="scope.row.type !== 'img'">
+                    {{ scope.row.value }}
+                  </div>
+                  <el-image v-else style="width: 300px" :src="scope.row.value" fit="fill" />
+                </div>
+              </template>
+            </el-table-column>
+            <el-table-column prop="note" label="备注" />
+            <el-table-column label="管理" width="200">
+              <template slot-scope="scope">
+                <div>
+                  <el-button size="small" type="primary" @click="data_update_popup(scope.row)">编辑</el-button>
+                </div>
+              </template>
+            </el-table-column>
+          </el-table>
+        </el-tab-pane>
       </el-tabs>
     </template>
 
@@ -117,7 +182,7 @@
       methods: {
         // 获取数据列表
         get_list() {
-          about().then(res => {
+          about(this.activeName).then(res => {
             res.data.forEach(data => {
               if (data.type === 'img') {
                 data.value = this.http + data.value
@@ -193,8 +258,9 @@
           reader.readAsDataURL(file.raw)
         },
 
-        handleClick(tab, event) {
-          console.log(this.activeName)
+        // 选项卡改变事件
+        handleClick() {
+          this.get_list()
         }
       }
     }
