@@ -100,7 +100,7 @@
         <el-form-item label="视频标题" prop="title">
           <el-input v-model="temp.title"/>
         </el-form-item>
-        <el-form-item label="分类图片">
+        <el-form-item label="封面图片">
           <el-upload
             :show-file-list="false"
             :multiple="false"
@@ -114,29 +114,20 @@
           </el-upload>
         </el-form-item>
         <el-form-item label="上传视频" >
-          <el-upload class="avatar-uploader"
-                     action="上传地址"
-                     :data="{FoldPath:'上传目录',SecretKey:'安全验证'}"
-                     :on-progress="uploadVideoProcess"
-                     :on-success="handleVideoSuccess"
-                      :before-upload="beforeUploadVideo"
-                     v-bind:show-file-list="false">
-            <video v-if="videoForm.showVideoPath !='' && !videoFlag"
-                   :src="videoForm.showVideoPath"
-                   class="avatar video-avatar"
-                   controls="controls">
-              您的浏览器不支持视频播放
-            </video>
-            <i v-else-if="videoForm.showVideoPath =='' && !videoFlag"
-               class="el-icon-plus avatar-uploader-icon"></i>
-            <el-progress v-if="videoFlag == true"
-                         type="circle"
-                         v-bind:percentage="videoUploadPercent"
-                         style="margin-top:7px;"></el-progress>
-          </el-upload>
+          <el-input type="file"/>
+<!--          <el-upload-->
+<!--            class="upload-demo"-->
+<!--            drag-->
+<!--            action="post"-->
+<!--            name="video"-->
+<!--            multiple>-->
+<!--            <i class="el-icon-upload"></i>-->
+<!--            <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>-->
+<!--            <div class="el-upload__tip" slot="tip">只能上传jpg/png文件，且不超过500kb</div>-->
+<!--          </el-upload>-->
         </el-form-item>
         <el-form-item label="分类描述">
-
+          <el-input type="textarea" autosize v-model="temp.title"/>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -178,7 +169,7 @@
         dialogFormVisible: false,
         playDialogFormVisible: false,
         rules: {
-          title: [{ required: true, message: '分类名称不能为空', trigger: 'change' }],
+          title: [{ required: true, message: '不能为空', trigger: 'change' }],
         },
         temp: {
           imageFile: '',
@@ -265,11 +256,11 @@
             const data = new FormData()
             data.append('id', tempData.id)
             data.append('title', tempData.title)
-            data.append('type', tempData.type)
             if (this.temp.imageFile != null) {
               data.append('image', this.temp.imageFile)
             }
-            category.edit(data).then(response => {
+            data.append('desc', tempData.desc)
+            prop.video_edit(data).then(response => {
               const index = this.list.findIndex(v => v.id === this.temp.id)
               this.list.splice(index, 1, tempData)
               this.dialogFormVisible = false
