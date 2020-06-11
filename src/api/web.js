@@ -34,9 +34,9 @@ export function banner_delete(id) {
 }
 
 // 关于我们数据列表
-export function about() {
+export function about(keyword) {
   return request({
-    url: '/v1/web/about'
+    url: '/v1/web/about?keyword=' + keyword
   })
 }
 

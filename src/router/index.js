@@ -299,6 +299,28 @@ export const constantRoutes = [{
       }
     ]
   },
+    // 学习课程
+  {
+    path: '/learn',
+    component: Layout,
+    name: '学习课程',
+    alwaysShow: true,
+    meta: {
+      title: '学习课程',
+      icon: 'table'
+    },
+    children: [{
+      path: 'kid',
+      name: '学生课程',
+      component: () => import('@/views/learn/kid'),
+      meta: {
+        title: '学生课程',
+        icon: 'tree'
+      }
+    }
+    ]
+  },
+
   // 平台设置  --看视频时间和积分设置--新用户注册赠送积分设置--每日最高积分设置--消费最低积分设置
   {
     path: '/platform',
