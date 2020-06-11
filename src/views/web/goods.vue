@@ -55,7 +55,7 @@
     </div>
     <!--    产品添加、修改弹出-->
     <div>
-      <el-dialog :visible.sync="FormShow" title="添加数据">
+      <el-dialog  :visible.sync="FormShow" title="添加数据">
         <el-form ref="form" :model="DataForm" label-width="80px">
           <el-form-item label="分类搜索">
             <el-input v-model="DataForm.keyword" placeholder="输入关键字进行搜索" autocomplete="off" @input="get_category" />

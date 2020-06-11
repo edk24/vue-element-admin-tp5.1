@@ -506,12 +506,29 @@ export const constantRoutes = [{
       }
     }, {
       path: 'web_news',
-      name: '产品管理',
-      component: () => import('@/views/web/news'),
+      name: '新闻管理',
+      component: () => import('@/views/web/news_type'),
       meta: {
         title: '新闻管理',
         icon: 'tree'
-      }
+      },
+      children: [{
+        path: 'news_type',
+        name: '新闻分类',
+        component: () => import('@/views/web/news_type'),
+        meta: {
+          title: '新闻分类',
+          icon: 'tree'
+        }
+      },{
+        path: 'web_newslist',
+        name: '新闻列表',
+        component: () => import('@/views/web/news'),
+        meta: {
+          title: '新闻列表',
+          icon: 'tree'
+        }
+      }]
     }]
   },
   {

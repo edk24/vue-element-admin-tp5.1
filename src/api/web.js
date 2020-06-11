@@ -118,3 +118,21 @@ export function goods_delete(id) {
     url: api + 'GoodsDelete?id=' + id
   })
 }
+
+// 新闻分类添加
+export function news_type_add(data) {
+  return request({
+    url: '/v1/Web/NewsTypeAdd',
+    method: 'post',
+    data
+  })
+}
+
+// 新闻分类列表
+export function news_type(data) {
+  return request({
+    url: '/v1/Web/NewsTypeList',
+    method: 'get',
+    data
+  })
+}
