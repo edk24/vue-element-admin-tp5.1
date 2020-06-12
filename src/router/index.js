@@ -317,6 +317,15 @@ export const constantRoutes = [{
         title: '学生课程',
         icon: 'tree'
       }
+    },
+      {
+      path: 'parent',
+      name: '家长课程',
+      component: () => import('@/views/learn/parent'),
+      meta: {
+        title: '家长课程',
+        icon: 'tree'
+      }
     }
     ]
   },
