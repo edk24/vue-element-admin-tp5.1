@@ -136,3 +136,22 @@ export function news_type(data) {
     data
   })
 }
+
+
+//新闻分类编辑
+export function news_type_update(data) {
+  return request({
+    url: '/v1/Web/NewsTypeUpdate',
+    method: 'post',
+    data
+  })
+}
+
+//新闻分类删除
+export function news_type_delete(data) {
+  return request({
+    url: '/v1/Web/NewsTypeDelete',
+    method: 'get',
+    data
+  })
+}
