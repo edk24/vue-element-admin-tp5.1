@@ -34,9 +34,9 @@ export function banner_delete(id) {
 }
 
 // 关于我们数据列表
-export function about() {
+export function about(keyword) {
   return request({
-    url: '/v1/web/about'
+    url: '/v1/web/about?keyword=' + keyword
   })
 }
 
@@ -116,5 +116,42 @@ export function goods_update(data) {
 export function goods_delete(id) {
   return request({
     url: api + 'GoodsDelete?id=' + id
+  })
+}
+
+// 新闻分类添加
+export function news_type_add(data) {
+  return request({
+    url: '/v1/Web/NewsTypeAdd',
+    method: 'post',
+    data
+  })
+}
+
+// 新闻分类列表
+export function news_type(data) {
+  return request({
+    url: '/v1/Web/NewsTypeList',
+    method: 'get',
+    data
+  })
+}
+
+
+//新闻分类编辑
+export function news_type_update(data) {
+  return request({
+    url: '/v1/Web/NewsTypeUpdate',
+    method: 'post',
+    data
+  })
+}
+
+//新闻分类删除
+export function news_type_delete(data) {
+  return request({
+    url: '/v1/Web/NewsTypeDelete',
+    method: 'get',
+    data
   })
 }
