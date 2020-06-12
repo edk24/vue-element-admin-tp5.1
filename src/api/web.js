@@ -137,8 +137,14 @@ export function news_type(data) {
   })
 }
 
+// 关键字查询所有分类
+export function news_type_all(keyword) {
+  return request({
+    url: api + 'NewsTypeAll?keyword=' + keyword
+  })
+}
 
-//新闻分类编辑
+// 新闻分类编辑
 export function news_type_update(data) {
   return request({
     url: '/v1/Web/NewsTypeUpdate',
@@ -147,11 +153,57 @@ export function news_type_update(data) {
   })
 }
 
-//新闻分类删除
+// 新闻分类删除
 export function news_type_delete(data) {
   return request({
     url: '/v1/Web/NewsTypeDelete',
     method: 'get',
     data
+  })
+}
+
+// 新闻列表
+export function news_list(page, limit, keyword = '') {
+  return request({
+    url: api + 'NewsList?page=' + page + '&limit=' + limit + '&keyword=' + keyword
+  })
+}
+
+// 新闻添加
+export function news_add(data) {
+  return request({
+    url: api + 'NewsAdd',
+    method: 'post',
+    data
+  })
+}
+
+// 新闻修改
+export function news_update(data) {
+  return request({
+    url: api + 'NewsUpdate',
+    method: 'post',
+    data
+  })
+}
+
+// 新闻删除
+export function news_delete(id) {
+  return request({
+    url: api + 'NewsDelete?id=' + id
+  })
+}
+
+// 留言列表
+export function shop_list(page, limit, type = -1) {
+  return request({
+    url: api + 'ShopList?page=' + page + '&limit=' + limit + '&type=' + type
+  })
+}
+
+// 留言回访
+export function shop_audit(id) {
+  return request({
+    url: api + 'ShopAudit?id=' + id
   })
 }

@@ -527,30 +527,29 @@ export const constantRoutes = [{
         icon: 'tree'
       }
     }, {
-      path: 'web_news',
-      name: '新闻管理',
+      path: 'web_news_type',
+      name: '新闻分类',
       component: () => import('@/views/web/news_type'),
       meta: {
-        title: '新闻管理',
+        title: '新闻分类',
         icon: 'tree'
-      },
-      children: [{
-        path: 'news_type',
-        name: '新闻分类',
-        component: () => import('@/views/web/news_type'),
-        meta: {
-          title: '新闻分类',
-          icon: 'tree'
-        }
-      },{
-        path: 'web_newslist',
-        name: '新闻列表',
-        component: () => import('@/views/web/news'),
-        meta: {
-          title: '新闻列表',
-          icon: 'tree'
-        }
-      }]
+      }
+    }, {
+      path: 'web_news_list',
+      name: '新闻列表',
+      component: () => import('@/views/web/news'),
+      meta: {
+        title: '新闻列表',
+        icon: 'tree'
+      }
+    }, {
+      path: 'web_shop',
+      name: '留言管理',
+      component: () => import('@/views/web/shop'),
+      meta: {
+        title: '留言管理',
+        icon: 'tree'
+      }
     }]
   },
   {

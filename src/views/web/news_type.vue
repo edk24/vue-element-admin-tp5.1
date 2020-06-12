@@ -1,6 +1,6 @@
 <template>
   <div class="app-container">
-    <el-button type="primary" @click="show_addnews=true">添加新闻</el-button>
+    <el-button type="primary" @click="show_addnews=true">添加</el-button>
     <el-table
       :data="tableData"
       style="width: 100%"
@@ -28,7 +28,9 @@
       >
         <template slot-scope="scope">
           <el-button @click="update_news_type(scope.row)">编辑</el-button>
-          <el-button type="danger" @click="delete_news_type(scope.row)">删除</el-button>
+          <el-popconfirm title="确定删除这条数据?" @onConfirm="delete_news_type(scope.row)">
+            <el-button slot="reference" size="small" type="danger">删除</el-button>
+          </el-popconfirm>
         </template>
 
       </el-table-column>
@@ -53,9 +55,7 @@
 
 <script>
   import { news_type_add, news_type, news_type_update, news_type_delete } from '@/api/web'
-  // import EditorBar from '@/components/wangEnduit'
   export default {
-    // components: { EditorBar },
     data() {
       return {
         form: {
