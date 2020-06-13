@@ -172,6 +172,7 @@ export default {
       this.formLabelAlign = { id: null }
       this.dialogFormVisible = true
     },
+
     // 删除企业
     del(item) {
       company_del(item.id).then(({ code, msg }) => {
