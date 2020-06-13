@@ -52,7 +52,6 @@
     </div>
   </div>
 </template>
-
 <script>
   import EditorBar from '@/components/wangEnduit'
   import { case_add, case_delete, case_list, case_update } from '@/api/web'
@@ -143,7 +142,3 @@
       }
     }
 </script>
-
-<style scoped>
-
-</style>
