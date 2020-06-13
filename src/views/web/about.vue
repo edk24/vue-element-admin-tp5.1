@@ -111,7 +111,7 @@
           <el-input v-model="UpdateForm.value" type="textarea" autocomplete="off" />
         </el-form-item>
 
-        <el-form-item v-else label="图片:">
+        <el-form-item v-if="UpdateForm.type === 'img'" label="图片:">
           <el-upload
             :show-file-list="false"
             :multiple="false"
@@ -136,12 +136,7 @@
         <el-form-item v-if="UpdateForm.type === 'input'" label="内容">
           <el-input v-model="UpdateForm.value" autocomplete="off" />
         </el-form-item>
-
-        <el-form-item v-if="UpdateForm.type === 'text'" label="内容">
-          <el-input v-model="UpdateForm.value" type="textarea" autocomplete="off" />
-        </el-form-item>
-
-        <el-form-item v-else label="图片:">
+        <el-form-item v-if="UpdateForm.type === 'img'" label="图片:">
           <el-upload
             :show-file-list="false"
             :multiple="false"
