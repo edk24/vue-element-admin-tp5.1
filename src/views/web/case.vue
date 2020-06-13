@@ -81,9 +81,6 @@
         // 数据提交
         data_submit() {
           const formData = new FormData()
-          if (!this.DataForm.id) {
-            this.DataForm = {}
-          }
           if (!this.DataForm.title) {
             this.$message.error('请输入标题')
             return

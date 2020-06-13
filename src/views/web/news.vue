@@ -87,7 +87,6 @@
     </div>
   </div>
 </template>
-
 <script>
   import { news_add, news_delete, news_list, news_type_all, news_update } from '@/api/web'
   import EditorBar from '@/components/wangEnduit'
