@@ -559,6 +559,14 @@ export const constantRoutes = [{
         title: '留言管理',
         icon: 'tree'
       }
+    }, {
+      path: 'web_case',
+      name: '案例管理',
+      component: () => import('@/views/web/case'),
+      meta: {
+        title: '案例管理',
+        icon: 'tree'
+      }
     }]
   },
   {

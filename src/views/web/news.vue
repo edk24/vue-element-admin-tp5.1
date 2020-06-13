@@ -31,9 +31,7 @@
           prop="create_time"
           label="创建时间"
         />
-        <el-table-column
-          label="操作"
-        >
+        <el-table-column label="操作">
           <template slot-scope="scope">
             <el-button @click="update_data(scope.row)">编辑</el-button>
             <el-popconfirm title="确定删除这条数据?" @onConfirm="delete_data(scope.row)">
@@ -56,7 +54,7 @@
     <!--    添加修改表单-->
     <div>
       <el-dialog :visible.sync="FormShow">
-        <el-form ref="form" :model="DataForm">
+        <el-form ref="form" :model="DataForm" label-width="80px">
           <el-form-item label="搜索分类">
             <el-input v-model="DataForm.keyword" @input="get_type" />
           </el-form-item>

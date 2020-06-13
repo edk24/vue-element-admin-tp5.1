@@ -207,3 +207,35 @@ export function shop_audit(id) {
     url: api + 'ShopAudit?id=' + id
   })
 }
+
+// 案例添加
+export function case_add(data) {
+  return request({
+    url: api + 'CaseAdd',
+    method: 'post',
+    data
+  })
+}
+
+// 案例列表
+export function case_list(page, limit, keyword = '') {
+  return request({
+    url: api + 'CaseList?page=' + page + '&limit=' + limit + '&keyword=' + keyword
+  })
+}
+
+// 案例修改
+export function case_update(data) {
+  return request({
+    url: api + 'CaseUpdate',
+    method: 'post',
+    data
+  })
+}
+
+// 案例删除
+export function case_delete(id) {
+  return request({
+    url: api + 'CaseDelete?id=' + id
+  })
+}
