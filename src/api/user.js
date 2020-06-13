@@ -113,3 +113,10 @@ export function bank_del(id) {
     url: '/v1/bank/del?' + qs.stringify({ id })
   })
 }
+
+// 用户搜索, 每次拉取25个
+export function user_search(keyword) {
+  return request({
+    url: 'v1/user/list?keyword=' + keyword
+  })
+}
