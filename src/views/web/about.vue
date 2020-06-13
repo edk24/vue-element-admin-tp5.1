@@ -26,7 +26,7 @@
             </el-table-column>
           </el-table>
         </el-tab-pane>
-        <el-tab-pane label="招商加盟" name="shop" >
+        <el-tab-pane label="招商加盟" name="shop">
           <el-table :data="data" stripe style="width: 100%">
             <el-table-column type="index" label="序号" align="center" width="80" />
             <el-table-column prop="title" label="标题" width="200" />
@@ -50,7 +50,7 @@
             </el-table-column>
           </el-table>
         </el-tab-pane>
-        <el-tab-pane label="服务支持" name="server" >
+        <el-tab-pane label="服务支持" name="server">
           <el-table :data="data" stripe style="width: 100%">
             <el-table-column type="index" label="序号" align="center" width="80" />
             <el-table-column prop="title" label="标题" width="200" />
@@ -74,7 +74,7 @@
             </el-table-column>
           </el-table>
         </el-tab-pane>
-        <el-tab-pane label="联系我们" name="contact" >
+        <el-tab-pane label="联系我们" name="contact">
           <el-table :data="data" stripe style="width: 100%">
             <el-table-column type="index" label="序号" align="center" width="80" />
             <el-table-column prop="title" label="标题" width="200" />
@@ -102,7 +102,7 @@
     </template>
 
     <el-dialog title="信息修改" :visible.sync="UpdateFormShow">
-      <el-form :model="UpdateForm">
+      <el-form ref="form" :model="UpdateForm" label-width="80px">
         <el-form-item v-if="UpdateForm.type === 'input'" label="内容">
           <el-input v-model="UpdateForm.value" autocomplete="off" />
         </el-form-item>
@@ -111,7 +111,7 @@
           <el-input v-model="UpdateForm.value" type="textarea" autocomplete="off" />
         </el-form-item>
 
-        <el-form-item v-else label="图片:">
+        <el-form-item v-if="UpdateForm.type === 'img'" label="图片:">
           <el-upload
             :show-file-list="false"
             :multiple="false"
@@ -132,16 +132,11 @@
     </el-dialog>
 
     <el-dialog title="图片修改" :visible.sync="ImageFormShow">
-      <el-form :model="UpdateForm">
+      <el-form ref="form" :model="UpdateForm" label-width="80px">
         <el-form-item v-if="UpdateForm.type === 'input'" label="内容">
           <el-input v-model="UpdateForm.value" autocomplete="off" />
         </el-form-item>
-
-        <el-form-item v-if="UpdateForm.type === 'text'" label="内容">
-          <el-input v-model="UpdateForm.value" type="textarea" autocomplete="off" />
-        </el-form-item>
-
-        <el-form-item v-else label="图片:">
+        <el-form-item v-if="UpdateForm.type === 'img'" label="图片:">
           <el-upload
             :show-file-list="false"
             :multiple="false"

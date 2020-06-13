@@ -513,10 +513,10 @@ export const constantRoutes = [{
       }
     }, {
       path: 'web_about',
-      name: '关于我们',
+      name: '平台设置',
       component: () => import('@/views/web/about'),
       meta: {
-        title: '关于我们',
+        title: '平台设置',
         icon: 'tree'
       }
     }, {
@@ -557,6 +557,14 @@ export const constantRoutes = [{
       component: () => import('@/views/web/shop'),
       meta: {
         title: '留言管理',
+        icon: 'tree'
+      }
+    }, {
+      path: 'web_case',
+      name: '案例管理',
+      component: () => import('@/views/web/case'),
+      meta: {
+        title: '案例管理',
         icon: 'tree'
       }
     }]
