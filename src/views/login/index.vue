@@ -49,7 +49,6 @@
 
 <script>
 import { validUsername } from '@/utils/validate'
-import md5 from '@/utils/md5.js'
 export default {
   name: 'Login',
   data() {
@@ -70,7 +69,7 @@ export default {
     return {
       loginForm: {
         phone: '18230771271',
-        password: '4297f44b13955235245b2497399d7a93'
+        password: '123123'
       },
       // md5用法  					password:md5.hex_md5(this.passwd),
       loginRules: {

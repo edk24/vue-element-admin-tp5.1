@@ -7,7 +7,7 @@ export function login(data) {
     url: '/v1/user/login',
     method: 'post',
     data: qs.stringify(data)
-  })
+})
 }
 
 // 获取用户信息
@@ -111,5 +111,12 @@ export function bank_status(data) {
 export function bank_del(id) {
   return request({
     url: '/v1/bank/del?' + qs.stringify({ id })
+  })
+}
+
+// 用户搜索, 每次拉取25个
+export function user_search(keyword) {
+  return request({
+    url: 'v1/user/list?keyword=' + keyword
   })
 }

@@ -123,6 +123,15 @@ export const constantRoutes = [{
           title: '银行卡审核',
           icon: 'tree'
         }
+      },
+      {
+        path: 'feedback',
+        name: '意见反馈',
+        component: () => import('@/views/user/feedback'),
+        meta: {
+          title: '意见反馈',
+          icon: 'tree'
+        }
       }
     ]
   },
@@ -299,6 +308,37 @@ export const constantRoutes = [{
       }
     ]
   },
+    // 学习课程
+  {
+    path: '/learn',
+    component: Layout,
+    name: '学习课程',
+    alwaysShow: true,
+    meta: {
+      title: '学习课程',
+      icon: 'table'
+    },
+    children: [{
+      path: 'kid',
+      name: '学生课程',
+      component: () => import('@/views/learn/kid'),
+      meta: {
+        title: '学生课程',
+        icon: 'tree'
+      }
+    },
+      {
+      path: 'parent',
+      name: '家长课程',
+      component: () => import('@/views/learn/parent'),
+      meta: {
+        title: '家长课程',
+        icon: 'tree'
+      }
+    }
+    ]
+  },
+
   // 平台设置  --看视频时间和积分设置--新用户注册赠送积分设置--每日最高积分设置--消费最低积分设置
   {
     path: '/platform',
@@ -378,27 +418,31 @@ export const constantRoutes = [{
       }
     ]
   },
+
+    // 优惠券
+
+
   // 反馈管理  --
-  {
-    path: '/feedback',
-    component: Layout,
-    name: '用户反馈',
-    alwaysShow: true,
-    meta: {
-      title: '用户反馈',
-      icon: 'table'
-    },
-    children: [{
-        path: 'index',
-        name: '用户反馈',
-        component: () => import('@/views/feedback/index'),
-        meta: {
-          title: '用户反馈',
-          icon: 'tree'
-        }
-      }
-    ]
-  },
+  // {
+  //   path: '/feedback',
+  //   component: Layout,
+  //   name: '用户反馈',
+  //   alwaysShow: true,
+  //   meta: {
+  //     title: '用户反馈',
+  //     icon: 'table'
+  //   },
+  //   children: [{
+  //       path: 'index',
+  //       name: '意见反馈',
+  //       component: () => import('@/views/feedback/index'),
+  //       meta: {
+  //         title: '意见反馈',
+  //         icon: 'tree'
+  //       }
+  //     }
+  //   ]
+  // },
   // 论坛管理  --
   {
     path: '/forum',
@@ -468,150 +512,76 @@ export const constantRoutes = [{
     component: Layout,
     name: '官网管理',
     meta: {
-      title: '权限管理',
+      title: '官网管理',
       tree: 'tree',
       icon: 'user'
     },
     children: [{
-      path: 'user',
-      name: '管理员管理',
-      component: () => import('@/views/admin/index'),
+      path: 'web_banner',
+      name: '轮播图管理',
+      component: () => import('@/views/web/banner'),
       meta: {
-        title: '管理员管理',
+        title: '轮播图管理',
         icon: 'tree'
       }
-    },
-      {
-        path: 'index',
-        name: '角色管理',
-        component: () => import('@/views/admin/role'),
-        meta: {
-          title: '角色管理',
-          icon: 'tree'
-        }
-      },
-      {
-        path: 'permission',
-        name: '菜单管理',
-        component: () => import('@/views/admin/permission'),
-        meta: {
-          title: '菜单管理',
-          icon: 'tree'
-        }
+    }, {
+      path: 'web_about',
+      name: '平台设置',
+      component: () => import('@/views/web/about'),
+      meta: {
+        title: '平台设置',
+        icon: 'tree'
       }
-      // 不展示  一般
-      // { path: 'permission', name: '权限管理', component: () => import('@/views/admin/permission'), meta: { title: '权限管理', icon: 'tree' }}
-    ]
+    }, {
+      path: 'web_category',
+      name: '产品分类',
+      component: () => import('@/views/web/category'),
+      meta: {
+        title: '产品分类',
+        icon: 'tree'
+      }
+    }, {
+      path: 'web_goods',
+      name: '产品管理',
+      component: () => import('@/views/web/goods'),
+      meta: {
+        title: '产品管理',
+        icon: 'tree'
+      }
+    }, {
+      path: 'web_news_type',
+      name: '新闻分类',
+      component: () => import('@/views/web/news_type'),
+      meta: {
+        title: '新闻分类',
+        icon: 'tree'
+      }
+    }, {
+      path: 'web_news_list',
+      name: '新闻列表',
+      component: () => import('@/views/web/news'),
+      meta: {
+        title: '新闻列表',
+        icon: 'tree'
+      }
+    }, {
+      path: 'web_shop',
+      name: '留言管理',
+      component: () => import('@/views/web/shop'),
+      meta: {
+        title: '留言管理',
+        icon: 'tree'
+      }
+    }, {
+      path: 'web_case',
+      name: '案例管理',
+      component: () => import('@/views/web/case'),
+      meta: {
+        title: '案例管理',
+        icon: 'tree'
+      }
+    }]
   },
-
-  // {
-  //   path: '/system',
-  //   component: Layout,
-  //   name: '系统管理',
-  //   meta: {
-  //     title: '系统管理',
-  //     tree: 'tree',
-  //     icon: 'component'
-  //   },
-  //   children: [{
-  //       path: 'setting',
-  //       name: '系统设置',
-  //       component: () => import('@/views/admin/index'),
-  //       meta: {
-  //         title: '系统设置',
-  //         icon: 'tree'
-  //       }
-  //     },
-  //     {
-  //       path: 'feedback',
-  //       name: '意见反馈',
-  //       component: () => import('@/views/system/feedback'),
-  //       meta: {
-  //         title: '意见反馈',
-  //         icon: 'tree'
-  //       }
-  //     },
-  //     {
-  //       path: 'kefu',
-  //       name: '在线客服',
-  //       component: () => import('@/views/admin/index'),
-  //       meta: {
-  //         title: '在线客服',
-  //         icon: 'tree'
-  //       }
-  //     }
-  //   ]
-  // },
-  // {
-  //   path: '/tender',
-  //   component: Layout,
-  //   name: '任务管理',
-  //   meta: { title: '任务管理', tree: 'tree', icon: 's-order' },
-  //   children: [
-  //     { path: 'index', name: '招标任务列表', component: () => import('@/views/tender/index'), meta: { title: '招标任务列表', icon: 'tree' }},
-  //     { path: 'back', name: '待审核任务', component: () => import('@/views/tender/index'), meta: { title: '待审核任务', icon: 'tree' }}
-  //   ]
-  // },
-
-  // {
-  //   path: '/task',
-  //   component: Layout,
-  //   name: '需求管理',
-  //   meta: {
-  //     title: '需求管理',
-  //     tree: 'tree',
-  //     icon: 's-order'
-  //   },
-  //   children: [{
-  //       path: 'bidding',
-  //       name: 'bidding',
-  //       component: () => import('@/views/task/bidding'),
-  //       meta: {
-  //         title: '竞标列表',
-  //         icon: 'tree'
-  //       }
-  //     },
-  //     {
-  //       path: 'audit',
-  //       name: 'audit',
-  //       component: () => import('@/views/task/audit'),
-  //       meta: {
-  //         title: '待审核列表',
-  //         icon: 'tree'
-  //       }
-  //     },
-  //     {
-  //       path: 'back',
-  //       name: '退款申请',
-  //       component: () => import('@/views/admin/index'),
-  //       meta: {
-  //         title: '退款申请',
-  //         icon: 'tree'
-  //       }
-  //     }
-  //   ]
-  // },
-  // {
-  //   path: '/goods',
-  //   component: Layout,
-  //   name: '商品管理',
-  //   meta: {
-  //     title: '商品管理',
-  //     tree: 'tree',
-  //     icon: 's-order'
-  //   },
-  //   children: [{
-  //     path: 'index',
-  //     name: '商品列表',
-  //     component: () => import('@/views/goods/index'),
-  //     meta: {
-  //       title: '商品列表',
-  //       icon: 'tree'
-  //     }
-  //   }
-  // ]
-  // },
-  // 404 page must be placed at the end !!!
   {
     path: '*',
     redirect: '/404',

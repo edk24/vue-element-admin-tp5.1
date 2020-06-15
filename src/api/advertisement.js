@@ -36,7 +36,6 @@ export function advertisement_type(data) {
   })
 }
 
-
 // 轮播审核
 export function advertisement_audit(id, type) {
   return request({
