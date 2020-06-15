@@ -107,17 +107,17 @@
           <el-collapse accordion>
             <el-collapse-item v-for="(item, index) in comment" :key="index">
               <template slot="title" style="position: relative;">
-                <span>{{ item.content }}</span>
+                <span style="width: 55%;line-height: 1.5;">{{ item.content }}</span>
                 <span style="position:absolute;right: 160px;">评论者：{{ item.user.nickname }}</span>
                 <el-button type="text" style="position:absolute;right: 60px;" @click="comment_del(item.id)">删除</el-button>
               </template>
-              <div v-for="(vo, key) in item.children" :key="key">
-                  <div v-if="vo.target_reply === null">
+              <div v-for="(vo, key) in item.children" :key="key" style="padding: 8px 0">
+                  <div v-if="vo.target_reply === null" style="border-top: 1px solid rgb(235,238,245);">
                     <span>{{ vo.content }}</span>
-                      <span style="position: absolute;right: 160px">回复者：{{ vo.user.nickname }}</span>
-                      <el-button type="text" style="position: absolute;right: 60px;line-height: 0px;" @click="comment_del(vo.id)">删除</el-button>
+                    <span style="position: absolute;right: 160px">回复者：{{ vo.user.nickname }}</span>
+                    <el-button type="text" style="position: absolute;right: 60px;line-height: 0px;" @click="comment_del(vo.id)">删除</el-button>
                   </div>
-                  <div v-if="vo.target_reply != null">
+                  <div v-if="vo.target_reply != null" style="border-top: 1px solid rgb(235,238,245);">
                     <span>{{ vo.content }}</span>
                     <span style="position: absolute;right: 160px">回复者：{{ vo.user.nickname }}@{{ vo.target_reply.nickname }}</span>
                     <el-button type="text" style="position: absolute;right: 60px;line-height: 0px;" @click="comment_del(vo.id)">删除</el-button>

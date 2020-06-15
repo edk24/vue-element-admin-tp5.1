@@ -167,8 +167,8 @@
             <div slot="tip" class="el-upload__tip">只能上传一个视频文件</div>
           </el-upload>
         </el-form-item>
-        <el-form-item label="视频内容">
-          <el-input v-model="temp.content" type="textarea" :autosize="{ minRows: 2 }" />
+        <el-form-item label="视频详情">
+          <editor-bar v-model="temp.content" :is-clear="isClear" />
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -192,12 +192,13 @@
 <script>
   import { learn } from '@/api/learn'
   import Pagination from '@/components/Pagination'
+  import EditorBar from '@/components/wangEnduit'
   const kid_type = [
     { key: '0', name: '学生心灵成长教育' },
     { key: '1', name: '学生思维成长教育' }
   ]
   export default {
-    components: { Pagination },
+    components: { Pagination, EditorBar },
     data() {
       return {
         videoRes: '',
@@ -208,6 +209,8 @@
         tableKey: 0,
         list: null,
         total: 0,
+        isClear: false,
+        detail: '',
         listLoading: false,
         listQuery: {
           page: 1,

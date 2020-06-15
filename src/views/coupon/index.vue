@@ -15,9 +15,9 @@
         />
         <el-button type="primary" @click="search()">搜索</el-button>
 
-        <el-select v-model="listQuery.type" style="width: 140px" class="filter-item" @change="handleFilter">
-          <el-option v-for="item in type" :key="item.key" :label="item.name" :value="item.key" />
-        </el-select>
+<!--        <el-select v-model="listQuery.type" style="width: 140px" class="filter-item" @change="handleFilter">-->
+<!--          <el-option v-for="item in type" :key="item.key" :label="item.name" :value="item.key" />-->
+<!--        </el-select>-->
       </p>
     </div>
 
@@ -29,18 +29,17 @@
       highlight-current-row
       style="width: 100%;margin-top: 10px;"
     >
-      <!--      <el-table-column label="序号" type="index" width="50" align="center">-->
-      <!--        <template scope="scope">-->
-      <!--          <span>{{ (listQuery.page - 1) * listQuery.limit + scope.$index + 1 }}</span>-->
-      <!--        </template>-->
-      <!--      </el-table-column>-->
-      <el-table-column type="index" label="序号" sortable="custom" align="center" width="80" :class-name="getSortClass('id')" />
-      <el-table-column label="分类名称" prop="title" align="center" :class-name="getSortClass('id')">
+      <el-table-column label="序号" type="index" width="50" align="center">
+        <template scope="scope">
+          <span>{{ (listQuery.page - 1) * listQuery.limit + scope.$index + 1 }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="优惠券标题" prop="title" width="150" align="center" :class-name="getSortClass('id')">
         <template slot-scope="{row}">
           <span>{{ row.title }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="分类图片" prop="type" align="center" width="150" style="height: 150px;" :class-name="getSortClass('id')">
+      <el-table-column label="培训机构" prop="type" align="center" width="150" style="height: 150px;" :class-name="getSortClass('id')">
         <template slot-scope="{row}">
           <el-image class="image" :src="row.image">
             <div slot="error" class="image-slot">
@@ -49,14 +48,24 @@
           </el-image>
         </template>
       </el-table-column>
-      <el-table-column label="所属类别" prop="note" align="center" width="250" :class-name="getSortClass('id')">
+      <el-table-column label="使用店" prop="note" align="center" width="150" :class-name="getSortClass('id')">
         <template slot-scope="{row}">
           <span v-if="row.type === 'learn'">学习课程</span>
           <span v-if="row.type === 'forum'">论坛</span>
           <span v-if="row.type === 'goods'">商品分类</span>
         </template>
       </el-table-column>
-      <el-table-column label="分类描述" prop="note" align="center" width="250" :class-name="getSortClass('id')">
+      <el-table-column label="时间范围" prop="note" align="center" width="150" :class-name="getSortClass('id')">
+        <template slot-scope="{row}">
+          <span>{{ row.desc }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="发行数量" prop="note" align="center" width="150" :class-name="getSortClass('id')">
+        <template slot-scope="{row}">
+          <span>{{ row.desc }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="剩余数量" prop="note" align="center" width="150" :class-name="getSortClass('id')">
         <template slot-scope="{row}">
           <span>{{ row.desc }}</span>
         </template>
@@ -89,40 +98,39 @@
     <!-- 弹窗页面   -->
     <el-dialog :title="textMap[dialogStatus]" width="500" :visible.sync="dialogFormVisible">
       <el-form ref="dataForm" :rules="rules" :model="temp" label-position="left" label-width="100px" style="padding:0 5px;margin-right:5px;margin-left:50px;">
-        <el-form-item label="分类名称" prop="title">
+        <el-form-item label="优惠券标题" prop="title">
           <el-input v-model="temp.title" />
         </el-form-item>
-        <el-form-item label="分类图片">
-          <el-upload
-            :show-file-list="false"
-            :multiple="false"
-            action="post"
-            :before-upload="selectImg"
-            :on-change="changeImage"
-            style="width: 200px; height: 200px"
-          >
-            <img v-if="temp.image" style="width: 200px; height: 200px" :src="temp.image" class="avatar">
-            <i v-else class="el-icon-plus avatar-uploader-icon" />
-          </el-upload>
-        </el-form-item>
-        <el-form-item label="所属分类">
-          <el-select v-model="temp.type" placeholder="所属分类">
-            <el-option label="论坛" value="forum" />
-            <el-option label="商品分类" value="goods" />
-            <el-option label="学生课程" value="learn" />
+        <el-form-item label="培训机构">
+          <el-select v-model="temp.master_id" filterable placeholder="请选择">
+            <el-option
+              v-for="item in train_list"
+              :key="item.id"
+              :label="item.name"
+              :value="item.id">
+            </el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="分类描述">
-          <!--          <tinymce v-model="temp.desc" height="300" />-->
-          <!--          <quill-editor ref="QuillEditor" v-model="temp.desc" :options="quillOption" />-->
-          <!--          <editor-bar v-model="temp.desc" :is-clear="isClear" @change="change" />-->
-          <el-input
-            type="textarea"
-            :autosize="{ minRows: 2, maxRows: 5}"
-            placeholder="请输入内容"
-            style="font-size: 16px"
-            v-model="temp.desc">
-          </el-input>
+        <el-form-item label="商品" prop="title">
+          <el-input v-model="temp.title" />
+        </el-form-item>
+        <el-form-item label="开始时间" prop="title">
+          <el-input v-model="temp.title" />
+        </el-form-item>
+        <el-form-item label="结束时间" prop="title">
+          <el-input v-model="temp.title" />
+        </el-form-item>
+        <el-form-item label="发布数量" prop="title">
+          <el-input v-model="temp.title" />
+        </el-form-item>
+        <el-form-item label="满减金额" prop="title">
+          <el-input v-model="temp.title" />
+        </el-form-item>
+        <el-form-item label="减少金额" prop="title">
+          <el-input v-model="temp.title" />
+        </el-form-item>
+        <el-form-item label="发布数量" prop="title">
+          <el-input v-model="temp.title" />
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -138,12 +146,11 @@
 </template>
 
 <script>
-  import EditorBar from '@/components/wangEnduit'
-  import { category } from '@/api/category'
+  import { coupon } from '@/api/coupon'
   import Pagination from '@/components/Pagination'
+  import { train_list } from '@/api/organization'
   // import Tinymce from '@/components/Tinymce'
   // import { quillEditor } from 'vue-quill-editor'
-  import quillConfig from '@/utils/quill-config.js'
   const type = [
     { key: 'all', name: '全部' },
     { key: 'forum', name: '论坛' },
@@ -152,13 +159,10 @@
   ]
   export default {
     // components: { Pagination, quillEditor, Tinymce, EditorBar },
-    components: { Pagination, EditorBar },
+    components: { Pagination },
     data() {
       return {
-        isClear: false,
-        detail: '',
-        quillOption: quillConfig,
-        type,
+        train_list: [],
         imgsrc: process.env.VUE_APP_BASE_API,
         tableKey: 0,
         list: null,
@@ -173,7 +177,7 @@
         dialogStatus: '',
         dialogFormVisible: false,
         rules: {
-          title: [{ required: true, message: '分类名称不能为空', trigger: 'change' }]
+          title: [{ required: true, message: '不能为空', trigger: 'change' }]
         },
         temp: {
           imageFile: '',
@@ -187,32 +191,32 @@
         textMap: {
           update: '编辑',
           create: '创建'
-        },
-        typelist: {}
+        }
       }
+    },
+    mounted() {
+      this.getTrain()
     },
     created() {
       this.getList()
     },
     methods: {
-      change(val) {
-        console.log(val)
-      },
       search() {
-        // if (this.listQuery.keyword) {
         this.getList()
-        // } else {
-        //   this.$message.warning('请输入关键词')
-        // }
       },
       handleFilter() {
         this.listQuery.page = 1
         this.getList()
       },
+      getTrain() {
+        train_list(1, 9999).then(res => {
+          this.train_list = res.data
+        })
+      },
       getList() {
         this.listLoading = false
         this.list = []
-        category.getlist(this.listQuery.page, this.listQuery.limit, this.listQuery.keyword, this.listQuery.type).then(({ code, msg, data, count }) => {
+        coupon.getlist(this.listQuery.page, this.listQuery.limit, this.listQuery.keyword).then(({ code, msg, data, count }) => {
           if (code === 0) {
             data.forEach(row => {
               row.image = this.imgsrc + row.image

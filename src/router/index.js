@@ -418,9 +418,27 @@ export const constantRoutes = [{
       }
     ]
   },
-
-    // 优惠券
-
+  {
+    path: '/coupon',
+    component: Layout,
+    name: '优惠券管理',
+    alwaysShow: true,
+    meta: {
+      title: '优惠券管理',
+      icon: 'table'
+    },
+    children: [
+      {
+        path: 'index',
+        name: '培训机构优惠券',
+        component: () => import('@/views/coupon/index'),
+        meta: {
+          title: '培训机构优惠券',
+          icon: 'tree'
+        }
+      }
+    ]
+  },
 
   // 反馈管理  --
   // {
