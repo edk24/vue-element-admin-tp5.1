@@ -122,6 +122,7 @@
             list-type="picture-card"
             :file-list="form.silderimgList"
             :on-preview="handlePictureCardPreview"
+            :on-change="imgPreview"
             :on-remove="handleRemove"
             :auto-upload="false"
           >
@@ -200,8 +201,7 @@
     },
     data() {
       return {
-        fileList: [{ name: 'food.jpeg', url: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100' }, { name: 'food2.jpeg', url: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100' }],
-        // silderimgList: [],
+        imgStatus: false,
         dialogImageUrl: '',
         dialogVisible: false,
         isClear: false,
@@ -238,7 +238,7 @@
          price: '',
          note: '',
          is_default: '',
-         silderimgList: [],
+         silderimgList: '',
          silder_image: []
        }
       }
@@ -249,23 +249,24 @@
     methods: {
       // this.form.silderimgList上传后的图片文件数组
       handleRemove(file, fileList) {
-        console.log('移除图片')
-        this.form.silderimgList = []
-        for (let i = 0; i < fileList.length; i++) {
-          let str = ''
-          str = fileList[i].url
-          this.form.silderimgList.push(str)
-        }
-        console.log(this.form.silderimgList)
-        console.log('移除图片')
+        // console.log('移除图片')
+        // // this.form.silderimgList = []
+        // for (let i = 0; i < fileList.length; i++) {
+        //   let str = ''
+        //   str = fileList[i].url
+        //   this.form.silderimgList.push(str)
+        // }
+        // console.log(this.form.silderimgList)
+        // console.log('移除图片')
       },
       // 点击放大图片
       handlePictureCardPreview(file) {
-        this.form.silder_image = file.url
-        this.dialogVisible = true
+        // this.form.silder_image = file.url
+        // this.dialogVisible = true
       },
       // 图片上传事件
       imgPreview(file, fileList) {
+        this.imgStatus = true
         const fileName = file.name
         const regex = /(.jpg|.jpeg|.gif|.png|.bmp)$/
         if (regex.test(fileName.toLowerCase())) {
@@ -275,6 +276,8 @@
         }
         console.log('图片上传事件')
         this.form.silderimgList = []
+        // console.log(this.form.silderimgList)
+        // return
         for (let i = 0; i < fileList.length; i++) {
           let obj = {}
           obj = fileList[i].raw
@@ -313,12 +316,14 @@
       edit(obj) {
         const that = this
         this.form = obj
-        this.form.silderimgList = []
-        var img = (obj.images).split(';')
-        img.forEach(function(row, index) {
-          row = that.url + row
-          that.form.silderimgList.push({ url: row })
-        })
+        if (obj.images !== '') {
+          this.form.silderimgList = []
+          var img = (obj.images).split(';')
+          img.forEach(function(row, index) {
+            row = that.url + row
+            that.form.silderimgList.push({ url: row })
+          })
+        }
         this.centerDialogVisible = true
       },
       // 拉取数据
@@ -351,7 +356,9 @@
         form.append('price', this.form.price)
         form.append('content', this.form.content)
         form.append('is_default', this.current)
-        form.append('images', data.silderimgList)
+        if (this.imgStatus) {
+          form.append('images', data.silderimgList)
+        }
         if (data.imageFile) {
           form.append('image', data.imageFile)
         }
