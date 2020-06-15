@@ -154,15 +154,6 @@ export const constantRoutes = [{
           title: '合伙人管理',
           icon: 'tree'
         }
-      },
-      {
-        path: 'shareholder',
-        name: '股东管理',
-        component: () => import('@/views/branch/shareholder'),
-        meta: {
-          title: '股东管理',
-          icon: 'tree'
-        }
       }
     ]
   },
@@ -183,15 +174,6 @@ export const constantRoutes = [{
         component: () => import('@/views/finance/withdrawal'),
         meta: {
           title: '提现审核',
-          icon: 'tree'
-        }
-      },
-      {
-        path: 'record',
-        name: '交易记录',
-        component: () => import('@/views/finance/record'),
-        meta: {
-          title: '交易记录',
           icon: 'tree'
         }
       }
