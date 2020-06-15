@@ -15,9 +15,16 @@
         />
         <el-button type="primary" @click="search()">搜索</el-button>
 
-        <!--        <el-select v-model="temp.category.id" style="width: 140px" class="filter-item" @change="handleFilter">-->
-        <!--          <el-option v-for="item in listQuery.learn_cate" :key="item.id" :label="item.title" :value="item.id" />-->
-        <!--        </el-select>-->
+        <el-select v-model="listQuery.category" style="width: 140px" class="filter-item" @change="handleFilter">
+          <el-option key="all" label="全部-分类" value="all" />
+          <el-option v-for="item in learn_cate" :key="item.id" :label="item.title" :value="item.id" />
+        </el-select>
+
+        <el-select v-model="listQuery.grade" style="width: 140px" class="filter-item" @change="handleFilter">
+          <el-option key="all" label="全部-年级" value="all" />
+          <el-option v-for="item in grade" :key="item.key" :label="item.key" :value="item.key" />
+        </el-select>
+
       </p>
     </div>
 
@@ -201,12 +208,6 @@
 <script>
   import { learn } from '@/api/learn'
   import Pagination from '@/components/Pagination'
-  const type = [
-    { key: 'all', name: '全部' },
-    { key: 'forum', name: '论坛' },
-    { key: 'goods', name: '商品分类' },
-    { key: 'learn', name: '学生课程' }
-  ]
   const grade = [
     { key: '小学' },
     { key: '初中' },
@@ -216,7 +217,6 @@
     components: { Pagination },
     data() {
       return {
-        type: type,
         videoRes: '',
         grade: grade,
         learn_cate: [],
@@ -231,7 +231,9 @@
           page: 1,
           limit: 10,
           keyword: '',
-          type: '4'
+          type: '4',
+          category: 'all',
+          grade: 'all'
         },
         dialogStatus: '',
         dialogFormVisible: false,
@@ -270,15 +272,12 @@
       getCate() {
         learn.cate().then(({ code, msg, data, count }) => {
           this.learn_cate = data
-          // data.forEach(row => {
-          //   this.listQuery.learn_cate.push(row)
-          // })
         })
       },
       getList() {
         this.listLoading = false
         this.list = []
-        learn.list(this.listQuery.page, this.listQuery.limit, this.listQuery.keyword, this.listQuery.type).then(({ code, msg, data, count }) => {
+        learn.list(this.listQuery.page, this.listQuery.limit, this.listQuery.keyword, this.listQuery.type, this.listQuery.category, this.listQuery.grade).then(({ code, msg, data, count }) => {
           if (code === 0) {
             data.forEach(row => {
               row.images = this.imgsrc + row.images

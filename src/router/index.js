@@ -123,6 +123,15 @@ export const constantRoutes = [{
           title: '银行卡审核',
           icon: 'tree'
         }
+      },
+      {
+        path: 'feedback',
+        name: '意见反馈',
+        component: () => import('@/views/user/feedback'),
+        meta: {
+          title: '意见反馈',
+          icon: 'tree'
+        }
       }
     ]
   },
@@ -409,27 +418,31 @@ export const constantRoutes = [{
       }
     ]
   },
+
+    // 优惠券
+
+
   // 反馈管理  --
-  {
-    path: '/feedback',
-    component: Layout,
-    name: '用户反馈',
-    alwaysShow: true,
-    meta: {
-      title: '用户反馈',
-      icon: 'table'
-    },
-    children: [{
-        path: 'index',
-        name: '意见反馈',
-        component: () => import('@/views/feedback/index'),
-        meta: {
-          title: '意见反馈',
-          icon: 'tree'
-        }
-      }
-    ]
-  },
+  // {
+  //   path: '/feedback',
+  //   component: Layout,
+  //   name: '用户反馈',
+  //   alwaysShow: true,
+  //   meta: {
+  //     title: '用户反馈',
+  //     icon: 'table'
+  //   },
+  //   children: [{
+  //       path: 'index',
+  //       name: '意见反馈',
+  //       component: () => import('@/views/feedback/index'),
+  //       meta: {
+  //         title: '意见反馈',
+  //         icon: 'tree'
+  //       }
+  //     }
+  //   ]
+  // },
   // 论坛管理  --
   {
     path: '/forum',
