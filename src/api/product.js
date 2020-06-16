@@ -1,4 +1,5 @@
 import request from '@/utils/request'
+import upload from '@/utils/upload'
 import qs from 'qs'
 
 // 添加  积分兑换产品的添加
@@ -20,7 +21,7 @@ export function exchange_list(page, limit, keyword) {
 
 // 编辑积分兑换产品
 export function exchange_edit(data) {
-  return request({
+  return upload({
     url: '/v1/exchange/update',
     method: 'post',
     data
