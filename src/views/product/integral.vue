@@ -118,7 +118,7 @@
         </el-form-item>
         <el-form-item label="商品轮播图:" label-width="130px">
           <el-upload
-            action="123"
+            action="post"
             list-type="picture-card"
             :file-list="form.silderimgList"
             :on-preview="handlePictureCardPreview"
@@ -316,8 +316,8 @@
       edit(obj) {
         const that = this
         this.form = obj
+        this.form.silderimgList = []
         if (obj.images !== '') {
-          this.form.silderimgList = []
           var img = (obj.images).split(';')
           img.forEach(function(row, index) {
             row = that.url + row
@@ -356,12 +356,24 @@
         form.append('price', this.form.price)
         form.append('content', this.form.content)
         form.append('is_default', this.current)
-        if (this.imgStatus) {
-          form.append('images', data.silderimgList)
-        }
-        if (data.imageFile) {
-          form.append('image', data.imageFile)
-        }
+        // if (data.silderimgList.length === 1){
+        //   form.append('image', data.silderimgList[0])
+        // } else {
+          for (let i = 0; i < data.silderimgList.length; i++) {
+            if (i >= 9) {
+              return this.$message.warning('图片数量大于9')
+            } else {
+              if (data.silderimgList[i].size <= 5242880) { // 上传图片不能超过5M
+                form.append('image[]', data.silderimgList[i])
+                /* 注意，这里的双引号里的变量名称后面必须要加上[]*/
+              }
+            }
+          }
+        // }
+
+        // if (data.imageFile) {
+        //   form.append('image', data.imageFile)
+        // }
         if (!this.form.title) {
           this.$message.error('请输入商品标题')
           return
