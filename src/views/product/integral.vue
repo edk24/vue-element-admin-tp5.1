@@ -136,18 +136,6 @@
         <el-form-item label="兑换所需积分:" label-width="130px">
           <el-input v-model="form.price" />
         </el-form-item>
-        <el-form-item label="兑换所需积分:" label-width="130px">
-          <el-input v-model="form.price" />
-        </el-form-item>
-<!--        <el-form-item label="是否是默认推送:" label-width="130px">-->
-<!--          <el-select-->
-<!--            v-model="form.is_default"-->
-<!--            placeholder="请选择"-->
-<!--          >-->
-<!--            <el-option label="否" value="0" />-->
-<!--            <el-option label="是" value="1" />-->
-<!--          </el-select>-->
-<!--        </el-form-item>-->
         <el-form-item label="商品详情:" label-width="130px">
           <editor-bar v-model="form.content" :is-clear="isClear" />
         </el-form-item>
