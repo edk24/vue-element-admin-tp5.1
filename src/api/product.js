@@ -19,6 +19,21 @@ export function exchange_list(page, limit, keyword) {
  })
 }
 
+export function upload_image(data) {
+  return request({
+    url: '/v1/exchange/upload_image',
+    method: 'post',
+    data
+  })
+}
+
+export function del_image(id, url) {
+  return request({
+    url: '/v1/exchange/del_image?' + qs.stringify({ id, url }),
+    method: 'get'
+  })
+}
+
 // 编辑积分兑换产品
 export function exchange_edit(data) {
   return upload({
