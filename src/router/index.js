@@ -321,49 +321,17 @@ export const constantRoutes = [{
     ]
   },
 
-  // 平台设置  --看视频时间和积分设置--新用户注册赠送积分设置--每日最高积分设置--消费最低积分设置
   {
-    path: '/platform',
+    path: '/configs',
     component: Layout,
-    name: '平台设置',
-    alwaysShow: true,
-    meta: {
-      title: '平台设置',
-      icon: 'table'
-    },
+    name: '系统设置',
+
     children: [{
-        path: 'timeAndIntegral',
-        name: '看视频时间和积分设置',
-        component: () => import('@/views/platform/timeAndIntegral'),
+        path: 'index',
+        name: '系统设置',
+        component: () => import('@/views/configs/index'),
         meta: {
-          title: '看视频时间和积分设置',
-          icon: 'tree'
-        }
-      },
-      {
-        path: 'integral',
-        name: '新用户注册送积分',
-        component: () => import('@/views/platform/integral'),
-        meta: {
-          title: '新用户注册送积分',
-          icon: 'tree'
-        }
-      },
-      {
-        path: 'height',
-        name: '每日最高积分设置',
-        component: () => import('@/views/platform/height'),
-        meta: {
-          title: '每日最高积分设置',
-          icon: 'tree'
-        }
-      },
-      {
-        path: 'lower',
-        name: '消费最低积分设置',
-        component: () => import('@/views/platform/lower'),
-        meta: {
-          title: '消费最低积分设置',
+          title: '系统设置',
           icon: 'tree'
         }
       }
