@@ -11,8 +11,11 @@ export function getAllConfig() {
 // 批量更新设置
 export function updateAll(data) {
   return request({
-    url: '/v1/config',
+    url: '/v1/config/0',
     method: 'put',
+    headers: {
+      'Content-Type':'application/json'
+    },
     data
   })
 }

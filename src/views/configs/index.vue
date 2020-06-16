@@ -1,20 +1,65 @@
 <template>
   <div class="app-container">
-    <el-tabs>
+    <el-tabs :activeName="tab_select">
       <el-tab-pane
         v-for="(item, index) in configList"
+        :key="index"
         :label="item.name"
         :name="item.group"
-        :key="index"
       >
-      <el-form label-width="160px">
-        <el-form-item v-for="(row, n) in item.item" :key="n" :label="row.title">
-          <el-input v-if="row.type==='number'" v-model="row.value"/>
-
-        </el-form-item>
-      </el-form>
+        <el-form label-width="160px">
+          <el-form-item v-for="(row, n) in item.item" :key="n" :label="row.title">
+            <!-- 文本框 -->
+            <el-input v-if="row.type==='number'" v-model="row.value" :placeholder="row.desc" />
+            <!-- 加长文本框 -->
+            <el-input
+              v-else-if="row.type ==='text'"
+              v-model="row.value"
+              type="textarea"
+              :placeholder="row.desc"
+            />
+            <!-- 单选框 -->
+            <el-radio-group v-else-if="row.type === 'radio'" v-model="row.value">
+              <el-radio v-for="(v, i) in row.attach" :key="i" :label="v.value">{{ v.title }}</el-radio>
+            </el-radio-group>
+            <!-- 开关 -->
+            <el-switch v-else-if="row.type==='switch'" v-model="row.value" />
+            <!-- 选择列表 -->
+            <el-select
+              v-else-if="row.type === 'select'"
+              v-model="row.value"
+              :placeholder="row.desc"
+            >
+              <el-option v-for="(v,i) in row.attach" :key="i" :label="v.title" :value="v.value" />
+            </el-select>
+            <!-- 日期选择框 -->
+            <el-date-picker
+              v-else-if="row.type==='date'"
+              v-model="row.value"
+              type="date"
+              :placeholder="row.desc"
+            />
+            <!-- 时间选择框 -->
+            <el-time-picker
+              v-else-if="row.type==='time'"
+              v-model="row.value"
+              :placeholder="row.desc"
+            />
+            <!-- 图片上传 -->
+            <div v-else-if="row.type==='image'">
+              <!-- <el-upload
+  action="https://jsonplaceholder.typicode.com/posts/"
+  list-type="picture-card"
+  :on-preview="handlePictureCardPreview"
+  :on-success="img"
+  <i class="el-icon-plus"></i>
+              </el-upload>-->
+            </div>
+          </el-form-item>
+        </el-form>
       </el-tab-pane>
     </el-tabs>
+    <el-button type="primary" @click="submitUpdate()">保存设置</el-button>
   </div>
 </template>
 
@@ -23,7 +68,8 @@ import { getAllConfig, updateAll } from '@/api/configs'
 export default {
   data() {
     return {
-      configList: []
+      configList: [],
+      tab_select:''
     }
   },
   created() {
@@ -36,6 +82,7 @@ export default {
         .then(({ code, data, msg, count }) => {
           if (code === 0) {
             this.configList = data
+              this.tab_select = data[0].group
           } else {
             this.$message.error(msg)
           }
@@ -43,7 +90,28 @@ export default {
         .catch(() => {})
     },
     // 提交更改
-    submitUpdate() {}
+    submitUpdate() {
+      const submitData = {}
+      for (let i = 0; this.configList.length > i; i++) {
+        for (let n = 0; this.configList[i].item.length > n; n++) {
+          const key = this.configList[i].item[n].key
+          const value = this.configList[i].item[n].value
+          console.log(key);
+          submitData[key] = value
+        }
+      }
+
+      console.log(submitData)
+      updateAll({ all: submitData })
+        .then(({ code, msg }) => {
+          if (code === 0) {
+            this.$message.success('修改成功')
+          } else {
+            this.$message.error(msg || '修改失败')
+          }
+        })
+        .catch(() => {})
+    }
   }
 }
 </script>
