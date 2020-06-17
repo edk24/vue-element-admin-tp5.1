@@ -7,53 +7,6 @@
         <el-button type="primary" @click="fetchData(true)">搜索</el-button>
       </el-row>
     </p>
-<<<<<<< HEAD
-    <el-table
-      v-loading="listLoading"
-      :data="list"
-      element-loading-text="Loading"
-      fit
-      highlight-current-row
-    > 
-      <el-table-column
-        align="center"
-        label="ID"
-        width="64"
-      >
-        <template slot-scope="scope">
-          {{ scope.$index+1 }}
-        </template>
-      </el-table-column>
-
-      <el-table-column
-        label="头像"
-        width="110"
-        align="center"
-      >
-        <template slot-scope="scope">
-          <el-image class="icon" :src="scope.row.avatar" />
-        </template>
-      </el-table-column>
-
-      <el-table-column label="昵称">
-        <template slot-scope="scope">
-          {{ scope.row.nickname }}
-        </template>
-      </el-table-column>
-
-      <el-table-column label="真实姓名">
-        <template slot-scope="scope">
-          {{ scope.row.realname }}
-        </template>
-      </el-table-column>
-
-      <el-table-column label="手机号">
-        <template slot-scope="scope">
-          {{ scope.row.phone }}
-        </template>
-      </el-table-column>
-=======
->>>>>>> 0a9b298973c4cb670c6d26ec211c274b05418090
 
     <!-- table -->
     <el-table :data="list" stripe>
