@@ -6,7 +6,7 @@ module.exports = {
    * @type {boolean} true | false
    * @description 是否修复标题
    */
-  fixedHeader: false,
+  fixedHeader: true,
 
   /**
    * @type {boolean} true | false

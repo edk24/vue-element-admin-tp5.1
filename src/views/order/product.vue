@@ -1,17 +1,14 @@
 <template>
   <div class="app-container">
-    <!-- header -->
-    <p>
-      <el-row>
-        <el-input v-model="keyword" placeholder="请输入关键词" style="width:260px" />
-        <el-button type="primary" @click="fetchData(true)">搜索</el-button>
-      </el-row>
-    </p>
+    <el-row>
+      <el-input v-model="key" placeholder="请输入关键词" style="width:260px" />
+      <el-button type="primary" @click="fetchData(true)">搜索</el-button>
+    </el-row>
 
     <!-- table -->
     <el-table :data="list" stripe>
       <el-table-column prop="order_sn" label="订单编号" width="180" />
-      <el-table-column>
+      <el-table-column label="类型">
         <template slot-scope="scope">
           <span v-if="scope.row.type === 'goods'">产品订单</span>
           <span v-else-if="scope.row.type === 'jifen'">积分订单</span>
@@ -23,13 +20,13 @@
         <template slot-scope="scope">
           <b v-if="scope.row.type === 'jifen'" style="color:red">
             {{ scope.row.total_jifen }}积分
-            <small>运费:{{ scope.row.express_amount }}</small>
+            <p><small>运费:{{ scope.row.express_amount }}</small></p>
           </b>
           <b v-else style="color:red">
             ¥
             <del v-if="scope.row.discount_amount>0">{{ scope.row.total_amount }}</del>
             {{ scope.row.order_amount }}
-            <small>运费:{{ scope.row.express_amount }}</small>
+            <p><small>运费:{{ scope.row.express_amount }}</small></p>
           </b>
         </template>
       </el-table-column>
@@ -48,9 +45,13 @@
           <span v-else-if="scope.row.order_status === 4">已评价</span>
         </template>
       </el-table-column>
-      <el-table-column label="地址">
+      <el-table-column label="收货人">
         <template slot-scope="scope">
           <p>{{ scope.row.consignee }} {{ scope.row.phone }}</p>
+        </template>
+      </el-table-column>
+      <el-table-column label="地址">
+        <template slot-scope="scope">
           <p>{{ scope.row.province }} {{ scope.row.city }} {{ scope.row.area }} {{ scope.row.address }}</p>
         </template>
       </el-table-column>
@@ -72,7 +73,7 @@
       <el-table-column label="管理">
         <template slot-scope="scope">
           <el-button size="small" type="primary" @click="edit(scope.row)">查看订单</el-button>
-          <el-button v-if="scope.row.order_status === 1" size="small" type="primary">发货</el-button>
+          <el-button v-if="scope.row.order_status === 1" @click="showShip(scope.row)" size="small" type="primary">发货</el-button>
           <el-popconfirm title="确定删除吗?" @onConfirm="del(scope.row)">
             <el-button
               slot="reference"
@@ -92,10 +93,12 @@
 
     <!-- 发货 -->
     <el-dialog :visible.sync="showShipState" title="发货">
-      <el-form label-width="100%">
+      <el-form label-width="100px">
         <el-form-item label="配送方式">
-          <el-radio v-model="shipForm.delivery_method" label="express">快递配送</el-radio>
-          <el-radio v-model="shipForm.delivery_method" label="home_pickup">上门自提</el-radio>
+          <el-radio-group v-model="shipForm.delivery_method">
+            <el-radio label="express">快递配送</el-radio>
+            <el-radio label="home_pickup">上门自提</el-radio>
+          </el-radio-group>
         </el-form-item>
         <div v-if="shipForm.delivery_method==='express'">
           <el-form-item label="配送公司">
@@ -127,18 +130,18 @@
 import { getOrderList, delOrder, shipOrder } from '@/api/order'
 import { getAllExpressCompany } from '@/api/express'
 export default {
-  date() {
+  data() {
     return {
       list: [
         {
-          delivery_method:''
+          delivery_method: ''
         }
       ],
       count: 0,
-      page: 0,
+      page: 1,
       limit: 25,
       status: 'all',
-      keyword:'',
+      key: '',
 
       // 窗口显示
       showOrderState: false,
@@ -158,11 +161,11 @@ export default {
     }
   },
   created() {
-    this.fetchData(true)
     // 查询所有快递公司
-    this.getAllExpressCompany()
+    getAllExpressCompany()
       .then(({ code, data, count, msg }) => {
         this.expressList = data
+    this.fetchData(true)
       })
       .catch(() => {})
   },
@@ -173,13 +176,12 @@ export default {
         this.list = []
         this.count = 0
         this.page = 1
-        this.limit = 0
         this.status = 'all'
       }
       getOrderList(
         this.page,
         this.limit,
-        this.keyword,
+        this.key,
         ['jifen', 'goods'],
         this.status
       )
@@ -210,8 +212,8 @@ export default {
     },
     // 发货提交
     submitShip() {
-      if (this.shipOrder.id) {
-        shipOrder(shipForm.id, shipForm)
+      if (this.shipForm.id) {
+        shipOrder(this.shipForm.id, this.shipForm)
           .then(({ code, msg }) => {
             if (code === 0) {
               this.$message.success('发货成功')
@@ -247,6 +249,3 @@ export default {
   }
 }
 </script>
-
-<style>
-</style>
