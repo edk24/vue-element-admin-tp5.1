@@ -25,6 +25,12 @@ const mutations = {
   },
   SET_AVATAR: (state, avatar) => {
     state.avatar = avatar
+  },
+  SET_TYPE: (state, type) => {
+    state.type = type
+  },
+  SET_ID: (state, id) => {
+    state.id = id
   }
 }
 
@@ -36,7 +42,6 @@ const actions = {
       login({ phone: phone.trim(), password: md5(password) }).then(response => {
         const { data } = response
         commit('SET_TOKEN', data)
-        console.log('token:' + data)
         setToken(data)
         resolve()
       }).catch(error => {
@@ -48,14 +53,15 @@ const actions = {
   // get user info
   getInfo({ commit, state }) {
     return new Promise((resolve, reject) => {
-      console.log('token2:' + state.token)
       getInfo(state.token).then(response => {
         const { data } = response
         if (!data) {
           reject('验证失败，请重新登录。')
         }
-        const { name, avatar } = data
+        const { name, avatar, type, id } = data
         commit('SET_NAME', name)
+        commit('SET_TYPE', type)
+        commit('SET_ID', id)
         commit('SET_AVATAR', avatar)
         resolve(data)
       }).catch(error => {

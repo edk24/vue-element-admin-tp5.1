@@ -27,9 +27,24 @@ export function upload_image(data) {
   })
 }
 
+export function goods_upload_image(data) {
+  return request({
+    url: '/v1/goods/upload_image',
+    method: 'post',
+    data
+  })
+}
+
 export function del_image(id, url) {
   return request({
     url: '/v1/exchange/del_image?' + qs.stringify({ id, url }),
+    method: 'get'
+  })
+}
+
+export function goods_del_image(id, url) {
+  return request({
+    url: '/v1/goods/del_image?' + qs.stringify({ id, url }),
     method: 'get'
   })
 }

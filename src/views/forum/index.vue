@@ -188,8 +188,8 @@
         })
       },
       detail(row) {
-        // that.imglist = ''
         const that = this
+        this.imglist = []
         this.temp = Object.assign({}, row)
         this.dialogStatus = 'detail'
         this.dialogFormVisible = true
