@@ -127,7 +127,7 @@
         <el-form-item label="股东称呼">
           <el-input v-model="gudonForm.username" />
         </el-form-item>
-        <el-form-item label="联系电话">
+        <el-form-item label="联系电话"> 
           <el-input v-model="gudonForm.phone" />
         </el-form-item>
 

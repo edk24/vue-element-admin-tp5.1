@@ -13,7 +13,7 @@
       highlight-current-row
     >
       <el-table-column
-        align="center"
+        align="center" 
         label="ID"
         width="64"
       >
@@ -43,7 +43,6 @@
           {{ scope.row.realname }}
         </template>
       </el-table-column>
-
       <el-table-column label="手机号">
         <template slot-scope="scope">
           {{ scope.row.phone }}

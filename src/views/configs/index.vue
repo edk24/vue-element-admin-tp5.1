@@ -14,7 +14,7 @@
             <!-- 加长文本框 -->
             <el-input
               v-else-if="row.type ==='text'"
-              v-model="row.value"
+              v-model="row.value" 
               type="textarea"
               :placeholder="row.desc"
             />

@@ -132,7 +132,6 @@
             <span v-else>女</span>
           </template>
         </el-table-column>
-
         <el-table-column
           prop="class"
           label="班级"

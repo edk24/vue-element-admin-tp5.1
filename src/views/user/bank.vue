@@ -13,7 +13,6 @@
       <el-button type="info" @click="wait()">未审核</el-button>
       <el-button type="success" @click="success()">审核成功</el-button>
       <el-button type="danger" @click="fail()">审核失败</el-button>
-
     </p>
     <el-table v-loading="listLoading" :data="list" element-loading-text="Loading" fit highlight-current-row>
       <el-table-column

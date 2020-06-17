@@ -6,7 +6,7 @@ export function article_add(data) {
   return request({
     url: '/v1/prop_article/add',
     method: 'post',
-    data
+    data 
  })
 }
 

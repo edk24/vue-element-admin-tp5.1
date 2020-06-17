@@ -11,7 +11,7 @@
       element-loading-text="Loading"
       fit
       highlight-current-row
-    >
+    > 
       <el-table-column
         align="center"
         label="ID"
