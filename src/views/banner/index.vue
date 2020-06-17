@@ -49,7 +49,7 @@
             </el-popconfirm>
           </div>
         </template>
-      </el-table-column>
+      </el-table-column> 
     </el-table>
 
     <el-dialog :visible.sync="centerDialogVisible" width="600px" center>

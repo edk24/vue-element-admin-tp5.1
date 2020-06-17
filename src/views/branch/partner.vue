@@ -55,7 +55,7 @@
             :before-upload="onBeforeUpload"
             :on-change="changeImage"
           >
-            <img v-if="formLabelAlign.license" :src="formLabelAlign.license" class="avatar" />
+            <img v-if="formLabelAlign.license" :src="formLabelAlign.license" class="avatar">
             <i v-else class="el-icon-plus avatar-uploader-icon" />
           </el-upload>
         </el-form-item>
@@ -127,7 +127,7 @@
         <el-form-item label="股东称呼">
           <el-input v-model="gudonForm.username" />
         </el-form-item>
-        <el-form-item label="联系电话">
+        <el-form-item label="联系电话"> 
           <el-input v-model="gudonForm.phone" />
         </el-form-item>
 
@@ -165,14 +165,14 @@ import {
   create as company_create,
   del as company_del,
   update as company_update
-} from "@/api/company";
+} from '@/api/company'
 import {
   getList as getGudonList,
   del as gudonDel,
   create as gudonAdd,
   update as gudonUpdate
-} from "@/api/company_gudon";
-import { user_search } from "@/api/user";
+} from '@/api/company_gudon'
+import { user_search } from '@/api/user'
 export default {
   data() {
     return {
@@ -192,17 +192,17 @@ export default {
       formLabelAlign: {
         id: null,
         user_id: 0,
-        title: "",
-        code: "",
-        license: "",
-        username: "",
-        phone: "",
-        province: "",
-        city: "",
-        area: "",
-        address: "",
-        commission: "",
-        license_obj: ""
+        title: '',
+        code: '',
+        license: '',
+        username: '',
+        phone: '',
+        province: '',
+        city: '',
+        area: '',
+        address: '',
+        commission: '',
+        license_obj: ''
       },
 
       // 股东管理
@@ -213,46 +213,46 @@ export default {
         id: null,
         user_id: 0,
         company_id: 0,
-        username: "",
-        phone: ""
+        username: '',
+        phone: ''
       }
-    };
+    }
   },
   created() {
-    this.fetchData(true);
+    this.fetchData(true)
   },
   methods: {
     // 拉取数据
     fetchData(clear = false) {
       if (clear) {
-        this.page = 1;
-        this.list = [];
+        this.page = 1
+        this.list = []
       }
       getList(this.page, this.limit, this.keyword)
         .then(({ code, msg, data, count }) => {
           if (code === 0) {
             data.forEach(row => {
-              this.list.push(row);
-            });
-            this.page++;
-            this.count = count;
+              this.list.push(row)
+            })
+            this.page++
+            this.count = count
           } else {
-            this.$message.info(msg);
+            this.$message.info(msg)
           }
         })
         .catch(err => {
-          console.log(err);
-        });
+          console.log(err)
+        })
     },
     // 修改表单
     edit(item) {
-      this.formLabelAlign = item;
-      this.dialogFormVisible = true;
+      this.formLabelAlign = item
+      this.dialogFormVisible = true
     },
     // 创建表单
     create() {
-      this.formLabelAlign = { id: null };
-      this.dialogFormVisible = true;
+      this.formLabelAlign = { id: null }
+      this.dialogFormVisible = true
     },
 
     // 删除企业
@@ -260,59 +260,59 @@ export default {
       company_del(item.id)
         .then(({ code, msg }) => {
           if (code === 0) {
-            this.$message.success("删除成功");
-            this.fetchData(true);
+            this.$message.success('删除成功')
+            this.fetchData(true)
           } else {
-            this.$message.warning(msg || "删除失败");
+            this.$message.warning(msg || '删除失败')
           }
         })
         .catch(() => {
-          this.$$message.error("系统错误, 请稍候再试");
-        });
+          this.$$message.error('系统错误, 请稍候再试')
+        })
     },
     // 提交表单
     submit() {
-      const formdata = new FormData();
-      formdata.append("user_id", this.formLabelAlign.user_id);
-      formdata.append("title", this.formLabelAlign.title);
-      formdata.append("code", this.formLabelAlign.code);
-      formdata.append("username", this.formLabelAlign.username);
-      formdata.append("phone", this.formLabelAlign.phone);
-      formdata.append("province", this.formLabelAlign.province);
-      formdata.append("city", this.formLabelAlign.city);
-      formdata.append("area", this.formLabelAlign.area);
-      formdata.append("address", this.formLabelAlign.address);
-      formdata.append("commission", this.formLabelAlign.commission);
+      const formdata = new FormData()
+      formdata.append('user_id', this.formLabelAlign.user_id)
+      formdata.append('title', this.formLabelAlign.title)
+      formdata.append('code', this.formLabelAlign.code)
+      formdata.append('username', this.formLabelAlign.username)
+      formdata.append('phone', this.formLabelAlign.phone)
+      formdata.append('province', this.formLabelAlign.province)
+      formdata.append('city', this.formLabelAlign.city)
+      formdata.append('area', this.formLabelAlign.area)
+      formdata.append('address', this.formLabelAlign.address)
+      formdata.append('commission', this.formLabelAlign.commission)
       if (this.formLabelAlign.license_obj) {
-        formdata.append("license", this.formLabelAlign.license_obj);
+        formdata.append('license', this.formLabelAlign.license_obj)
       }
 
       if (this.formLabelAlign.id === null) {
         // create
         company_create(formdata).then(({ code, msg }) => {
           if (code === 0) {
-            this.$message.success("保存成功");
-            this.fetchData(true);
+            this.$message.success('保存成功')
+            this.fetchData(true)
           } else {
-            this.$message.error(msg || "保存失败");
+            this.$message.error(msg || '保存失败')
           }
-        });
+        })
       } else {
         // update
 
         company_update(this.formLabelAlign.id, formdata).then(
           ({ code, msg }) => {
             if (code === 0) {
-              this.$message.success("保存成功");
-              this.fetchData(true);
+              this.$message.success('保存成功')
+              this.fetchData(true)
             } else {
-              this.$message.error(msg || "保存失败");
+              this.$message.error(msg || '保存失败')
             }
           }
-        );
+        )
       }
 
-      this.dialogFormVisible = false;
+      this.dialogFormVisible = false
     },
     // 提交股东表单
     submitGudon() {
@@ -321,82 +321,82 @@ export default {
         gudonAdd(this.gudonForm)
           .then(({ code, msg }) => {
             if (code === 0) {
-              this.$message.success("添加成功");
-              this.showGudonFormDialog = false;
+              this.$message.success('添加成功')
+              this.showGudonFormDialog = false
               this.showGudonAdmin(this.formLabelAlign)
             } else {
-              this.$message.error(msg);
+              this.$message.error(msg)
             }
           })
-          .catch(() => {});
+          .catch(() => {})
       } else {
         // modify
         gudonUpdate(this.gudonForm.id, this.gudonForm)
           .then(({ code, msg }) => {
             if (code === 0) {
-              this.$message.success("修改成功");
-              this.showGudonFormDialog = false;
+              this.$message.success('修改成功')
+              this.showGudonFormDialog = false
             } else {
-              this.$message.error(msg);
+              this.$message.error(msg)
             }
           })
-          .catch(() => {});
+          .catch(() => {})
       }
     },
     // 用户搜索
     userSearch(query) {
-      if (query !== "") {
-        this.loading = true;
+      if (query !== '') {
+        this.loading = true
         user_search(query)
           .then(({ code, count, data, msg }) => {
             if (code === 0) {
-              this.userList = data;
+              this.userList = data
             } else {
-              this.userSearch = [];
-              this.$message.warning(msg);
+              this.userSearch = []
+              this.$message.warning(msg)
             }
-            this.loading = false;
+            this.loading = false
           })
           .catch(err => {
-            this.loading = false;
-          });
+            this.loading = false
+          })
       } else {
-        this.userSearch = [];
-        this.loading = false;
+        this.userSearch = []
+        this.loading = false
       }
     },
 
     // On上传图片前
     onBeforeUpload(file) {
       // 验证
-      const isRightSize = file.size / 1024 < 500;
+      const isRightSize = file.size / 1024 < 500
       if (!isRightSize) {
-        this.$message.error("文件大小超过 500KB");
+        this.$message.error('文件大小超过 500KB')
       }
 
-      const isAccept = new RegExp("image/*").test(file.type);
+      const isAccept = new RegExp('image/*').test(file.type)
       if (!isAccept) {
-        this.$message.error("应该选择image/*类型的文件");
+        this.$message.error('应该选择image/*类型的文件')
       }
 
-      this.formLabelAlign.license_obj = file;
-      return false; // don't auto upload
+      this.formLabelAlign.license_obj = file
+      return false // don't auto upload
     },
     // on 图片被选中
     changeImage(file) {
-      var reader = new FileReader();
+      var reader = new FileReader()
       reader.onload = e => {
-        this.formLabelAlign.license = e.target.result;
-      };
-      reader.readAsDataURL(file.raw);
+        this.formLabelAlign.license = e.target.result
+      }
+      reader.readAsDataURL(file.raw)
     },
 
     // 展示股东管理
     showGudonAdmin(item) {
-      this.showGudonDialog = true;
-      this.formLabelAlign = item;
-      this.gudonList = [];
-      const that = this;
+      this.showGudonDialog = true
+      this.formLabelAlign = item
+      this.gudonList = []
+      const that = this
 
       getGudonList(item.id)
         .then(({ code, data, msg, count }) => {
@@ -409,38 +409,38 @@ export default {
                 phone: row.phone,
                 create_time: row.create_time,
                 ceo: row.ceo
-              });
-            });
-            this.gudonList = data;
+              })
+            })
+            this.gudonList = data
           } else {
-            this.$message.error(msg);
+            this.$message.error(msg)
           }
         })
-        .catch(() => {});
+        .catch(() => {})
     },
     // 删除股东
     deleteGudon(item) {
       gudonDel(item.id)
         .then(({ code, msg }) => {
           if (code === 0) {
-            this.$message.success("删除成功");
+            this.$message.success('删除成功')
           } else {
-            this.$message.error(msg || "删除失败");
+            this.$message.error(msg || '删除失败')
           }
         })
-        .catch(() => {});
+        .catch(() => {})
     },
     // 股东创建表单
     gudonCreate() {
-      this.showGudonFormDialog = true;
-      this.gudonForm = { id: null, company_id: this.formLabelAlign.id };
+      this.showGudonFormDialog = true
+      this.gudonForm = { id: null, company_id: this.formLabelAlign.id }
     },
     gudonEdit(item) {
-      this.showGudonFormDialog = true;
-      this.gudonForm = item;
+      this.showGudonFormDialog = true
+      this.gudonForm = item
     }
   }
-};
+}
 </script>
 
 <style>

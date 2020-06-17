@@ -11,18 +11,7 @@ import router from './router'
 import store from './store'
 import 'quill/dist/quill.core.css'
 import 'quill/dist/quill.snow.css'
-/**
- * 如果您不想使用模拟服务器
- * 您想将MockJs用于模拟API
- * 您可以执行：mockXHR（）
- *
- * 目前，MockJs将用于生产环境，
- * 请先删除它，然后再上网！ ！ ！
- */
-if (process.env.NODE_ENV === 'production') {
-  const { mockXHR } = require('../mock')
-  mockXHR()
-}
+
 // 将ElementUI lang设置为EN
 Vue.use(ElementUI, { locale })
 // 如果想要中文版 element-ui，按如下方式声明

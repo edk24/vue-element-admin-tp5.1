@@ -7,7 +7,7 @@
     </p>
     <el-table
       v-loading="listLoading"
-      :data="list"
+      :data="list" 
       element-loading-text="Loading"
       fit
       highlight-current-row
