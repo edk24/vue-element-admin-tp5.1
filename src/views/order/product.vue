@@ -3,19 +3,35 @@
     <el-row>
       <el-input v-model="key" placeholder="请输入关键词" style="width:260px" />
       <el-button type="primary" @click="fetchData(true)">搜索</el-button>
+
     </el-row>
+
+<p></p>
+<p></p>
+<el-tabs v-model="status" @tab-click="fetchData(true)">
+    <el-tab-pane label="全部" name="all"></el-tab-pane>
+    <el-tab-pane label="待支付" name="waitpay"></el-tab-pane>
+    <el-tab-pane label="待发货" name="waitdelivery"></el-tab-pane>
+    <el-tab-pane label="已发货" name="shipped"></el-tab-pane>
+    <el-tab-pane label="已收货" name="recived"></el-tab-pane>
+    <!-- <el-tab-pane label="已评价" name="comment"></el-tab-pane> -->
+  </el-tabs>
 
     <!-- table -->
     <el-table :data="list" stripe>
-      <el-table-column prop="order_sn" label="订单编号" width="180" />
+      <el-table-column prop="order_sn" label="订单编号" />
       <el-table-column label="类型">
         <template slot-scope="scope">
           <span v-if="scope.row.type === 'goods'">产品订单</span>
           <span v-else-if="scope.row.type === 'jifen'">积分订单</span>
-          <span v-if="scope.row.type === 'train'">培训课程</span>
+          <span v-else-if="scope.row.type === 'train'">培训课程</span>
         </template>
       </el-table-column>
-      <el-table-column prop="unickname" label="用户名" width="180" />
+      <el-table-column label="用户名">
+        <template slot-scope="scope">
+          {{ scope.row.userinfo?scope.row.userinfo.nickname:'' }}
+        </template>
+      </el-table-column>
       <el-table-column label="金额">
         <template slot-scope="scope">
           <b v-if="scope.row.type === 'jifen'" style="color:red">
@@ -47,7 +63,8 @@
       </el-table-column>
       <el-table-column label="收货人">
         <template slot-scope="scope">
-          <p>{{ scope.row.consignee }} {{ scope.row.phone }}</p>
+          <p>{{ scope.row.consignee }}</p>
+          <p>{{ scope.row.phone }}</p>
         </template>
       </el-table-column>
       <el-table-column label="地址">
@@ -72,14 +89,13 @@
       <el-table-column prop="create_time" label="下单时间" />
       <el-table-column label="管理">
         <template slot-scope="scope">
-          <el-button size="small" type="primary" @click="edit(scope.row)">查看订单</el-button>
-          <el-button v-if="scope.row.order_status === 1" @click="showShip(scope.row)" size="small" type="primary">发货</el-button>
-          <el-popconfirm title="确定删除吗?" @onConfirm="del(scope.row)">
+          <el-button size="small" type="primary" @click="showOrder(scope.row)">查看订单</el-button>
+          <el-button v-if="scope.row.order_status === 1" size="small" type="primary" @click="showShip(scope.row)">发货</el-button>
+          <el-popconfirm title="确定删除吗?" @onConfirm="deleteOrder(scope.row)">
             <el-button
               slot="reference"
               size="small"
               type="danger"
-              @click="deleteOrder(scope.row)"
             >删除</el-button>
           </el-popconfirm>
         </template>
@@ -123,12 +139,81 @@
         <el-button type="primary" @click="submitShip">确 定</el-button>
       </span>
     </el-dialog>
+
+    <!-- 查看订单 -->
+    <el-dialog
+  title="订单详情"
+  :visible.sync="showOrderState"
+  >
+   <div class="order">
+     <div class="row">
+       <div class="title">订单编号</div>
+       <div class="value">{{orderInfo.order_sn}}</div>
+       <div class="title">订单类型</div>
+       <div class="value">
+         <span v-if="orderInfo.type === 'goods'">产品订单</span>
+          <span v-else-if="orderInfo.type === 'jifen'">积分订单</span>
+          <span v-else-if="orderInfo.type === 'train'">培训课程</span>
+       </div>
+     </div>
+     <div class="row">
+       <div class="title">用户名称</div>
+       <div class="value"></div>
+       <div class="title">下单时间</div>
+       <div class="value">{{orderInfo.create_time}}</div>
+     </div>
+     <div class="row">
+       <div class="title">支付状态</div>
+       <div class="value">
+         <span v-if="orderInfo.paid_status === 0">未支付</span>
+         <span v-else-if="orderInfo.paid_status === 1">已支付</span>
+       </div>
+       <div class="title">支付方式</div>
+       <div class="value">{{orderInfo.paid_method}}</div>
+     </div>
+
+     <div class="row">
+       <div class="title">订单状态</div>
+       <div class="value">
+         <span v-if="orderInfo.order_status===0">待支付</span>
+         <span v-else-if="orderInfo.order_status===1">待发货</span>
+         <span v-else-if="orderInfo.order_status===2">已发货</span>
+         <span v-else-if="orderInfo.order_status===3">已收货</span>
+         <span v-else-if="orderInfo.order_status===4">已评价</span>
+       </div>
+       <div class="title">配送方式</div>
+       <div class="value">
+         <span v-if="orderInfo.delivery_method==='express'">快递</span>
+         <span v-else-if="orderInfo.delivery_method==='home_pickup'">上门自取</span>
+       </div>
+     </div>
+     <div class="row">
+       <div class="title">收货地址</div>
+       <div class="value">
+          {{orderInfo.consignee}}  {{orderInfo.phone}}
+
+        <p>
+          {{orderInfo.province}} {{orderInfo.city}} {{orderInfo.area}} {{orderInfo.address}}
+        </p>
+       </div>
+     </div>
+
+     <div class="goods" v-for="(item, index) in orderInfo.goods">
+       <img :src="item.goods_img" alt="">
+
+     </div>
+   </div>
+  <span slot="footer" class="dialog-footer">
+    <el-button @click="showOrderState = false">关闭</el-button>
+  </span>
+</el-dialog>
   </div>
 </template>
 
 <script>
 import { getOrderList, delOrder, shipOrder } from '@/api/order'
 import { getAllExpressCompany } from '@/api/express'
+import { parseTime } from '@/utils/index'
 export default {
   data() {
     return {
@@ -155,6 +240,7 @@ export default {
         express_com: '',
         express_sn: ''
       },
+      orderInfo:{},
 
       // express
       expressList: []
@@ -176,7 +262,6 @@ export default {
         this.list = []
         this.count = 0
         this.page = 1
-        this.status = 'all'
       }
       getOrderList(
         this.page,
@@ -187,7 +272,12 @@ export default {
       )
         .then(({ code, msg, data, count }) => {
           if (code === 0) {
-            this.list = data
+            data.forEach(row => {
+              if (row.paid_status === 1) {
+                row.paid_time = parseTime(row.paid_time)
+              }
+              this.list.push(row)
+            })
             this.page++
             this.count = count
           } else {
@@ -199,6 +289,7 @@ export default {
     // 打开订单查看窗口
     showOrder(item) {
       this.showOrderState = true
+      this.orderInfo = item
     },
     // 打开发货窗口
     showShip(item) {
@@ -249,3 +340,23 @@ export default {
   }
 }
 </script>
+
+<style lang="scss">
+.order {
+  width:100%;
+  .row {
+    display: flex;
+    flex-direction: row;
+    line-height: 32px;
+
+    .title {
+      width: 90px;
+      padding-right: 10px;
+      text-align: right;
+    }
+    .value {
+      flex:1
+    }
+  }
+}
+</style>
