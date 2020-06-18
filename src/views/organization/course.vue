@@ -341,6 +341,7 @@
         }
       },
       typeChange() {
+
       },
       getTrainList() {
         organization.train_list(1, 999, '', this.user.id).then(res => {
@@ -420,6 +421,10 @@
             data.append('id', tempData.id)
             data.append('title', tempData.title)
             data.append('train_id', tempData.train_id)
+
+            if (tempData.train_id === '') {
+              return this.$message.warning('请选择培训机构')
+            }
             data.append('desc', tempData.desc)
             data.append('money', tempData.money)
             if (tempData.start_time === undefined) {
@@ -465,6 +470,9 @@
             const tempData = Object.assign({}, this.temp)
             const data = new FormData()
             data.append('title', tempData.title)
+            if (tempData.train_id === undefined) {
+              return this.$message.warning('请选择培训机构')
+            }
             data.append('train_id', tempData.train_id)
             data.append('desc', tempData.desc)
             data.append('money', tempData.money)
