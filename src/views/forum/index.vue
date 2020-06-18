@@ -14,7 +14,7 @@
           <span>{{(listQuery.page - 1) * listQuery.limit + scope.$index + 1}}</span>
         </template>
       </el-table-column>
-      <el-table-column label="帖子内容">
+      <el-table-column label="帖子内容" width="300">
         <template slot-scope="{row}">
           {{row.content}}
         </template>
@@ -188,8 +188,8 @@
         })
       },
       detail(row) {
-        // that.imglist = ''
         const that = this
+        this.imglist = []
         this.temp = Object.assign({}, row)
         this.dialogStatus = 'detail'
         this.dialogFormVisible = true

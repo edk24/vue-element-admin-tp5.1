@@ -15,8 +15,9 @@
         />
         <el-button type="primary" @click="search()">搜索</el-button>
 
-        <el-select v-model="listQuery.status" style="width: 140px" class="filter-item" @change="handleFilter">
-          <el-option v-for="item in status" :key="item.key" :label="item.name" :value="item.key" />
+        <el-select v-model="listQuery.type" style="width: 140px" class="filter-item" @change="handleFilter">
+          <el-option label="全部" value="all" />
+          <el-option v-for="item in type" :key="item.key" :label="item.name" :value="item.key" />
         </el-select>
       </p>
     </div>
@@ -34,24 +35,20 @@
           <span>{{ (listQuery.page - 1) * listQuery.limit + scope.$index + 1 }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="机构名称" prop="title" align="center" width="200" :class-name="getSortClass('id')">
+      <el-table-column label="发布人" prop="title" width="200" align="center" :class-name="getSortClass('id')">
         <template slot-scope="{row}">
-          <span>{{ row.name }}</span>
+          <span>{{ row.from_user.nickname }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="推广子公司名称" prop="title" width="200" align="center" :class-name="getSortClass('id')">
+      <el-table-column label="类型" prop="title" align="center" :class-name="getSortClass('id')">
         <template slot-scope="{row}">
-          <span>{{ row.company.title }}</span>
+          <span v-if="row.type === 'SUBSCRIBE'">订阅推送</span>
+          <span v-if="row.type === 'ONE'">指定用户</span>
         </template>
       </el-table-column>
-      <el-table-column label="联系人" prop="type" align="center" width="150" style="height: 150px;" :class-name="getSortClass('id')">
+      <el-table-column label="标题" prop="type" align="center" width="200" style="height: 150px;" :class-name="getSortClass('id')">
         <template slot-scope="{row}">
-          <span>{{ row.contact }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="联系人电话" prop="note" align="center" width="200" :class-name="getSortClass('id')">
-        <template slot-scope="{row}">
-          <span>{{ row.phone }}</span>
+          <span>{{ row.title }}</span>
         </template>
       </el-table-column>
       <el-table-column label="创建时间" prop="create_time" align="center" width="250" :class-name="getSortClass('id')">
@@ -81,80 +78,85 @@
 
     <!-- 弹窗页面   -->
     <el-dialog :title="textMap[dialogStatus]" width="500" :visible.sync="dialogFormVisible">
-      <el-form ref="dataForm" :rules="rules" :model="temp" label-position="left" label-width="120px" style="padding:0 5px;margin-right:5px;margin-left:50px;">
-        <el-form-item label="机构名称" >
-          <el-input v-model="temp.name" readonly/>
+      <el-form ref="dataForm" :rules="rules" :model="temp" label-position="left" label-width="100px" style="padding:0 5px;margin-right:5px;margin-left:50px;">
+        <el-form-item label="标题" prop="title">
+          <el-input v-model="temp.title" />
         </el-form-item>
-        <el-form-item label="推广公司名称" >
-          <el-input v-model="temp.company.title" readonly/>
+        <el-form-item label="消息类型">
+          <el-select v-model="temp.type" filterable placeholder="请选择"  style="width: 220px;">
+            <el-option v-for="item in type" :key="item.key" :label="item.name" :value="item.key" />
+          </el-select>
         </el-form-item>
-        <el-form-item label="营业执照" >
-          <el-image
-            style="width: 200px; height: 200px"
-            :src="temp.license"
-            :preview-src-list="licenseList">
-          </el-image>
+        <el-form-item label="推送对象">
+          <el-select
+            v-model="temp.to"
+            filterable
+            remote
+            reserve-keyword
+            placeholder="请输入手机号检索"
+            :remote-method="userSearch"
+            :loading="loading"
+            v-if="temp.type === 'ONE'"
+            style="width: 200px;"
+          >
+            <el-option
+              v-for="item in userList"
+              :key="item.id"
+              :label="item.nickname"
+              :value="item.id"
+            />
+<!--            <el-option v-for="item in user_list" :key="item.id" :label="item.nickname" :value="item.id"/>-->
+<!--            <el-option v-for="item in channel_list" v-if="temp.type === 'SUBSCRIBE'" :key="item.id" :label="item.title" :value="item.id" />-->
+          </el-select>
+
+          <el-select
+            v-model="temp.to"
+            filterable
+            v-if="temp.type === 'SUBSCRIBE'"
+            style="width: 200px;"
+          >
+            <el-option v-for="item in channel_list"  :key="item.id" :label="item.title" :value="item.id" />
+          </el-select>
+
         </el-form-item>
-        <el-form-item label="省" >
-          <el-input v-model="temp.province" readonly/>
-        </el-form-item>
-        <el-form-item label="市" >
-          <el-input v-model="temp.city" readonly/>
-        </el-form-item>
-        <el-form-item label="区" >
-          <el-input v-model="temp.area" readonly/>
-        </el-form-item>
-        <el-form-item label="详细地址" >
-          <el-input v-model="temp.address" readonly/>
-        </el-form-item>
-        <el-form-item label="联系人" >
-          <el-input v-model="temp.contact" readonly/>
-        </el-form-item>
-        <el-form-item label="联系人电话" >
-          <el-input v-model="temp.phone" readonly/>
-        </el-form-item>
-        <el-form-item label="对推广人员返点" >
-          <el-input v-model="temp.rebate" readonly/>
-        </el-form-item>
-        <el-form-item label="审核" v-if="listQuery.status === '0'">
-          <el-radio v-model="radio" label="1">审核过关</el-radio>
-          <el-radio v-model="radio" label="2">审核失败</el-radio>
-        </el-form-item>
-        <el-form-item label="拒绝理由" v-if="radio === '2' || listQuery.status ==='2'" prop="reason">
-          <el-input type="textarea" :autosize="{ minRows: 2, maxRows: 5}" v-model="temp.reason" />
+
+        <el-form-item label="消息内容" prop="content">
+          <el-input v-model="temp.content" type="textarea" :autosize="{ minRows: 2, maxRows: 5}" />
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button type="primary" v-if="listQuery.status === '0'" @click="dialogStatus==='create'?createData():updateData()">
-          确认审核
-        </el-button>
         <el-button @click="dialogFormVisible = false">
-          返回
+          取消
         </el-button>
-
+        <el-button v-if="dialogStatus === 'create'" type="primary" @click="dialogStatus==='create'?createData():updateData()">
+          确认
+        </el-button>
       </div>
     </el-dialog>
   </div>
 </template>
 
 <script>
-  import { organization } from '@/api/organization'
   import Pagination from '@/components/Pagination'
-  const status = [
-    { key: '0', name: '待审核' },
-    { key: '1', name: '审核过关' },
-    { key: '2', name: '审核失败' }
+  import { message } from '@/api/message'
+  import { user_list } from '@/api/user'
+  import { user_search } from '@/api/user'
+  const type = [
+    { key: 'ONE', name: '指定用户' },
+    { key: 'SUBSCRIBE', name: '订阅推送' }
   ]
   export default {
-    // components: { Pagination, quillEditor, Tinymce, EditorBar },
     components: { Pagination },
     data() {
       return {
-        licenseList: [],
-        radio: '1',
-        status: status,
+        // 用户搜索
+        userList: [],
+        loading: false,
+        user_list: [],
+        channel_list: [],
         isClear: false,
         detail: '',
+        type: type,
         imgsrc: process.env.VUE_APP_BASE_API,
         tableKey: 0,
         list: null,
@@ -163,32 +165,58 @@
         listQuery: {
           page: 1,
           limit: 10,
-          status: '0',
+          type: 'all',
           keyword: ''
         },
         dialogStatus: '',
         dialogFormVisible: false,
         rules: {
           title: [{ required: true, message: '不能为空', trigger: 'change' }],
-          reason: [{ required: true, message: '不能为空', trigger: 'change' }]
+          content: [{ required: true, message: '不能为空', trigger: 'change' }]
         },
         temp: {
+          imageFile: '',
           id: undefined,
-          company: [],
-          reason: ''
+          title: '',
+          type: '',
+          to: '',
+          phone: ''
         },
         textMap: {
-          update: '查看详情',
+          update: '编辑',
           create: '创建'
         },
+        typelist: {}
       }
+    },
+    mounted() {
+      this.getToList()
     },
     created() {
       this.getList()
     },
     methods: {
-      change(val) {
-        console.log(val)
+      // 用户搜索
+      userSearch(query) {
+        if (query !== '') {
+          this.loading = true
+          user_search(query)
+              .then(({ code, count, data, msg }) => {
+                if (code === 0) {
+                  this.userList = data
+                } else {
+                  this.userSearch = []
+                  this.$message.warning(msg)
+                }
+                this.loading = false
+              }).catch(error => {
+                this.loading = false
+                console.log(error)
+              })
+        } else {
+          this.userSearch = []
+          this.loading = false
+        }
       },
       search() {
         this.getList()
@@ -197,13 +225,24 @@
         this.listQuery.page = 1
         this.getList()
       },
+      getToList() {
+        user_list(1, 999).then(res => {
+          this.user_list = res.data
+        }).catch(error => {
+          console.log(error)
+        })
+        message.channel().then(res => {
+          this.channel_list = res.data
+        }).catch(error => {
+          console.log(error)
+        })
+      },
       getList() {
         this.listLoading = false
         this.list = []
-        organization.train_list(this.listQuery.page, this.listQuery.limit, this.listQuery.keyword, this.listQuery.status).then(({ code, msg, data, count }) => {
+        message.getlist(this.listQuery.page, this.listQuery.limit, this.listQuery.keyword, this.listQuery.type).then(({ code, msg, data, count }) => {
           if (code === 0) {
             data.forEach(row => {
-              row.license = this.imgsrc + row.license
               this.list.push(row)
             })
             this.total = count
@@ -225,7 +264,9 @@
           title: '',
           desc: '',
           image: '',
-          imageFile: ''
+          imageFile: '',
+          type: '',
+          to: ''
         }
       },
       handleCreate() {
@@ -238,7 +279,6 @@
       },
       handleUpdate(row) {
         this.temp = Object.assign({}, row) // copy obj
-        this.licenseList.push(row.license)
         this.dialogStatus = 'update'
         this.dialogFormVisible = true
         this.$nextTick(() => {
@@ -251,9 +291,15 @@
             const tempData = Object.assign({}, this.temp)
             const data = new FormData()
             data.append('id', tempData.id)
-            organization.status(tempData.id, this.radio, tempData.reason).then(response => {
+            data.append('title', tempData.title)
+            data.append('type', tempData.type)
+            data.append('pid', tempData.pid)
+            if (this.temp.imageFile != null) {
+              data.append('image', this.temp.imageFile)
+            }
+            category.edit(data).then(response => {
               const index = this.list.findIndex(v => v.id === this.temp.id)
-              this.list.splice(index, 1)
+              this.list.splice(index, 1, tempData)
               this.dialogFormVisible = false
               this.$notify({
                 title: 'Success',
@@ -272,18 +318,19 @@
           if (valid) {
             const tempData = Object.assign({}, this.temp)
             const data = new FormData()
-            data.append('id', tempData.id)
             data.append('title', tempData.title)
+            if (tempData.type === '') {
+              return this.$message.warning('必须选择消息类型')
+            }
+            if (tempData.to === '') {
+              return this.$message.warning('必须选择推送对象')
+            }
             data.append('type', tempData.type)
-            if (tempData.type === undefined) {
-              return this.$message.error('必须选择分类')
-            }
-            if (this.temp.imageFile != null) {
-              data.append('image', this.temp.imageFile)
-            }
-            category.add(data).then(() => {
-              this.temp.create_time = new Date(this.temp.timestamp)
-              this.list.push(this.temp)
+            data.append('to', tempData.to)
+            data.append('content', tempData.content)
+            message.add(data).then(() => {
+              // this.list.push(this.temp)
+              this.getList()
               this.dialogFormVisible = false
               this.$notify({
                 title: 'Success',
@@ -296,7 +343,7 @@
         })
       },
       handleDelete(row, index) {
-        organization.del(row.id).then(({ code, msg }) => {
+        message.del(row.id).then(({ code, msg }) => {
           if (code === 0) {
             this.list.splice(index, 1)
             this.$notify({
@@ -311,64 +358,11 @@
         }).catch(error => {
           console.log(error)
         })
-      },
-      /**
-       * 事件-选择图片
-       */
-      selectImg(file) {
-        // 验证
-        const isRightSize = file.size / 1024 < 500
-        if (!isRightSize) {
-          this.$message.error('文件大小超过 500KB')
-        }
-        const isAccept = new RegExp('image/*').test(file.type)
-        if (!isAccept) {
-          this.$message.error('应该选择image/*类型的文件')
-        }
-
-        this.temp.imageFile = file
-        return false // don't auto upload
-      },
-      // 图片被改变
-      changeImage(file) {
-        // 读图片预览
-        const that = this
-        var reader = new FileReader()
-        reader.onload = (e) => {
-          that.temp.image = e.target.result
-        }
-        reader.readAsDataURL(file.raw)
       }
     }
   }
 
 </script>
 <style type="text/css">
-  .avatar-uploader .el-upload {
-    border: 1px dashed #d9d9d9;
-    border-radius: 6px;
-    cursor: pointer;
-    position: relative;
-    overflow: hidden;
-  }
-
-  .avatar-uploader .el-upload:hover {
-    border-color: #409eff;
-  }
-
-  .avatar-uploader-icon {
-    font-size: 28px;
-    color: #8c939d;
-    width: 178px;
-    height: 178px;
-    line-height: 178px;
-    text-align: center;
-  }
-
-  .avatar {
-    width: 178px;
-    height: 178px;
-    display: block;
-  }
 </style>
 

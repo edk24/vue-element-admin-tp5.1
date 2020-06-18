@@ -41,15 +41,9 @@
 
       </el-table-column>
 
-      <el-table-column label="最高可抵用积分">
+      <el-table-column label="最高可抵用积分" width="120">
         <template slot-scope="scope">
-          {{ scope.row.point }}
-        </template>
-      </el-table-column>
-
-      <el-table-column label="产品详情">
-        <template slot-scope="scope">
-          {{ scope.row.content }}
+          {{ scope.row.jifen }}
         </template>
       </el-table-column>
 
@@ -79,7 +73,6 @@
 
     <el-dialog
       :visible.sync="centerDialogVisible"
-      width="600px"
       center
     >
       <el-form
@@ -89,6 +82,9 @@
       >
         <el-form-item label="产品标题:" label-width="130px">
           <el-input v-model="form.title" />
+        </el-form-item>
+        <el-form-item label="产品描述:" label-width="130px">
+          <el-input v-model="form.desc" type="textarea" :autosize="{ minRows: 2, maxRows: 5}" />
         </el-form-item>
         <el-form-item label="产品展示图:" label-width="130px">
           <el-upload
@@ -109,14 +105,31 @@
             />
           </el-upload>
         </el-form-item>
+        <el-form-item label="产品轮播图:" label-width="130px">
+          <el-upload
+            action="post"
+            list-type="picture-card"
+            :file-list="form.silderimgList"
+            :on-preview="handlePictureCardPreview"
+            :on-change="imgPreview"
+            :before-upload="selectImg"
+            :on-remove="handleRemove"
+            :auto-upload="false"
+          >
+            <i class="el-icon-plus" />
+          </el-upload>
+          <el-dialog :visible.sync="dialogVisible">
+            <img width="100%" :src="form.silder_image" alt="">
+          </el-dialog>
+        </el-form-item>
         <el-form-item label="产品价格:" label-width="130px">
           <el-input v-model="form.price" />
         </el-form-item>
         <el-form-item label="最高可抵用积分:" label-width="130px">
-          <el-input v-model="form.point" />
+          <el-input v-model="form.jifen" />
         </el-form-item>
         <el-form-item label="商品详情:" label-width="130px">
-          <el-input v-model="form.content" />
+          <editor-bar v-model="form.content" :is-clear="isClear" />
         </el-form-item>
       </el-form>
 
@@ -151,10 +164,13 @@
     goods_add,
     goods_list,
     goods_del,
-    goods_edit
+    goods_edit,
+      goods_upload_image,
+      goods_del_image
   } from '@/api/product'
+  import EditorBar from '@/components/wangEnduit'
   export default {
-    components: {},
+    components: { EditorBar },
     filters: {
       statusFilter(status) {
         const statusMap = {
@@ -167,6 +183,9 @@
     },
     data() {
       return {
+        isClear: false,
+        detail: '',
+        dialogVisible: false,
         url: process.env.VUE_APP_BASE_API,
         list: [],
         count: 0,
@@ -180,9 +199,10 @@
           icon: null,
           id: 0,
           // 欲上传文件对象
-          fileIcon: null
+          fileIcon: null,
+          silder_image: []
         },
-
+        silderimgList: [],
         rules: {
           title: [{
             required: true,
@@ -220,11 +240,76 @@
         }
         this.centerDialogVisible = true
       },
+      handleRemove(file) {
+        if (this.form.id){
+          goods_del_image(this.form.id, file.url).then(res => {
+            this.$notify({
+              title: 'Success',
+              message: '删除成功',
+              type: 'success',
+              duration: 1200
+            })
+          })
+        }
+      },
+      // 点击放大图片
+      handlePictureCardPreview(file) {
+        this.form.silder_image = file.url
+        this.dialogVisible = true
+      },
+      // 图片上传事件
+      imgPreview(file, fileList) {
+        // const that = this
+        this.imgStatus = true
+        const fileName = file.name
+        const regex = /(.jpg|.jpeg|.gif|.png|.bmp)$/
+        if (regex.test(fileName.toLowerCase())) {
+          this.form.silder_image = file.url
+        } else {
+          this.$message.error('请选择图片文件')
+        }
+        console.log('图片上传事件')
+        this.silderimgList = []
+        for (let i = 0; i < fileList.length; i++) {
+          let obj = {}
+          obj = fileList[i].raw
+          this.silderimgList.push(obj)
+        }
+        this.form.name = fileList[0].raw
+        // console.log(file, fileList)
+        console.log(this.silderimgList)
+        console.log('图片上传事件')
+
+        if (this.form.id) {
+          const data = new FormData()
+          data.append('id', this.form.id)
+          data.append('images', file.raw)
+          goods_upload_image(data).then(res => {
+            this.$notify({
+              title: 'Success',
+              message: '添加成功',
+              type: 'success',
+              duration: 1200
+            })
+          }).catch(error => {
+            console.log(error)
+          })
+        }
+      },
       /**
        * 编辑产品
        */
       edit(obj) {
+        const that = this
         this.form = obj
+        this.form.silderimgList = []
+        if (obj.images !== '') {
+          var img = (obj.images).split(';')
+          img.forEach(function(row, index) {
+            row = that.url + row
+            that.form.silderimgList.push({ url: row })
+          })
+        }
         this.centerDialogVisible = true
       },
       // 拉取数据
@@ -254,6 +339,7 @@
         const data = this.form
         const form = new FormData()
         form.append('title', this.form.title)
+        form.append('desc', this.form.desc)
         form.append('price', this.form.price)
         form.append('point', this.form.point)
         form.append('content', this.form.content)
@@ -272,7 +358,7 @@
           this.$message.error('请输入产品价格')
           return
         }
-        if (!this.form.point) {
+        if (!this.form.jifen) {
           this.$message.error('请输入最高可抵用积分')
           return
         }
@@ -293,6 +379,16 @@
             }
           }).catch(() => { })
         } else {
+          for (var i = 0; i < this.silderimgList.length; i++) {
+            // 使用for循环添加图片
+            if (i >= 9) { continue } // 图片数目不能大于9
+            else {
+              if (this.silderimgList[i].size <= 5242880) { // 上传图片不能超过5M
+                form.append('images[]', this.silderimgList[i])
+                /* 注意，这里的双引号里的变量名称后面必须要加上[]*/
+              }
+            }
+          }
           // create
           goods_add(form).then(({ code, msg }) => {
             if (code === 0) {

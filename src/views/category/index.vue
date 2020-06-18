@@ -29,18 +29,23 @@
       highlight-current-row
       style="width: 100%;margin-top: 10px;"
     >
-<!--      <el-table-column label="序号" type="index" width="50" align="center">-->
-<!--        <template scope="scope">-->
-<!--          <span>{{ (listQuery.page - 1) * listQuery.limit + scope.$index + 1 }}</span>-->
-<!--        </template>-->
-<!--      </el-table-column>-->
-        <el-table-column type="index" label="序号" sortable="custom" align="center" width="80" :class-name="getSortClass('id')" />
-        <el-table-column label="分类名称" prop="title" align="center" :class-name="getSortClass('id')">
+      <el-table-column label="序号" type="index" width="50" align="center">
+        <template scope="scope">
+          <span>{{ (listQuery.page - 1) * listQuery.limit + scope.$index + 1 }}</span>
+        </template>
+      </el-table-column>
+        <el-table-column label="分类名称" prop="title" width="200" align="center" :class-name="getSortClass('id')">
           <template slot-scope="{row}">
             <span>{{ row.title }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="分类图片" prop="type" align="center" width="150" style="height: 150px;" :class-name="getSortClass('id')">
+        <el-table-column label="上级" prop="title" align="center" :class-name="getSortClass('id')">
+          <template slot-scope="{row}">
+            <span v-if="row.pid === 0">顶级</span>
+            <span v-else>{{ row.parent.title}}</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="分类图片" prop="type" align="center" width="200" style="height: 150px;" :class-name="getSortClass('id')">
           <template slot-scope="{row}">
             <el-image class="image" :src="row.image">
               <div slot="error" class="image-slot">
@@ -49,14 +54,14 @@
             </el-image>
           </template>
         </el-table-column>
-        <el-table-column label="所属类别" prop="note" align="center" width="250" :class-name="getSortClass('id')">
+        <el-table-column label="所属类别" prop="note" align="center" width="150" :class-name="getSortClass('id')">
           <template slot-scope="{row}">
             <span v-if="row.type === 'learn'">学习课程</span>
             <span v-if="row.type === 'forum'">论坛</span>
             <span v-if="row.type === 'goods'">商品分类</span>
           </template>
         </el-table-column>
-        <el-table-column label="分类描述" prop="note" align="center" width="250" :class-name="getSortClass('id')">
+        <el-table-column label="分类描述" prop="note" align="center" width="200" :class-name="getSortClass('id')">
           <template slot-scope="{row}">
             <span>{{ row.desc }}</span>
           </template>
@@ -92,6 +97,17 @@
         <el-form-item label="分类名称" prop="title">
           <el-input v-model="temp.title" />
         </el-form-item>
+        <el-form-item label="选择上级">
+          <el-select v-model="temp.pid" filterable placeholder="请选择">
+            <el-option label="顶级" :value="0"></el-option>
+            <el-option
+              v-for="item in pidList"
+              :key="item.id"
+              :label="item.title"
+              :value="item.id">
+            </el-option>
+          </el-select>
+        </el-form-item>
         <el-form-item label="分类图片">
           <el-upload
             :show-file-list="false"
@@ -106,7 +122,7 @@
           </el-upload>
         </el-form-item>
         <el-form-item label="所属分类">
-          <el-select v-model="temp.type" placeholder="所属分类">
+          <el-select v-model="temp.type" placeholder="所属分类" @change="typeChange()">
             <el-option label="论坛" value="forum" />
             <el-option label="商品分类" value="goods" />
             <el-option label="学生课程" value="learn" />
@@ -155,6 +171,7 @@
     components: { Pagination, EditorBar },
     data() {
       return {
+        pidList: [],
         isClear: false,
         detail: '',
         quillOption: quillConfig,
@@ -178,11 +195,8 @@
         temp: {
           imageFile: '',
           id: undefined,
-          timestamp: new Date(),
-          create_time: new Date(),
           title: '',
-          type: '',
-          type_title: ''
+          type: ''
         },
         textMap: {
           update: '编辑',
@@ -190,6 +204,8 @@
         },
         typelist: {}
       }
+    },
+    mounted() {
     },
     created() {
       this.getList()
@@ -208,6 +224,18 @@
       handleFilter() {
         this.listQuery.page = 1
         this.getList()
+      },
+      typeChange() {
+        this.temp.pid = 0
+        this.getPidList()
+      },
+      getPidList() {
+        console.log(this.temp)
+        category.getlist(1, 9999, '', this.temp.type).then(res => {
+          this.pidList = res.data
+        }).catch(error => {
+          console.log(error)
+        })
       },
       getList() {
         this.listLoading = false
@@ -248,11 +276,14 @@
           title: '',
           desc: '',
           image: '',
-          imageFile: ''
+          imageFile: '',
+          pid: 0,
+          type: ''
         }
       },
       handleCreate() {
         this.resetTemp()
+        this.getPidList()
         this.dialogStatus = 'create'
         this.dialogFormVisible = true
         this.$nextTick(() => {
@@ -261,6 +292,7 @@
       },
       handleUpdate(row) {
         this.temp = Object.assign({}, row) // copy obj
+        this.getPidList()
         this.dialogStatus = 'update'
         this.dialogFormVisible = true
         this.$nextTick(() => {
@@ -275,6 +307,7 @@
             data.append('id', tempData.id)
             data.append('title', tempData.title)
             data.append('type', tempData.type)
+            data.append('pid', tempData.pid)
             if (this.temp.imageFile != null) {
               data.append('image', this.temp.imageFile)
             }
@@ -302,15 +335,16 @@
             data.append('id', tempData.id)
             data.append('title', tempData.title)
             data.append('type', tempData.type)
-            if (tempData.type === undefined) {
+            data.append('pid', tempData.pid)
+            if (tempData.type === '') {
               return this.$message.error('必须选择分类')
             }
             if (this.temp.imageFile != null) {
               data.append('image', this.temp.imageFile)
             }
             category.add(data).then(() => {
-              this.temp.create_time = new Date(this.temp.timestamp)
-              this.list.push(this.temp)
+              // this.list.push(this.temp)
+              this.getList()
               this.dialogFormVisible = false
               this.$notify({
                 title: 'Success',

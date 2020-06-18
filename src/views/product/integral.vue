@@ -18,7 +18,7 @@
       >添加产品</el-button>
     </p>
     <el-table v-loading="listLoading" :data="list" element-loading-text="Loading" fit highlight-current-row>
-      <el-table-column label="序号" type="index" width="50" align="center">
+      <el-table-column label="序号" type="index" width="80" align="center">
         <template scope="scope">
           <span>{{ (page - 1) * limit + scope.$index + 1 }}</span>
         </template>
@@ -34,20 +34,14 @@
         </template>
       </el-table-column>
 
-      <el-table-column label="兑换所需积分">
+      <el-table-column label="兑换所需积分" align="center">
         <template slot-scope="scope">
           {{ scope.row.price }}
         </template>
 
       </el-table-column>
 
-      <el-table-column label="商品详情">
-        <template slot-scope="scope">
-          {{ scope.row.note }}
-        </template>
-      </el-table-column>
-
-      <el-table-column label="是否是默认推送的产品">
+      <el-table-column label="是否默认推送" align="center">
         <template slot-scope="scope">
           <el-switch
             v-model="scope.row.is_default"
@@ -232,7 +226,8 @@
          is_default: '',
          silderimgList: '',
          silder_image: []
-       }
+       },
+       silderimgList: []
       }
     },
     created() {
@@ -240,14 +235,16 @@
     },
     methods: {
       handleRemove(file) {
-        del_image(this.form.id, file.url).then(res => {
-          this.$notify({
-            title: 'Success',
-            message: '删除成功',
-            type: 'success',
-            duration: 1200
+        if (this.form.id){
+          del_image(this.form.id, file.url).then(res => {
+            this.$notify({
+              title: 'Success',
+              message: '删除成功',
+              type: 'success',
+              duration: 1200
+            })
           })
-        })
+        }
       },
       // 点击放大图片
       handlePictureCardPreview(file) {
@@ -255,8 +252,9 @@
         this.dialogVisible = true
       },
       // 图片上传事件
-      imgPreview(file) {
-        // this.imgStatus = true
+      imgPreview(file, fileList) {
+        // const that = this
+        this.imgStatus = true
         const fileName = file.name
         const regex = /(.jpg|.jpeg|.gif|.png|.bmp)$/
         if (regex.test(fileName.toLowerCase())) {
@@ -264,19 +262,33 @@
         } else {
           this.$message.error('请选择图片文件')
         }
-        const data = new FormData()
-        data.append('id', this.form.id)
-        data.append('images', file.raw)
-        upload_image(data).then(res => {
-          this.$notify({
-            title: 'Success',
-            message: '添加成功',
-            type: 'success',
-            duration: 1200
+        console.log('图片上传事件')
+        this.silderimgList = []
+        for (let i = 0; i < fileList.length; i++) {
+          let obj = {}
+          obj = fileList[i].raw
+          this.silderimgList.push(obj)
+        }
+        this.form.name = fileList[0].raw
+        // console.log(file, fileList)
+        console.log(this.silderimgList)
+        console.log('图片上传事件')
+
+        if (this.form.id) {
+          const data = new FormData()
+          data.append('id', this.form.id)
+          data.append('images', file.raw)
+          upload_image(data).then(res => {
+            this.$notify({
+              title: 'Success',
+              message: '添加成功',
+              type: 'success',
+              duration: 1200
+            })
+          }).catch(error => {
+            console.log(error)
           })
-        }).catch(error => {
-          console.log(error)
-        })
+        }
       },
       // 设置默认按钮
       setDefault(e, index) {
@@ -287,7 +299,12 @@
         // isDefault = e ? 1 : 0
         exchange_default(this.list[index].id).then(res => {
           if (res.code === 0) {
-            this.fetchData(1)
+            this.$notify({
+              title: 'Success',
+              message: '状态修改成功',
+              type: 'success',
+              duration: 1000
+            })
           } else {
             this.$message.error(res.data.mgs)
           }
@@ -343,6 +360,7 @@
         const data = this.form
         const form = new FormData()
         form.append('title', this.form.title)
+        form.append('desc', this.form.desc)
         form.append('price', this.form.price)
         form.append('content', this.form.content)
         form.append('is_default', this.current)
@@ -366,7 +384,7 @@
           this.$message.error('请输入商品详情')
           return
         }
-        if (!this.form.silderimgList) {
+        if (!this.silderimgList) {
           this.$message.error('请选择商品轮播图')
           return
         }
@@ -386,6 +404,16 @@
           })
         } else {
           // create
+          for (var i = 0; i < this.silderimgList.length; i++) {
+            // 使用for循环添加图片
+            if (i >= 9) { continue } // 图片数目不能大于9
+            else {
+              if (this.silderimgList[i].size <= 5242880) { // 上传图片不能超过5M
+                form.append('images[]', this.silderimgList[i])
+                /* 注意，这里的双引号里的变量名称后面必须要加上[]*/
+              }
+            }
+          }
           exchange_add(form).then(({ code, msg }) => {
             if (code === 0) {
               this.$message.success('操作成功')
