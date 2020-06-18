@@ -19,7 +19,7 @@ export function getOrderInfo(id) {
 export function delOrder(id) {
   return request({
     url: '/v1/order/' + id,
-    methods: 'delete'
+    method: 'delete'
   })
 }
 
