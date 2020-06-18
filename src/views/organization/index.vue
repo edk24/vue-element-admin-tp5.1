@@ -1,51 +1,74 @@
 <template>
   <div class="app-container">
-    <div class="filter-container">
+    <div class="filter-container" />
 
+    <el-form ref="dataForm" :rules="rules" :model="temp" label-position="left" label-width="100px" style="padding:0 5px;margin-right:5px;margin-left:50px;">
+      <el-form-item label="机构名称" style="width: 30%;">
+        <el-input v-model="temp.title" />
+      </el-form-item>
+      <el-form-item label="推广公司">
+        <el-select v-model="temp.type" placeholder="所属分类" @change="typeChange()">
+          <el-option v-for="item in type" :key="item.key" :label="item.name" :value="item.key" />
+        </el-select>
+      </el-form-item>
+      <el-form-item label="营业执照">
+        <el-upload
+          :show-file-list="false"
+          :multiple="false"
+          action="post"
+          :before-upload="selectImg"
+          :on-change="changeImage"
+          :props="optionProps"
+          style="width: 200px; height: 200px"
+        >
+          <img v-if="temp.image" style="width: 200px; height: 200px" :src="temp.image" class="avatar">
+          <i v-else class="el-icon-plus avatar-uploader-icon" />
+        </el-upload>
+      </el-form-item>
+      <el-form-item label="省/市/区">
+        <el-cascader
+          v-model="selectedOptions"
+          size="large"
+          :options="options"
+          placeholder="请选择机构所在地区"
+          style="width: 350px;"
+          :props="optionProps"
+          @change="handleChange"
+        />
+      </el-form-item>
+      <el-form-item label="详细地址">
+        <el-input v-model="temp.address" />
+      </el-form-item>
+      <el-form-item label="联系人">
+        <el-input v-model="temp.contact" />
+      </el-form-item>
+      <el-form-item label="联系人电话">
+        <el-input v-model="temp.phone" />
+      </el-form-item>
+      <el-form-item label="对推广员返点">
+        <el-input v-model="temp.rebate" />
+      </el-form-item>
+      <el-form-item label="审核状态">
+        <el-input v-model="temp.status" />
+      </el-form-item>
+      <el-form-item label="拒绝理由">
+        <el-input v-model="temp.reason" />
+      </el-form-item>
+      <el-form-item label="纬度">
+        <el-input v-model="temp.title" />
+      </el-form-item>
+      <el-form-item label="经度">
+        <el-input v-model="temp.title" />
+      </el-form-item>
+    </el-form>
+    <div slot="footer" class="dialog-footer">
+      <el-button @click="dialogFormVisible = false">
+        取消
+      </el-button>
+      <el-button type="primary" @click="dialogStatus==='create'?createData():updateData()">
+        确认
+      </el-button>
     </div>
-
-      <el-form ref="dataForm" :rules="rules" :model="temp" label-position="left" label-width="100px" style="padding:0 5px;margin-right:5px;margin-left:50px;">
-        <el-form-item label="机构名称">
-          <el-input v-model="temp.title" />
-        </el-form-item>
-        <el-form-item label="推广公司">
-          <el-select v-model="temp.type" placeholder="所属分类" @change="typeChange()">
-            <el-option v-for="item in type" :label="item.name" :value="item.key" :key="item.key" />
-          </el-select>
-        </el-form-item>
-        <el-form-item label="选择上级">
-        </el-form-item>
-        <el-form-item label="分类图片">
-          <el-upload
-            :show-file-list="false"
-            :multiple="false"
-            action="post"
-            :before-upload="selectImg"
-            :on-change="changeImage"
-            style="width: 200px; height: 200px"
-          >
-            <img v-if="temp.image" style="width: 200px; height: 200px" :src="temp.image" class="avatar">
-            <i v-else class="el-icon-plus avatar-uploader-icon" />
-          </el-upload>
-        </el-form-item>
-        <el-form-item label="分类描述">
-          <el-input
-            type="textarea"
-            :autosize="{ minRows: 2, maxRows: 5}"
-            placeholder="请输入内容"
-            style="font-size: 16px"
-            v-model="temp.desc">
-          </el-input>
-        </el-form-item>
-      </el-form>
-      <div slot="footer" class="dialog-footer">
-        <el-button @click="dialogFormVisible = false">
-          取消
-        </el-button>
-        <el-button type="primary" @click="dialogStatus==='create'?createData():updateData()">
-          确认
-        </el-button>
-      </div>
   </div>
 </template>
 
@@ -53,9 +76,15 @@
   import EditorBar from '@/components/wangEnduit'
   import { category } from '@/api/category'
   import Pagination from '@/components/Pagination'
-  // import Tinymce from '@/components/Tinymce'
-  // import { quillEditor } from 'vue-quill-editor'
   import quillConfig from '@/utils/quill-config.js'
+  import {
+    provinceAndCityData,
+    regionData,
+    provinceAndCityDataPlus,
+    regionDataPlus,
+    CodeToText,
+    TextToCode
+  } from 'element-china-area-data'
   const type = [
     { key: 'forum', name: '论坛' },
     { key: 'goods', name: '商品分类' },
@@ -63,15 +92,20 @@
     { key: 'train', name: '培训机构' }
   ]
   export default {
-    // components: { Pagination, quillEditor, Tinymce, EditorBar },
-    components: { Pagination, EditorBar },
+    components: { Pagination },
     data() {
       return {
-        pidList: [],
+        optionProps: {
+          value: 'label',
+          label: 'label',
+          children: 'children'
+        },
+        options: regionData,
+        selectedOptions: [],
         isClear: false,
         detail: '',
-        quillOption: quillConfig,
         type,
+        quillOption: quillConfig,
         imgsrc: process.env.VUE_APP_BASE_API,
         tableKey: 0,
         list: null,
@@ -111,11 +145,11 @@
         console.log(val)
       },
       search() {
-        // if (this.listQuery.keyword) {
         this.getList()
-        // } else {
-        //   this.$message.warning('请输入关键词')
-        // }
+      },
+      // 获取省市区地址级联
+      handleChange(e) {
+        console.log(e)
       },
       handleFilter() {
         this.listQuery.page = 1
