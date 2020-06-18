@@ -7,7 +7,7 @@ export function login(data) {
     url: '/v1/user/login',
     method: 'post',
     data: qs.stringify(data)
-})
+  })
 }
 
 // 获取用户信息
@@ -25,10 +25,10 @@ export function logout() {
   })
 }
 
-// 查询管理员用户列表
-export function user_list(page, limit) {
+// 查询用户列表
+export function user_list(page, limit, keyword) {
   return request({
-    url: '/v1/admin/list?' + qs.stringify(limit, page)
+    url: '/v1/user/list?' + qs.stringify({ page, limit, keyword })
   })
 }
 
@@ -66,29 +66,9 @@ export function user_do_audit(user_id, type, real_content) {
   })
 }
 
-// 查询家长列表-家长
-export function user_parent(page, limit, keyword) {
-  return request({
-    url: '/v1/user/list?' + qs.stringify({ limit, page, keyword }),
-    method: 'get'
-  })
-}
 
-// 查询孩子列表
-export function user_child(page, limit, keyword) {
-  return request({
-    url: '/v1/user/getAllSon?' + qs.stringify({ limit, page, keyword }),
-    method: 'get'
-  })
-}
 
-// 查询孩子列表
-export function user_get_child(id) {
-  return request({
-    url: '/v1/user/getSonByUid?uid=' + id,
-    method: 'get'
-  })
-}
+
 
 // 查询银行卡列表
 export function bank_list(page, limit, keyword, status) {

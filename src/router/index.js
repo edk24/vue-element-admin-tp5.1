@@ -91,7 +91,7 @@ export const constantRoutes = [{
     children: [{
         path: 'parent',
         name: '家长管理',
-        component: () => import('@/views/user/parent'),
+        component: () => import('@/views/user/index'),
         meta: {
           title: '家长管理',
           icon: 'tree'
