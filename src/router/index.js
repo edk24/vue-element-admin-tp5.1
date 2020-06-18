@@ -272,10 +272,10 @@ export const constantRoutes = [{
       },
       {
         path: 'index',
-        name: '列表',
+        name: '机构管理',
         component: () => import('@/views/organization/index'),
         meta: {
-          title: '列表',
+          title: '机构管理',
           icon: 'tree'
         }
       },

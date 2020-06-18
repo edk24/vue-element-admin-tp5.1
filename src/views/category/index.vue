@@ -16,6 +16,7 @@
         <el-button type="primary" @click="search()">搜索</el-button>
 
         <el-select v-model="listQuery.type" style="width: 140px" class="filter-item" @change="handleFilter">
+          <el-option label="全部" value="all" />
           <el-option v-for="item in type" :key="item.key" :label="item.name" :value="item.key" />
         </el-select>
       </p>
@@ -56,9 +57,7 @@
         </el-table-column>
         <el-table-column label="所属类别" prop="note" align="center" width="150" :class-name="getSortClass('id')">
           <template slot-scope="{row}">
-            <span v-if="row.type === 'learn'">学习课程</span>
-            <span v-if="row.type === 'forum'">论坛</span>
-            <span v-if="row.type === 'goods'">商品分类</span>
+            <span>{{ row.type_title }}</span>
           </template>
         </el-table-column>
         <el-table-column label="分类描述" prop="note" align="center" width="200" :class-name="getSortClass('id')">
@@ -97,6 +96,11 @@
         <el-form-item label="分类名称" prop="title">
           <el-input v-model="temp.title" />
         </el-form-item>
+        <el-form-item label="所属分类">
+          <el-select v-model="temp.type" placeholder="所属分类" @change="typeChange()">
+            <el-option v-for="item in type" :label="item.name" :value="item.key" :key="item.key" />
+          </el-select>
+        </el-form-item>
         <el-form-item label="选择上级">
           <el-select v-model="temp.pid" filterable placeholder="请选择">
             <el-option label="顶级" :value="0"></el-option>
@@ -120,13 +124,6 @@
             <img v-if="temp.image" style="width: 200px; height: 200px" :src="temp.image" class="avatar">
             <i v-else class="el-icon-plus avatar-uploader-icon" />
           </el-upload>
-        </el-form-item>
-        <el-form-item label="所属分类">
-          <el-select v-model="temp.type" placeholder="所属分类" @change="typeChange()">
-            <el-option label="论坛" value="forum" />
-            <el-option label="商品分类" value="goods" />
-            <el-option label="学生课程" value="learn" />
-          </el-select>
         </el-form-item>
         <el-form-item label="分类描述">
           <!--          <tinymce v-model="temp.desc" height="300" />-->
@@ -161,10 +158,10 @@
   // import { quillEditor } from 'vue-quill-editor'
   import quillConfig from '@/utils/quill-config.js'
   const type = [
-    { key: 'all', name: '全部' },
     { key: 'forum', name: '论坛' },
     { key: 'goods', name: '商品分类' },
-    { key: 'learn', name: '学生课程' }
+    { key: 'learn', name: '学生课程' },
+    { key: 'train', name: '培训机构' }
   ]
   export default {
     // components: { Pagination, quillEditor, Tinymce, EditorBar },
@@ -306,14 +303,16 @@
             const data = new FormData()
             data.append('id', tempData.id)
             data.append('title', tempData.title)
+            data.append('desc', tempData.desc)
             data.append('type', tempData.type)
             data.append('pid', tempData.pid)
             if (this.temp.imageFile != null) {
               data.append('image', this.temp.imageFile)
             }
             category.edit(data).then(response => {
-              const index = this.list.findIndex(v => v.id === this.temp.id)
-              this.list.splice(index, 1, tempData)
+              // const index = this.list.findIndex(v => v.id === this.temp.id)
+              // this.list.splice(index, 1, tempData)
+              this.getList()
               this.dialogFormVisible = false
               this.$notify({
                 title: 'Success',
@@ -334,6 +333,7 @@
             const data = new FormData()
             data.append('id', tempData.id)
             data.append('title', tempData.title)
+            data.append('desc', tempData.desc)
             data.append('type', tempData.type)
             data.append('pid', tempData.pid)
             if (tempData.type === '') {

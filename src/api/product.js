@@ -84,9 +84,9 @@ export function goods_add(data) {
 }
 
 // 查询 普通产品列表
-export function goods_list(page, limit, keyword) {
+export function goods_list(page, limit, keyword, type) {
   return request({
-    url: '/v1/goods/list?' + qs.stringify({ page, limit, keyword }),
+    url: '/v1/goods/list?' + qs.stringify({ page, limit, keyword, type }),
     method: 'get'
  })
 }

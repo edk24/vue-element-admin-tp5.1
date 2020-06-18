@@ -90,7 +90,7 @@
         </el-form-item>
         <el-form-item label="营业执照" >
           <el-image
-            style="width: 200px; height: 200px"
+            style="width: 300px; height: 200px"
             :src="temp.license"
             :preview-src-list="licenseList">
           </el-image>
