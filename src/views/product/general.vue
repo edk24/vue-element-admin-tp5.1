@@ -2,14 +2,18 @@
   <div class="app-container">
     <p>
       <el-input
-        v-model="keyword"
+        v-model="listQuery.keyword"
         maxlength="16"
         style="width:300px;margin-right:15px"
         placeholder="请输入关键字进行搜索"
         @keyup.enter.native="search()"
       />
       <el-button type="primary" @click="search()">搜索</el-button>
-      <el-button type="primary" @click="all()">全部</el-button>
+
+      <el-select v-model="listQuery.type" style="width: 150px" class="filter-item" @change="handleFilter">
+        <el-option label="全部-分类" value="all" />
+        <el-option v-for="item in categoryList" :key="item.id" :label="item.title" :value="item.id" />
+      </el-select>
     </p>
     <p>
       <el-button
@@ -20,12 +24,17 @@
     <el-table v-loading="listLoading" :data="list" element-loading-text="Loading" fit highlight-current-row>
       <el-table-column label="序号" type="index" width="50" align="center">
         <template scope="scope">
-          <span>{{ (page - 1) * limit + scope.$index + 1 }}</span>
+          <span>{{ (listQuery.page - 1) * listQuery.page + scope.$index + 1 }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="产品标题">
+      <el-table-column label="产品标题" align="center">
         <template slot-scope="scope">
           {{ scope.row.title }}
+        </template>
+      </el-table-column>
+      <el-table-column label="所属分类" align="center">
+        <template slot-scope="scope">
+          {{ scope.row.category.title }}
         </template>
       </el-table-column>
       <el-table-column label="产品展示图" width="200" align="center">
@@ -71,6 +80,9 @@
       </el-table-column>
     </el-table>
 
+    <!-- 分页 -->
+    <pagination v-show="total>0" :total="total" :page.sync="listQuery.page" :limit.sync="listQuery.limit" @pagination="fetchData" />
+
     <el-dialog
       :visible.sync="centerDialogVisible"
       center
@@ -82,6 +94,11 @@
       >
         <el-form-item label="产品标题:" label-width="130px">
           <el-input v-model="form.title" />
+        </el-form-item>
+        <el-form-item label="分类：" label-width="130px">
+          <el-select v-model="form.category_id" style="width: 150px">
+            <el-option v-for="item in categoryList" :key="item.id" :label="item.title" :value="item.id" />
+          </el-select>
         </el-form-item>
         <el-form-item label="产品描述:" label-width="130px">
           <el-input v-model="form.desc" type="textarea" :autosize="{ minRows: 2, maxRows: 5}" />
@@ -145,17 +162,6 @@
       </span>
     </el-dialog>
 
-    <p>
-      <el-pagination
-        background
-        :current-page.sync="page"
-        :page-size="limit"
-        layout="total, prev, pager, next"
-        :total="count"
-        @current-change="fetchData"
-      />
-    </p>
-
   </div>
 </template>
 
@@ -168,9 +174,11 @@
       goods_upload_image,
       goods_del_image
   } from '@/api/product'
+  import { category } from '@/api/category'
   import EditorBar from '@/components/wangEnduit'
+  import Pagination from '@/components/Pagination'
   export default {
-    components: { EditorBar },
+    components: { EditorBar, Pagination },
     filters: {
       statusFilter(status) {
         const statusMap = {
@@ -183,15 +191,20 @@
     },
     data() {
       return {
+        categoryList: [],
         isClear: false,
         detail: '',
+        total: 0,
         dialogVisible: false,
         url: process.env.VUE_APP_BASE_API,
+        listQuery: {
+          page: 1,
+          limit: 10,
+          type: 'all',
+          keyword: ''
+        },
         list: [],
         count: 0,
-        page: 1,
-        limit: 10,
-        keyword: '',
         listLoading: true,
         centerDialogVisible: false,
         formData: {
@@ -223,7 +236,8 @@
       }
     },
     created() {
-      this.fetchData(1)
+      this.fetchData()
+      this.getCategoryList()
     },
     methods: {
       /**
@@ -240,8 +254,19 @@
         }
         this.centerDialogVisible = true
       },
+      handleFilter() {
+        this.listQuery.page = 1
+        this.fetchData()
+      },
+      getCategoryList() {
+        category.getlist(1, 999, '', 'goods').then(res => {
+          this.categoryList = res.data
+        }).catch(e => {
+          console.log(e)
+        })
+      },
       handleRemove(file) {
-        if (this.form.id){
+        if (this.form.id) {
           goods_del_image(this.form.id, file.url).then(res => {
             this.$notify({
               title: 'Success',
@@ -268,7 +293,6 @@
         } else {
           this.$message.error('请选择图片文件')
         }
-        console.log('图片上传事件')
         this.silderimgList = []
         for (let i = 0; i < fileList.length; i++) {
           let obj = {}
@@ -276,8 +300,6 @@
           this.silderimgList.push(obj)
         }
         this.form.name = fileList[0].raw
-        // console.log(file, fileList)
-        console.log(this.silderimgList)
         console.log('图片上传事件')
 
         if (this.form.id) {
@@ -302,6 +324,7 @@
       edit(obj) {
         const that = this
         this.form = obj
+        console.log(this.form)
         this.form.silderimgList = []
         if (obj.images !== '') {
           var img = (obj.images).split(';')
@@ -313,23 +336,22 @@
         this.centerDialogVisible = true
       },
       // 拉取数据
-      fetchData(page) {
+      fetchData() {
         const that = this
-        if (page) {
-          this.page = page
-          if (page <= 1) {
-            that.page = 1
-          }
-        }
+        // if (page) {
+        //   this.listQuery.page = page
+        //   if (page <= 1) {
+        //     that.listQuery.page = 1
+        //   }
+        // }
         this.listLoading = true
-        goods_list(this.page, this.limit, this.keyword).then(response => {
+        goods_list(this.listQuery.page, this.listQuery.limit, this.listQuery.keyword, this.listQuery.type).then(response => {
           that.list = []
           response.data.forEach(row => {
             row.image = that.url + row.image
-            console.log(row)
             that.list.push(row)
           })
-          this.count = response.count
+          this.total = response.count
           this.listLoading = false
         }).catch((err) => {
           console.log(err.message)
@@ -339,6 +361,10 @@
         const data = this.form
         const form = new FormData()
         form.append('title', this.form.title)
+        if (this.form.category_id === '') {
+          return this.$message.warning('分类为空')
+        }
+        form.append('category_id', this.form.category_id)
         form.append('desc', this.form.desc)
         form.append('price', this.form.price)
         form.append('point', this.form.point)
@@ -444,7 +470,7 @@
       },
       // 搜索
       search() {
-        if (this.keyword) {
+        if (this.listQuery.keyword) {
           this.fetchData()
         } else {
           this.$message.warning('请输入关键词')
@@ -452,7 +478,7 @@
       },
       // 查询全部
       all() {
-        this.keyword = ''
+        this.listQuery.keyword = ''
         this.fetchData()
       }
     }
