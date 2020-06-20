@@ -32,6 +32,19 @@ const organization = {
       method: 'post',
       data
     })
+  },
+  upload_image: function(data) {
+    return request({
+      url: '/v1/train/upload_image',
+      method: 'post',
+      data
+    })
+  },
+  del_image: function(id, url) {
+    return request({
+      url: '/v1/train/del_image?' + qs.stringify({ id, url }),
+      method: 'get'
+    })
   }
 }
 // 培训机构列表

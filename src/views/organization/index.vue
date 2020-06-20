@@ -1,7 +1,7 @@
 <template>
   <div class="app-container">
     <div class="filter-container" />
-    <el-form ref="dataForm" v-model="list" :rules="rules" label-position="left" label-width="100px" style="padding:0 5px;margin-right:5px;margin-left:50px;">
+    <el-form ref="dataForm" v-model="list" :rules="rules" label-position="left" label-width="100px" style="padding:0 5px;margin-right:5px;margin-left:150px;">
       <el-form-item label="机构名称" style="width: 30%;">
         <span>{{ list.name }}</span>
       </el-form-item>
@@ -17,12 +17,15 @@
       </el-form-item>
       <el-form-item label="描述">
         <el-input
+          v-model="list.desc"
           type="textarea"
           :autosize="{ minRows: 3, maxRows: 6}"
           placeholder="请输入内容"
           style="width: 50%;"
-          v-model="list.desc">
-        </el-input>
+        />
+      </el-form-item>
+      <el-form-item label="分类">
+        <span>{{ category.title }}</span>
       </el-form-item>
       <el-form-item label="展示图">
         <el-upload
@@ -47,7 +50,7 @@
         <el-upload
           action="post"
           list-type="picture-card"
-          :file-list="list.silderimgList"
+          :file-list="silderimgList"
           :on-preview="handlePictureCardPreview"
           :on-change="imgPreview"
           :before-upload="selectImg"
@@ -85,17 +88,17 @@
         <span>{{ list.rebate }}</span>
       </el-form-item>
       <el-form-item label="详情">
-        <editor-bar v-model="list.content" :is-clear="isClear" style="width: 800px;"/>
+        <editor-bar v-model="list.content" :is-clear="isClear" style="width: 800px;" />
       </el-form-item>
     </el-form>
-        <div slot="footer" class="dialog-footer">
-<!--          <el-button @click="dialogFormVisible = false">-->
-<!--            取消-->
-<!--          </el-button>-->
-          <el-button type="primary" @click="updateData()">
-            确认修改
-          </el-button>
-        </div>
+    <div slot="footer" class="dialog-footer" style="margin-left: 254px;">
+      <!--          <el-button @click="dialogFormVisible = false">-->
+      <!--            取消-->
+      <!--          </el-button>-->
+      <el-button type="primary" @click="updateData()">
+        确认修改
+      </el-button>
+    </div>
   </div>
 </template>
 
@@ -130,6 +133,7 @@
     },
     data() {
       return {
+        category: [],
         imgStatus: false,
         dialogImageUrl: '',
         dialogVisible: false,
@@ -187,8 +191,8 @@
     },
     methods: {
       handleRemove(file) {
-        if (this.list.id){
-          del_image(this.list.id, file.url).then(res => {
+        if (this.list.id) {
+          organization.del_image(this.list.id, file.url).then(res => {
             this.$notify({
               title: 'Success',
               message: '删除成功',
@@ -204,7 +208,7 @@
         this.dialogVisible = true
       },
       // 图片上传事件
-      imgPreview(file, fileList) {
+      imgPreview(file) {
         // const that = this
         this.imgStatus = true
         const fileName = file.name
@@ -214,23 +218,17 @@
         } else {
           this.$message.error('请选择图片文件')
         }
-        console.log('图片上传事件')
-        this.silderimgList = []
-        for (let i = 0; i < fileList.length; i++) {
-          let obj = {}
-          obj = fileList[i].raw
-          this.silderimgList.push(obj)
+        if (this.silderimgList.length >= 8) {
+          return this.$message.warning('轮播图超过8张，无效上传')
         }
-        this.list.name = fileList[0].raw
-        // console.log(file, fileList)
-        console.log(this.silderimgList)
-        console.log('图片上传事件')
-
         if (this.list.id) {
           const data = new FormData()
           data.append('id', this.list.id)
           data.append('images', file.raw)
-          upload_image(data).then(res => {
+          organization.upload_image(data).then(res => {
+            var img = this.imgsrc + res.data
+            this.silderimgList.push({ url: img })
+            console.log(this.silderimgList)
             this.$notify({
               title: 'Success',
               message: '添加成功',
@@ -257,20 +255,25 @@
         this.getList()
       },
       getList() {
+        const that = this
         this.listLoading = false
         organization.train_info(this.user.id).then(({ code, msg, data, count }) => {
           if (code === 0) {
-            // data.forEach(row => {
-            //   row.image = this.imgsrc + row.image
-            //   this.list.push(row)
-            // })
             data.license = this.imgsrc + data.license
             this.licenseList.push(data.license)
+            data.image = this.imgsrc + data.image
             var str = data.province + ',' + data.city + ',' + data.area
             this.selectedOptions = str.split(',')
 
-            this.list = data
+              var img = data.images.split(';')
+              img.forEach(function(row) {
+                row = that.imgsrc + row
+                that.silderimgList.push({ url: row })
+              })
+            this.category = data.category
             this.company = data.company
+
+            this.list = data
           } else {
             this.$message.error(msg || '查询失败')
           }
@@ -395,7 +398,7 @@
           this.$message.error('应该选择image/*类型的文件')
         }
 
-        this.temp.imageFile = file
+        this.list.imageFile = file
         return false // don't auto upload
       },
       // 图片被改变
@@ -404,7 +407,7 @@
         const that = this
         var reader = new FileReader()
         reader.onload = (e) => {
-          that.temp.image = e.target.result
+          that.list.image = e.target.result
         }
         reader.readAsDataURL(file.raw)
       }
