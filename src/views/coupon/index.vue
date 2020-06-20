@@ -15,9 +15,9 @@
         />
         <el-button type="primary" @click="search()">搜索</el-button>
 
-<!--        <el-select v-model="listQuery.type" style="width: 140px" class="filter-item" @change="handleFilter">-->
-<!--          <el-option v-for="item in type" :key="item.key" :label="item.name" :value="item.key" />-->
-<!--        </el-select>-->
+        <!--        <el-select v-model="listQuery.type" style="width: 140px" class="filter-item" @change="handleFilter">-->
+        <!--          <el-option v-for="item in type" :key="item.key" :label="item.name" :value="item.key" />-->
+        <!--        </el-select>-->
       </p>
     </div>
 
@@ -41,33 +41,27 @@
       </el-table-column>
       <el-table-column label="培训机构" prop="type" align="center" width="150" style="height: 150px;" :class-name="getSortClass('id')">
         <template slot-scope="{row}">
-          <el-image class="image" :src="row.image">
-            <div slot="error" class="image-slot">
-              暂未上传
-            </div>
-          </el-image>
+          <span>{{ row.train.name }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="使用店" prop="note" align="center" width="150" :class-name="getSortClass('id')">
+      <el-table-column label="使用课程" prop="note" align="center" width="150" :class-name="getSortClass('id')">
         <template slot-scope="{row}">
-          <span v-if="row.type === 'learn'">学习课程</span>
-          <span v-if="row.type === 'forum'">论坛</span>
-          <span v-if="row.type === 'goods'">商品分类</span>
+          <!--          <span>{{  }}</span>-->
         </template>
       </el-table-column>
       <el-table-column label="时间范围" prop="note" align="center" width="150" :class-name="getSortClass('id')">
         <template slot-scope="{row}">
-          <span>{{ row.desc }}</span>
+          <span>{{ row.start_time }}-{{ row.end_time }}</span>
         </template>
       </el-table-column>
       <el-table-column label="发行数量" prop="note" align="center" width="150" :class-name="getSortClass('id')">
         <template slot-scope="{row}">
-          <span>{{ row.desc }}</span>
+          <span>{{ row.issue_number }}</span>
         </template>
       </el-table-column>
       <el-table-column label="剩余数量" prop="note" align="center" width="150" :class-name="getSortClass('id')">
         <template slot-scope="{row}">
-          <span>{{ row.desc }}</span>
+          <span>{{ row.number }}</span>
         </template>
       </el-table-column>
       <el-table-column label="创建时间" prop="create_time" align="center" width="250" :class-name="getSortClass('id')">
@@ -107,30 +101,35 @@
               v-for="item in train_list"
               :key="item.id"
               :label="item.name"
-              :value="item.id">
-            </el-option>
+              :value="item.id"
+            />
           </el-select>
         </el-form-item>
-        <el-form-item label="商品" prop="title">
-          <el-input v-model="temp.title" />
+        <el-form-item label="商品" >
+          <!--          <el-input v-model="temp.title" />-->
         </el-form-item>
-        <el-form-item label="开始时间" prop="title">
-          <el-input v-model="temp.title" />
+        <el-form-item label="开始时间" >
+          <el-date-picker
+            v-model="temp.start_time"
+            type="date"
+            placeholder="选择日期"
+          />
         </el-form-item>
-        <el-form-item label="结束时间" prop="title">
-          <el-input v-model="temp.title" />
+        <el-form-item label="结束时间" >
+          <el-date-picker
+            v-model="temp.end_time"
+            type="date"
+            placeholder="选择日期"
+          />
         </el-form-item>
-        <el-form-item label="发布数量" prop="title">
-          <el-input v-model="temp.title" />
+        <el-form-item label="发布数量" >
+          <el-input v-model="temp.issue_number" type="number" />
         </el-form-item>
-        <el-form-item label="满减金额" prop="title">
-          <el-input v-model="temp.title" />
+        <el-form-item label="满减金额" prop="full_money">
+          <el-input v-model="temp.full_money" clearable  placeholder="请输入满减金额" oninput="value=value.replace(/[^\d.]/g,'')"/>
         </el-form-item>
-        <el-form-item label="减少金额" prop="title">
-          <el-input v-model="temp.title" />
-        </el-form-item>
-        <el-form-item label="发布数量" prop="title">
-          <el-input v-model="temp.title" />
+        <el-form-item label="减少金额" prop="dec_money">
+          <el-input v-model="temp.dec_money" maxlength="10" placeholder="请输入减少金额" oninput="value=value.replace(/[^\d.]/g,'')" />
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -148,9 +147,8 @@
 <script>
   import { coupon } from '@/api/coupon'
   import Pagination from '@/components/Pagination'
-  import { train_list } from '@/api/organization'
-  // import Tinymce from '@/components/Tinymce'
-  // import { quillEditor } from 'vue-quill-editor'
+  import { organization } from '@/api/organization'
+  import { mapGetters } from 'vuex'
   const type = [
     { key: 'all', name: '全部' },
     { key: 'forum', name: '论坛' },
@@ -158,14 +156,24 @@
     { key: 'learn', name: '学生课程' }
   ]
   export default {
-    // components: { Pagination, quillEditor, Tinymce, EditorBar },
     components: { Pagination },
+    computed: {
+      ...mapGetters([
+        'name',
+        'avatar',
+        'id'
+      ])
+    },
     data() {
       return {
+        user: {},
+        train: [],
         train_list: [],
         imgsrc: process.env.VUE_APP_BASE_API,
         tableKey: 0,
-        list: null,
+        list: {
+          train: []
+        },
         total: 0,
         listLoading: false,
         listQuery: {
@@ -177,16 +185,23 @@
         dialogStatus: '',
         dialogFormVisible: false,
         rules: {
-          title: [{ required: true, message: '不能为空', trigger: 'change' }]
+          title: [{ required: true, message: '不能为空', trigger: 'change' }],
+          full_money: [
+            { required: true, type: 'string', trigger: 'blur', message: '金额不能为空' },
+            { pattern: /(^[1-9]([0-9]+)?(\.[0-9]{1,2})?$)|(^(0){1}$)|(^[0-9]\.[0-9]([0-9])?$)/, message: '请输入正确额格式,可保留两位小数' }
+          ],
+          dec_money: [
+            { required: true, type: 'string', trigger: 'blur', message: '金额不能为空' },
+            { pattern: /(^[1-9]([0-9]+)?(\.[0-9]{1,2})?$)|(^(0){1}$)|(^[0-9]\.[0-9]([0-9])?$)/, message: '请输入正确额格式,可保留两位小数' }
+          ]
         },
         temp: {
           imageFile: '',
           id: undefined,
-          timestamp: new Date(),
-          create_time: new Date(),
           title: '',
           type: '',
-          type_title: ''
+          type_title: '',
+          master_id: ''
         },
         textMap: {
           update: '编辑',
@@ -196,8 +211,11 @@
     },
     mounted() {
       this.getTrain()
+
     },
     created() {
+      this.user.id = this.$store.state.user.id
+      this.user.type = this.$store.state.user.type
       this.getList()
     },
     methods: {
@@ -209,7 +227,7 @@
         this.getList()
       },
       getTrain() {
-        train_list(1, 9999).then(res => {
+        organization.train_list(1, 9999).then(res => {
           this.train_list = res.data
         })
       },
@@ -218,28 +236,17 @@
         this.list = []
         coupon.getlist(this.listQuery.page, this.listQuery.limit, this.listQuery.keyword).then(({ code, msg, data, count }) => {
           if (code === 0) {
+            this.total = count
             data.forEach(row => {
               row.image = this.imgsrc + row.image
               this.list.push(row)
             })
-            this.total = count
           } else {
             this.$message.error(msg || '查询失败')
           }
           setTimeout(() => {
             this.listLoading = false
           }, 1.5 * 1000)
-        })
-      },
-      getTypeList() {
-        category.type().then(({ code, msg, data, count }) => {
-          if (code === 0) {
-            this.typelist = data
-          } else {
-            this.$message.error(msg || '查询失败')
-          }
-        }).catch(error => {
-          console.log(error)
         })
       },
       getSortClass: function(key) {
