@@ -1,12 +1,7 @@
 import request from '@/utils/request'
+import upload from '@/utils/upload'
 import qs from 'qs'
 const organization = {
-  getlist: function(page, limit, keyword, type) {
-    return request({
-      url: '/v1/category/list?' + qs.stringify({ page, limit, keyword, type }),
-      method: 'get'
-    })
-  },
   train_list: function(page, limit, keyword, status) {
     return request({
       url: '/v1/train?' + qs.stringify({ page, limit, keyword, status }),
@@ -22,6 +17,32 @@ const organization = {
   del: function(id) {
     return request({
       url: '/v1/train/del?id=' + id,
+      method: 'get'
+    })
+  },
+  train_info: function(id) {
+    return request({
+      url: '/v1/train/' + id,
+      method: 'get'
+    })
+  },
+  edit: function(data) {
+    return request({
+      url: '/v1/train/update',
+      method: 'post',
+      data
+    })
+  },
+  upload_image: function(data) {
+    return request({
+      url: '/v1/train/upload_image',
+      method: 'post',
+      data
+    })
+  },
+  del_image: function(id, url) {
+    return request({
+      url: '/v1/train/del_image?' + qs.stringify({ id, url }),
       method: 'get'
     })
   }

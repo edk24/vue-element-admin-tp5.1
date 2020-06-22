@@ -39,6 +39,11 @@
           <span>{{ row.name }}</span>
         </template>
       </el-table-column>
+      <el-table-column label="分类" prop="title" align="center" width="200" :class-name="getSortClass('id')">
+        <template slot-scope="{row}">
+          <span>{{ row.category.title }}</span>
+        </template>
+      </el-table-column>
       <el-table-column label="推广子公司名称" prop="title" width="200" align="center" :class-name="getSortClass('id')">
         <template slot-scope="{row}">
           <span>{{ row.company.title }}</span>
@@ -82,51 +87,56 @@
     <!-- 弹窗页面   -->
     <el-dialog :title="textMap[dialogStatus]" width="500" :visible.sync="dialogFormVisible">
       <el-form ref="dataForm" :rules="rules" :model="temp" label-position="left" label-width="120px" style="padding:0 5px;margin-right:5px;margin-left:50px;">
-        <el-form-item label="机构名称" >
-          <el-input v-model="temp.name" readonly/>
+        <el-form-item label="机构名称">
+          <el-input v-model="temp.name" :readonly="readonly" />
         </el-form-item>
-        <el-form-item label="推广公司名称" >
-          <el-input v-model="temp.company.title" readonly/>
+        <el-form-item label="推广公司名称">
+          <el-input v-model="temp.company.title" readonly />
         </el-form-item>
-        <el-form-item label="营业执照" >
+        <el-form-item label="分类">
+          <el-select v-model="temp.category_id" style="width: 140px" class="filter-item" @change="handleFilter">
+            <el-option v-for="item in categoryList" :key="item.id" :label="item.title" :value="item.id" :disabled="disabled"/>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="营业执照">
           <el-image
             style="width: 300px; height: 200px"
             :src="temp.license"
-            :preview-src-list="licenseList">
-          </el-image>
+            :preview-src-list="licenseList"
+          />
         </el-form-item>
-        <el-form-item label="省" >
-          <el-input v-model="temp.province" readonly/>
+        <el-form-item label="省">
+          <el-input v-model="temp.province" :readonly="readonly" />
         </el-form-item>
-        <el-form-item label="市" >
-          <el-input v-model="temp.city" readonly/>
+        <el-form-item label="市">
+          <el-input v-model="temp.city" :readonly="readonly" />
         </el-form-item>
-        <el-form-item label="区" >
-          <el-input v-model="temp.area" readonly/>
+        <el-form-item label="区">
+          <el-input v-model="temp.area" :readonly="readonly" />
         </el-form-item>
-        <el-form-item label="详细地址" >
-          <el-input v-model="temp.address" readonly/>
+        <el-form-item label="详细地址">
+          <el-input v-model="temp.address" :readonly="readonly" />
         </el-form-item>
-        <el-form-item label="联系人" >
-          <el-input v-model="temp.contact" readonly/>
+        <el-form-item label="联系人">
+          <el-input v-model="temp.contact" :readonly="readonly" />
         </el-form-item>
-        <el-form-item label="联系人电话" >
-          <el-input v-model="temp.phone" readonly/>
+        <el-form-item label="联系人电话">
+          <el-input v-model="temp.phone" :readonly="readonly" />
         </el-form-item>
-        <el-form-item label="对推广人员返点" >
-          <el-input v-model="temp.rebate" readonly/>
+        <el-form-item label="对推广人员返点">
+          <el-input v-model="temp.rebate" :readonly="readonly" />
         </el-form-item>
-        <el-form-item label="审核" v-if="listQuery.status === '0'">
+        <el-form-item v-if="listQuery.status === '0'" label="审核">
           <el-radio v-model="radio" label="1">审核过关</el-radio>
           <el-radio v-model="radio" label="2">审核失败</el-radio>
         </el-form-item>
-        <el-form-item label="拒绝理由" v-if="radio === '2' || listQuery.status ==='2'" prop="reason">
-          <el-input type="textarea" :autosize="{ minRows: 2, maxRows: 5}" v-model="temp.reason" />
+        <el-form-item v-if="radio === '2' || listQuery.status ==='2'" label="拒绝理由" prop="reason">
+          <el-input v-model="temp.reason" type="textarea" :autosize="{ minRows: 2, maxRows: 5}" />
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button type="primary" v-if="listQuery.status === '0'" @click="dialogStatus==='create'?createData():updateData()">
-          确认审核
+        <el-button v-if="listQuery.status != '2'" type="primary" @click="dialogStatus==='create'?createData():updateData()">
+          确认
         </el-button>
         <el-button @click="dialogFormVisible = false">
           返回
@@ -140,6 +150,7 @@
 <script>
   import { organization } from '@/api/organization'
   import Pagination from '@/components/Pagination'
+  import { category } from '@/api/category'
   const status = [
     { key: '0', name: '待审核' },
     { key: '1', name: '审核过关' },
@@ -150,6 +161,9 @@
     components: { Pagination },
     data() {
       return {
+        disabled: true,
+        categoryList: [],
+        readonly: true,
         licenseList: [],
         radio: '1',
         status: status,
@@ -179,9 +193,12 @@
         },
         textMap: {
           update: '查看详情',
-          create: '创建'
-        },
+          create: '查看且修改'
+        }
       }
+    },
+    mounted() {
+      this.getCategoryList()
     },
     created() {
       this.getList()
@@ -192,6 +209,13 @@
       },
       search() {
         this.getList()
+      },
+      getCategoryList() {
+        category.getlist(1, 999, '', 'train').then(res => {
+          this.categoryList = res.data
+        }).catch(e => {
+          console.log(e)
+        })
       },
       handleFilter() {
         this.listQuery.page = 1
@@ -207,6 +231,7 @@
               this.list.push(row)
             })
             this.total = count
+            console.log(data)
           } else {
             this.$message.error(msg || '查询失败')
           }
@@ -239,7 +264,16 @@
       handleUpdate(row) {
         this.temp = Object.assign({}, row) // copy obj
         this.licenseList.push(row.license)
-        this.dialogStatus = 'update'
+        if (this.listQuery.status === '1') {
+          this.readonly = false
+          this.disabled = false
+        }
+        if (this.listQuery.status === '0') {
+          this.dialogStatus = 'update'
+        }
+        if (this.listQuery.status === '1') {
+          this.dialogStatus = 'create'
+        }
         this.dialogFormVisible = true
         this.$nextTick(() => {
           this.$refs['dataForm'].clearValidate()
@@ -273,17 +307,16 @@
             const tempData = Object.assign({}, this.temp)
             const data = new FormData()
             data.append('id', tempData.id)
-            data.append('title', tempData.title)
-            data.append('type', tempData.type)
-            if (tempData.type === undefined) {
-              return this.$message.error('必须选择分类')
-            }
-            if (this.temp.imageFile != null) {
-              data.append('image', this.temp.imageFile)
-            }
-            category.add(data).then(() => {
-              this.temp.create_time = new Date(this.temp.timestamp)
-              this.list.push(this.temp)
+            data.append('name', tempData.name)
+            data.append('category_id', tempData.category_id)
+            data.append('city', tempData.city)
+            data.append('area', tempData.area)
+            data.append('address', tempData.address)
+            data.append('contact', tempData.contact)
+            data.append('phone', tempData.phone)
+            data.append('rebate', tempData.rebate)
+            organization.edit(data).then(() => {
+              this.getList()
               this.dialogFormVisible = false
               this.$notify({
                 title: 'Success',

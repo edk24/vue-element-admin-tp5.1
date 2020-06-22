@@ -240,7 +240,7 @@
           title: [{ required: true, message: '分类名称不能为空', trigger: 'change' }],
           open_time: [{ required: true, message: '分类名称不能为空', trigger: 'change' }],
           money: [
-            { required: true, type: 'string', trigger: 'blur', message: '合同金额不能为空' },
+            { required: true, type: 'string', trigger: 'blur', message: '金额不能为空' },
             { pattern: /(^[1-9]([0-9]+)?(\.[0-9]{1,2})?$)|(^(0){1}$)|(^[0-9]\.[0-9]([0-9])?$)/, message: '请输入正确额格式,可保留两位小数' }
           ]
         },
