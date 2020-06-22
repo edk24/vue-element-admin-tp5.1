@@ -1,5 +1,4 @@
 import request from '@/utils/request'
-import upload from '@/utils/upload'
 import qs from 'qs'
 const organization = {
   train_list: function(page, limit, keyword, status) {

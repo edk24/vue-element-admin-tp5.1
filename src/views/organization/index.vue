@@ -264,12 +264,13 @@
             data.image = this.imgsrc + data.image
             var str = data.province + ',' + data.city + ',' + data.area
             this.selectedOptions = str.split(',')
-
+            if (data.images !== '') {
               var img = data.images.split(';')
               img.forEach(function(row) {
                 row = that.imgsrc + row
                 that.silderimgList.push({ url: row })
               })
+            }
             this.category = data.category
             this.company = data.company
 
