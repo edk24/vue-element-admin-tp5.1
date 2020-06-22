@@ -90,28 +90,10 @@ export const constantRoutes = [{
     },
     children: [{
         path: 'parent',
-        name: '家长管理',
+        name: '用户列表',
         component: () => import('@/views/user/index'),
         meta: {
-          title: '家长管理',
-          icon: 'tree'
-        }
-      },
-      {
-        path: 'child',
-        name: '学生管理',
-        component: () => import('@/views/user/child'),
-        meta: {
-          title: '学生管理',
-          icon: 'tree'
-        }
-      },
-      {
-        path: 'bank',
-        name: '银行卡',
-        component: () => import('@/views/user/bank'),
-        meta: {
-          title: '银行卡',
+          title: '用户列表',
           icon: 'tree'
         }
       },
