@@ -24,6 +24,13 @@ export function logout() {
     method: 'get'
   })
 }
+// 用户删除
+export function user_del(id) {
+  return request({
+    url:'/v1/user/'+id,
+    method:'delete'
+  })
+}
 
 // 查询用户列表
 export function user_list(page, limit, keyword) {
