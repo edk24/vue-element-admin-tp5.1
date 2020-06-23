@@ -11,17 +11,17 @@
     <el-table v-loading="listLoading" :data="list" element-loading-text="Loading" fit highlight-current-row>
       <el-table-column label="序号" type="index" width="50" align="center">
         <template scope="scope">
-          <span>{{(listQuery.page - 1) * listQuery.limit + scope.$index + 1}}</span>
+          <span>{{ (listQuery.page - 1) * listQuery.limit + scope.$index + 1 }}</span>
         </template>
       </el-table-column>
       <el-table-column label="帖子内容" width="300">
         <template slot-scope="{row}">
-          {{row.content}}
+          {{ row.content }}
         </template>
       </el-table-column>
       <el-table-column label="类别">
         <template slot-scope="{row}">
-          {{row.category.title}}
+          {{ row.category.title }}
         </template>
       </el-table-column>
 
@@ -31,12 +31,12 @@
         </template>
       </el-table-column>
 
-<!--      <el-table-column label="发帖人性别">-->
-<!--        <template slot-scope="{row}">-->
-<!--          <span v-if="row.sex == 1">男</span>-->
-<!--          <span v-else>女</span>-->
-<!--        </template>-->
-<!--      </el-table-column>-->
+      <!--      <el-table-column label="发帖人性别">-->
+      <!--        <template slot-scope="{row}">-->
+      <!--          <span v-if="row.sex == 1">男</span>-->
+      <!--          <span v-else>女</span>-->
+      <!--        </template>-->
+      <!--      </el-table-column>-->
 
       <el-table-column label="浏览量">
         <template slot-scope="scope">
@@ -73,7 +73,7 @@
           <el-button type="primary" size="mini" @click="detail(row)">
             查看详情
           </el-button>
-          <el-popconfirm title="帖子下的所有评论都删除，谨慎操作！"  @onConfirm="posts_del(row,$index)">
+          <el-popconfirm title="帖子下的所有评论都删除，谨慎操作！" @onConfirm="posts_del(row,$index)">
             <el-button slot="reference" size="small" type="danger">删除</el-button>
           </el-popconfirm>
         </template>
@@ -86,21 +86,22 @@
     <el-dialog :title="textMap[dialogStatus]" width="600" :visible.sync="dialogFormVisible">
       <el-form ref="dataForm" :model="temp" label-width="80px">
         <el-form-item label="发帖人">
-          <el-input v-model="temp.nickname" readonly=""></el-input>
+          <el-input v-model="temp.nickname" readonly="" />
         </el-form-item>
         <el-form-item label="发帖时间">
-          <el-input v-model="temp.create_time" readonly=""></el-input>
+          <el-input v-model="temp.create_time" readonly="" />
         </el-form-item>
         <el-form-item label="发帖图片">
-            <el-image
-              v-for="(item,index) in imglist"
-              :key="index"
-              style="width: 100px; height: 100px;margin: 0 8px"
-              :preview-src-list="imglist"
-              :src="item"></el-image>
+          <el-image
+            v-for="(item,index) in imglist"
+            :key="index"
+            style="width: 100px; height: 100px;margin: 0 8px"
+            :preview-src-list="imglist"
+            :src="item"
+          />
         </el-form-item>
         <el-form-item label="发帖内容">
-          <el-input type="textarea" v-model="temp.content" readonly=""></el-input>
+          <el-input v-model="temp.content" type="textarea" readonly="" />
         </el-form-item>
         <p>帖子评论</p>
         <el-collapse v-model="comment">
@@ -112,16 +113,16 @@
                 <el-button type="text" style="position:absolute;right: 60px;" @click="comment_del(item.id)">删除</el-button>
               </template>
               <div v-for="(vo, key) in item.children" :key="key" style="padding: 8px 0">
-                  <div v-if="vo.target_reply === null" style="border-top: 1px solid rgb(235,238,245);">
-                    <span>{{ vo.content }}</span>
-                    <span style="position: absolute;right: 160px">回复者：{{ vo.user.nickname }}</span>
-                    <el-button type="text" style="position: absolute;right: 60px;line-height: 0px;" @click="comment_del(vo.id)">删除</el-button>
-                  </div>
-                  <div v-if="vo.target_reply != null" style="border-top: 1px solid rgb(235,238,245);">
-                    <span>{{ vo.content }}</span>
-                    <span style="position: absolute;right: 160px">回复者：{{ vo.user.nickname }}@{{ vo.target_reply.nickname }}</span>
-                    <el-button type="text" style="position: absolute;right: 60px;line-height: 0px;" @click="comment_del(vo.id)">删除</el-button>
-                  </div>
+                <div v-if="vo.target_reply === null" style="border-top: 1px solid rgb(235,238,245);">
+                  <span>{{ vo.content }}</span>
+                  <span style="position: absolute;right: 160px">回复者：{{ vo.user.nickname }}</span>
+                  <el-button type="text" style="position: absolute;right: 60px;line-height: 0px;" @click="comment_del(vo.id)">删除</el-button>
+                </div>
+                <div v-if="vo.target_reply != null" style="border-top: 1px solid rgb(235,238,245);">
+                  <span>{{ vo.content }}</span>
+                  <span style="position: absolute;right: 160px">回复者：{{ vo.user.nickname }}@{{ vo.target_reply.nickname }}</span>
+                  <el-button type="text" style="position: absolute;right: 60px;line-height: 0px;" @click="comment_del(vo.id)">删除</el-button>
+                </div>
               </div>
             </el-collapse-item>
           </el-collapse>
@@ -182,9 +183,8 @@
           } else {
             this.$message.error(msg || '查询失败')
           }
-          setTimeout(() => {
+          console.log(data)
             this.listLoading = false
-          }, 1.5 * 1000)
         })
       },
       detail(row) {

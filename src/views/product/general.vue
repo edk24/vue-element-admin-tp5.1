@@ -91,6 +91,7 @@
         ref="form"
         :model="form"
         label-width="80px"
+        :rules="rules"
       >
         <el-form-item label="产品标题:" label-width="130px">
           <el-input v-model="form.title" />
@@ -139,8 +140,11 @@
             <img width="100%" :src="form.silder_image" alt="">
           </el-dialog>
         </el-form-item>
-        <el-form-item label="产品价格:" label-width="130px">
-          <el-input v-model="form.price" />
+        <el-form-item label="产品价格:" label-width="130px" prop="price">
+          <el-input v-model="form.price" maxlength="10" oninput="value=value.replace(/[^\d.]/g,'')" />
+        </el-form-item>
+        <el-form-item label="原价:" label-width="130px" prop="original_price">
+          <el-input v-model="form.original_price" maxlength="10" oninput="value=value.replace(/[^\d.]/g,'')" />
         </el-form-item>
         <el-form-item label="最高可抵用积分:" label-width="130px">
           <el-input v-model="form.jifen" />
@@ -217,11 +221,15 @@
         },
         silderimgList: [],
         rules: {
-          title: [{
-            required: true,
-            message: '请输入名称',
-            trigger: 'blur'
-          }]
+          title: [{ required: true, message: '请输入名称', trigger: 'blur' }],
+          price: [
+            { required: true, type: 'string', trigger: 'blur', message: '金额不能为空' },
+            { pattern: /(^[1-9]([0-9]+)?(\.[0-9]{1,2})?$)|(^(0){1}$)|(^[0-9]\.[0-9]([0-9])?$)/, message: '请输入正确额格式,可保留两位小数' }
+          ],
+          original_price: [
+            { required: true, type: 'string', trigger: 'blur', message: '金额不能为空' },
+            { pattern: /(^[1-9]([0-9]+)?(\.[0-9]{1,2})?$)|(^(0){1}$)|(^[0-9]\.[0-9]([0-9])?$)/, message: '请输入正确额格式,可保留两位小数' }
+          ]
         },
         current: '否', // 当前选中 是否推送 0-否  1-是
         // 表单
