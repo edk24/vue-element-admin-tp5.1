@@ -95,7 +95,16 @@ export const constantRoutes = [{
           title: '用户列表',
           icon: 'tree'
         }
-      },
+    },
+    {
+      path: 'audit',
+      name: '待审核用户',
+      component: () => import('@/views/user/audit'),
+      meta: {
+        title: '待审核用户',
+        icon: 'tree'
+      }
+    },
       // {
       //   path: 'bankPermission',
       //   name: '银行卡审核',

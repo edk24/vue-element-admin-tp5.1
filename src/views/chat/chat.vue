@@ -606,7 +606,7 @@ export default {
         .then(res => {
           if (res.code === 0) {
             console.log(res.data)
-            res.data.avatar = this.url + res.data.avatar
+            res.data.avatar = res.data.avatar
             if (id === 1) {
               this.myInfo = res.data
               console.log(this.myInfo)

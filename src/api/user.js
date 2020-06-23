@@ -27,15 +27,15 @@ export function logout() {
 // 用户删除
 export function user_del(id) {
   return request({
-    url:'/v1/user/'+id,
-    method:'delete'
+    url: '/v1/user/' + id,
+    method: 'delete'
   })
 }
 
 // 查询用户列表
-export function user_list(page, limit, keyword, type) {
+export function user_list(page, limit, keyword, type, audit = -1) {
   return request({
-    url: '/v1/user/list?' + qs.stringify({ page, limit, keyword, type})
+    url: '/v1/user/list?' + qs.stringify({ page, limit, keyword, type, audit })
   })
 }
 
@@ -101,5 +101,18 @@ export function bank_del(id) {
 export function user_search(keyword) {
   return request({
     url: 'v1/user/list?keyword=' + keyword
+  })
+}
+
+// 实名认证提交
+export function user_audit(user_id, audit) {
+  const data = { user_id, audit }
+  return request({
+    url: '/v1/user/audit',
+    method: 'post',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    data: data
   })
 }
