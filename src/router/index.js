@@ -191,10 +191,10 @@ export const constantRoutes = [{
     },
     children: [{
         path: 'exchange',
-        name: '礼品兑换订单',
+        name: '积分订单',
         component: () => import('@/views/order/exchange'),
         meta: {
-          title: '礼品兑换订单',
+          title: '积分订单',
           icon: 'tree'
         }
       },
