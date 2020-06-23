@@ -107,6 +107,15 @@ export const constantRoutes = [{
         }
       },
       {
+        path: 'bank',
+        name: '银行卡列表',
+        component: () => import('@/views/user/bank'),
+        meta: {
+          title: '银行卡列表',
+          icon: 'tree'
+        }
+      },
+      {
         path: 'feedback',
         name: '意见反馈',
         component: () => import('@/views/user/feedback'),

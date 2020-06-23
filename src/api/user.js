@@ -66,10 +66,6 @@ export function user_do_audit(user_id, type, real_content) {
   })
 }
 
-
-
-
-
 // 查询银行卡列表
 export function bank_list(page, limit, keyword, status) {
   return request({
@@ -78,19 +74,19 @@ export function bank_list(page, limit, keyword, status) {
   })
 }
 
-// 银行卡审核列表
 export function bank_status(data) {
   return request({
     url: '/v1/bank/status',
     method: 'post',
-    data: qs.stringify(data)
+    data
   })
 }
 
 // 银行卡删除
 export function bank_del(id) {
   return request({
-    url: '/v1/bank/del?' + qs.stringify({ id })
+    url: '/v1/bank/del?id=' + id,
+    method: 'get'
   })
 }
 
