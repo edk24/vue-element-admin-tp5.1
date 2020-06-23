@@ -12,7 +12,6 @@ export const constantRoutes = [{
       title: '登录系统'
     }
   },
-
   {
     path: '/404',
     component: () => import('@/views/404'),
@@ -97,15 +96,15 @@ export const constantRoutes = [{
           icon: 'tree'
         }
       },
-      {
-        path: 'bankPermission',
-        name: '银行卡审核',
-        component: () => import('@/views/user/bankPermission'),
-        meta: {
-          title: '银行卡审核',
-          icon: 'tree'
-        }
-      },
+      // {
+      //   path: 'bankPermission',
+      //   name: '银行卡审核',
+      //   component: () => import('@/views/user/bankPermission'),
+      //   meta: {
+      //     title: '银行卡审核',
+      //     icon: 'tree'
+      //   }
+      // },
       {
         path: 'bank',
         name: '银行卡列表',
