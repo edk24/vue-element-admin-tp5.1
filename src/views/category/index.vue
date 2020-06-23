@@ -25,67 +25,72 @@
     <el-table
       :key="tableKey"
       v-loading="listLoading"
+      style="width: 100%;margin-bottom: 20px;"
+      row-key="id"
+      border
+      default-expand-all
+      :tree-props="{children: 'children', hasChildren: 'hasChildren'}"
       :data="list"
       fit
       highlight-current-row
-      style="width: 100%;margin-top: 10px;"
     >
       <el-table-column label="序号" type="index" width="50" align="center">
         <template scope="scope">
           <span>{{ (listQuery.page - 1) * listQuery.limit + scope.$index + 1 }}</span>
         </template>
       </el-table-column>
-        <el-table-column label="分类名称" prop="title" width="200" align="center" :class-name="getSortClass('id')">
-          <template slot-scope="{row}">
-            <span>{{ row.title }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column label="上级" prop="title" align="center" :class-name="getSortClass('id')">
-          <template slot-scope="{row}">
-            <span v-if="row.pid === 0">顶级</span>
-            <span v-else>{{ row.parent.title}}</span>
-          </template>
-        </el-table-column>
-        <el-table-column label="分类图片" prop="type" align="center" width="200" style="height: 150px;" :class-name="getSortClass('id')">
-          <template slot-scope="{row}">
-            <el-image class="image" :src="row.image">
-              <div slot="error" class="image-slot">
-                暂未上传
-              </div>
-            </el-image>
-          </template>
-        </el-table-column>
-        <el-table-column label="所属类别" prop="note" align="center" width="150" :class-name="getSortClass('id')">
-          <template slot-scope="{row}">
-            <span>{{ row.type_title }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column label="分类描述" prop="note" align="center" width="200" :class-name="getSortClass('id')">
-          <template slot-scope="{row}">
-            <span>{{ row.desc }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column label="创建时间" prop="create_time" align="center" width="250" :class-name="getSortClass('id')">
-          <template slot-scope="{row}">
-            <span>{{ row.create_time }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column label="修改时间" prop="update_time" align="center" width="250" :class-name="getSortClass('id')">
-          <template slot-scope="{row}">
-            <span>{{ row.update_time }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column label="操作" fixed="right" align="center" width="350" class-name="small-padding fixed-width">
-          <template slot-scope="{row,$index}">
-            <el-button type="primary" size="mini" @click="handleUpdate(row)">
-              编辑
-            </el-button>
-            <el-popconfirm title="确定删除这行信息吗?" @onConfirm="handleDelete(row,$index)">
-              <el-button slot="reference" size="small" type="danger">删除</el-button>
-            </el-popconfirm>
-          </template>
-        </el-table-column>
-      </el-table>
+      <el-table-column label="分类名称" prop="title" width="200" align="center" :class-name="getSortClass('id')">
+        <template slot-scope="{row}">
+          <span>{{ row.title }}</span>
+        </template>
+      </el-table-column>
+      <!--        <el-table-column label="上级" prop="title" align="center" :class-name="getSortClass('id')">-->
+      <!--          <template slot-scope="{row}">-->
+      <!--            <span v-if="row.pid === 0">顶级</span>-->
+      <!--            <span v-else>{{ row.parent.title}}</span>-->
+      <!--          </template>-->
+      <!--        </el-table-column>-->
+      <el-table-column label="分类图片" prop="type" align="center" width="200" style="height: 150px;" :class-name="getSortClass('id')">
+        <template slot-scope="{row}">
+          <el-image class="image" :src="row.image">
+            <div slot="error" class="image-slot">
+              暂未上传
+            </div>
+          </el-image>
+        </template>
+      </el-table-column>
+      <el-table-column label="所属类别" prop="note" align="center" width="150" :class-name="getSortClass('id')">
+        <template slot-scope="{row}">
+          <span v-if="row.type_title != ''">{{ row.type_title }}</span>
+          <span v-if="row.type_title === undefined">{{ row.title }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="分类描述" prop="note" align="center" width="200" :class-name="getSortClass('id')">
+        <template slot-scope="{row}">
+          <span>{{ row.desc }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="创建时间" prop="create_time" align="center" width="250" :class-name="getSortClass('id')">
+        <template slot-scope="{row}">
+          <span>{{ row.create_time }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="修改时间" prop="update_time" align="center" width="250" :class-name="getSortClass('id')">
+        <template slot-scope="{row}">
+          <span>{{ row.update_time }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="操作" fixed="right" align="center" width="350" class-name="small-padding fixed-width">
+        <template slot-scope="{row,$index}">
+          <el-button type="primary" size="mini" @click="handleUpdate(row)">
+            编辑
+          </el-button>
+          <el-popconfirm title="确定删除这行信息吗?" @onConfirm="handleDelete(row,$index)">
+            <el-button slot="reference" size="small" type="danger">删除</el-button>
+          </el-popconfirm>
+        </template>
+      </el-table-column>
+    </el-table>
 
     <!-- 分页 -->
     <pagination v-show="total>0" :total="total" :page.sync="listQuery.page" :limit.sync="listQuery.limit" @pagination="getList" />
@@ -98,18 +103,18 @@
         </el-form-item>
         <el-form-item label="所属分类">
           <el-select v-model="temp.type" placeholder="所属分类" @change="typeChange()">
-            <el-option v-for="item in type" :label="item.name" :value="item.key" :key="item.key" />
+            <el-option v-for="item in type" :key="item.key" :label="item.name" :value="item.key" />
           </el-select>
         </el-form-item>
         <el-form-item label="选择上级">
           <el-select v-model="temp.pid" filterable placeholder="请选择">
-            <el-option label="顶级" :value="0"></el-option>
+            <el-option label="顶级" :value="0" />
             <el-option
               v-for="item in pidList"
               :key="item.id"
               :label="item.title"
-              :value="item.id">
-            </el-option>
+              :value="item.id"
+            />
           </el-select>
         </el-form-item>
         <el-form-item label="分类图片">
@@ -128,14 +133,14 @@
         <el-form-item label="分类描述">
           <!--          <tinymce v-model="temp.desc" height="300" />-->
           <!--          <quill-editor ref="QuillEditor" v-model="temp.desc" :options="quillOption" />-->
-<!--          <editor-bar v-model="temp.desc" :is-clear="isClear" @change="change" />-->
-                    <el-input
-                      type="textarea"
-                      :autosize="{ minRows: 2, maxRows: 5}"
-                      placeholder="请输入内容"
-                      style="font-size: 16px"
-                      v-model="temp.desc">
-                    </el-input>
+          <!--          <editor-bar v-model="temp.desc" :is-clear="isClear" @change="change" />-->
+          <el-input
+            v-model="temp.desc"
+            type="textarea"
+            :autosize="{ minRows: 2, maxRows: 5}"
+            placeholder="请输入内容"
+            style="font-size: 16px"
+          />
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">

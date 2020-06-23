@@ -16,7 +16,7 @@
         <el-button type="primary" @click="search()">搜索</el-button>
 
         <el-select v-model="listQuery.master_id" style="width: 140px" class="filter-item" @change="handleFilter">
-          <el-option label="培训班-全部" value="-1" />
+          <el-option label="培训班-全部" value="all" />
           <el-option v-for="item in train_list" :key="item.id" :label="item.name" :value="item.id" />
         </el-select>
 
@@ -280,7 +280,7 @@
           limit: 10,
           type: 'train',
           keyword: '',
-          master_id: '-1',
+          master_id: 'all',
           target_id: 'all'
         },
         dialogStatus: '',

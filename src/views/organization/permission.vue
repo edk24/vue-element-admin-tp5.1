@@ -15,10 +15,13 @@
         />
         <el-button type="primary" @click="search()">搜索</el-button>
 
-        <el-select v-model="listQuery.status" style="width: 140px" class="filter-item" @change="handleFilter">
-          <el-option v-for="item in status" :key="item.key" :label="item.name" :value="item.key" />
-        </el-select>
+<!--        <el-select v-model="listQuery.status" style="width: 140px" class="filter-item" @change="handleFilter">-->
+<!--          <el-option v-for="item in status" :key="item.key" :label="item.name" :value="item.key" />-->
+<!--        </el-select>-->
       </p>
+      <el-tabs v-model="listQuery.status" @tab-click="handleFilter">
+        <el-tab-pane  v-for="item in status" :key="item.key" :label="item.name" :value="item.key"></el-tab-pane>
+      </el-tabs>
     </div>
 
     <el-table
@@ -166,7 +169,7 @@
         readonly: true,
         licenseList: [],
         radio: '1',
-        status: status,
+        status,
         isClear: false,
         detail: '',
         imgsrc: process.env.VUE_APP_BASE_API,
@@ -177,7 +180,7 @@
         listQuery: {
           page: 1,
           limit: 10,
-          status: '0',
+          status: '1',
           keyword: ''
         },
         dialogStatus: '',
@@ -402,6 +405,12 @@
     width: 178px;
     height: 178px;
     display: block;
+  }
+  .el-tabs__item{
+    font-size: 16px;
+  }
+  .el-tabs__item.is-active{
+    font-size: 18px;
   }
 </style>
 

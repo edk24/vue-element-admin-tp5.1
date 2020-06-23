@@ -108,30 +108,25 @@
         </el-form-item>
         <p>帖子评论</p>
 
-          <div class="block">
-            <el-timeline>
+        <div class="block">
+          <el-timeline>
 
-              <el-timeline-item timestamp="2018/4/12" placement="top">
-                <el-card>
-                  <h4>更新 Github 模板</h4>
-                  <p>王小虎 提交于 2018/4/12 20:46</p>
-                </el-card>
-              </el-timeline-item>
-              <el-timeline-item timestamp="2018/4/3" placement="top">
-                <el-card>
-                  <h4>更新 Github 模板</h4>
-                  <p>王小虎 提交于 2018/4/3 20:46</p>
-                </el-card>
-              </el-timeline-item>
-              <el-timeline-item timestamp="2018/4/2" placement="top">
-                <el-card>
-                  <h4>更新 Github 模板</h4>
-                  <p>王小虎 提交于 2018/4/2 20:46</p>
-                </el-card>
-              </el-timeline-item>
+            <el-timeline-item v-for="(item, index) in comment" :key="index" :value="index" :timestamp="item.create_time" placement="top">
+              <el-card>
+                <h4>{{ item.content }}</h4>
+                <p>用户：{{ item.user.nickname }}&nbsp;&nbsp;&nbsp;评论于&nbsp;&nbsp;&nbsp;{{ item.create_time }} </p>
+                <el-button type="text" @click="comment_del(item.id)">删除</el-button>
+                <div v-for="(vo, num) in item.children" :key="num" :value="num">
+                  <h5>{{ vo.content }}</h5>
+                  <p v-if="vo.user != null">用户：{{ vo.user.nickname }}&nbsp;&nbsp;&nbsp;回复于&nbsp;&nbsp;&nbsp;{{ vo.create_time }}</p>
+                  <p v-if="vo.user === null">该回复用户信息，已不存在</p>
+                  <el-button type="text">删除</el-button>
+                </div>
+              </el-card>
+            </el-timeline-item>
 
-            </el-timeline>
-          </div>
+          </el-timeline>
+        </div>
 
       </el-form>
       <span slot="footer" class="dialog-footer">
