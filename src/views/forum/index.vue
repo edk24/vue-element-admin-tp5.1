@@ -14,9 +14,9 @@
           <span>{{ (listQuery.page - 1) * listQuery.limit + scope.$index + 1 }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="帖子内容" width="300">
+      <el-table-column label="帖子标题" width="200" align="center">
         <template slot-scope="{row}">
-          {{ row.content }}
+          {{ row.title }}
         </template>
       </el-table-column>
       <el-table-column label="类别">
@@ -50,7 +50,7 @@
         </template>
       </el-table-column>
 
-      <el-table-column label="手机号">
+      <el-table-column label="手机号" width="120">
         <template slot-scope="scope">
           {{ scope.row.phone }}
         </template>
@@ -84,12 +84,15 @@
     <pagination v-show="total>0" :total="total" :page.sync="listQuery.page" :limit.sync="listQuery.limit" @pagination="getList" />
 
     <el-dialog :title="textMap[dialogStatus]" width="600" :visible.sync="dialogFormVisible">
-      <el-form ref="dataForm" :model="temp" label-width="80px">
+      <el-form ref="dataForm" :model="temp" label-width="80px" style="padding: 0 40px;">
         <el-form-item label="发帖人">
           <el-input v-model="temp.nickname" readonly="" />
         </el-form-item>
         <el-form-item label="发帖时间">
           <el-input v-model="temp.create_time" readonly="" />
+        </el-form-item>
+        <el-form-item label="发帖标题">
+          <el-input v-model="temp.title" readonly="" />
         </el-form-item>
         <el-form-item label="发帖图片">
           <el-image
@@ -101,32 +104,34 @@
           />
         </el-form-item>
         <el-form-item label="发帖内容">
-          <el-input v-model="temp.content" type="textarea" readonly="" />
+          <el-input v-model="temp.content" :rows="4" type="textarea" readonly="" />
         </el-form-item>
         <p>帖子评论</p>
-        <el-collapse v-model="comment">
-          <el-collapse accordion>
-            <el-collapse-item v-for="(item, index) in comment" :key="index">
-              <template slot="title" style="position: relative;">
-                <span style="width: 55%;line-height: 1.5;">{{ item.content }}</span>
-                <span style="position:absolute;right: 160px;">评论者：{{ item.user.nickname }}</span>
-                <el-button type="text" style="position:absolute;right: 60px;" @click="comment_del(item.id)">删除</el-button>
-              </template>
-              <div v-for="(vo, key) in item.children" :key="key" style="padding: 8px 0">
-                <div v-if="vo.target_reply === null" style="border-top: 1px solid rgb(235,238,245);">
-                  <span>{{ vo.content }}</span>
-                  <span style="position: absolute;right: 160px">回复者：{{ vo.user.nickname }}</span>
-                  <el-button type="text" style="position: absolute;right: 60px;line-height: 0px;" @click="comment_del(vo.id)">删除</el-button>
-                </div>
-                <div v-if="vo.target_reply != null" style="border-top: 1px solid rgb(235,238,245);">
-                  <span>{{ vo.content }}</span>
-                  <span style="position: absolute;right: 160px">回复者：{{ vo.user.nickname }}@{{ vo.target_reply.nickname }}</span>
-                  <el-button type="text" style="position: absolute;right: 60px;line-height: 0px;" @click="comment_del(vo.id)">删除</el-button>
-                </div>
-              </div>
-            </el-collapse-item>
-          </el-collapse>
-        </el-collapse>
+
+          <div class="block">
+            <el-timeline>
+
+              <el-timeline-item timestamp="2018/4/12" placement="top">
+                <el-card>
+                  <h4>更新 Github 模板</h4>
+                  <p>王小虎 提交于 2018/4/12 20:46</p>
+                </el-card>
+              </el-timeline-item>
+              <el-timeline-item timestamp="2018/4/3" placement="top">
+                <el-card>
+                  <h4>更新 Github 模板</h4>
+                  <p>王小虎 提交于 2018/4/3 20:46</p>
+                </el-card>
+              </el-timeline-item>
+              <el-timeline-item timestamp="2018/4/2" placement="top">
+                <el-card>
+                  <h4>更新 Github 模板</h4>
+                  <p>王小虎 提交于 2018/4/2 20:46</p>
+                </el-card>
+              </el-timeline-item>
+
+            </el-timeline>
+          </div>
 
       </el-form>
       <span slot="footer" class="dialog-footer">
@@ -200,12 +205,9 @@
         })
         forum.detail(row.id).then(({ code, msg, data, count }) => {
           this.comment = data.comment
-          // var res = JSON.stringify(data)
-          // console.log()
-          data.comment.forEach(function(row) {
-            console.log(row.children)
-          })
         })
+        console.log(this.comment)
+        return
       },
       posts_del(row, index) {
         forum.posts_del(row.id).then(({ code, msg, data, count }) => {
@@ -266,4 +268,7 @@
 </script>
 
 <style>
+  .el-collapse-item {
+
+  }
 </style>
