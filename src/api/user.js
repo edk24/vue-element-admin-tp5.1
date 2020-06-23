@@ -33,9 +33,9 @@ export function user_del(id) {
 }
 
 // 查询用户列表
-export function user_list(page, limit, keyword) {
+export function user_list(page, limit, keyword, type) {
   return request({
-    url: '/v1/user/list?' + qs.stringify({ page, limit, keyword })
+    url: '/v1/user/list?' + qs.stringify({ page, limit, keyword, type})
   })
 }
 
