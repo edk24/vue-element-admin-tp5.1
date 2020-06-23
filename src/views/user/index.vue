@@ -2,7 +2,17 @@
   <div class="app-container">
     <el-row>
       <el-input v-model="keyword" placeholder="请输入关键词" style="width:260px" />
+      <el-select v-model="type" @change="fetchData(true)" placeholder="请选择">
+    <el-option
+      v-for="item in userTypes"
+      :key="item.value"
+      :label="item.label"
+      :value="item.value">
+    </el-option>
+  </el-select>
+
       <el-button type="primary" @click="fetchData(true)">搜索</el-button>
+
     </el-row>
 
     <p />
@@ -71,7 +81,7 @@
               type="primary"
               @click="showCompanyDialog(scope.row)"
             >公司信息</el-button>
-            <el-button v-else-if="scope.row.type === 2" size="mini" type="primary">机构信息</el-button>
+            <el-button v-else-if="scope.row.type === 2" size="mini" type="primary" @click="showTrainDialog(scope.row)">机构信息</el-button>
             <el-popconfirm title="确认删除吗?" @onConfirm="onUserDel(scope.row)">
               <el-button slot="reference" size="mini" type="danger">删除</el-button>
             </el-popconfirm>
@@ -102,8 +112,9 @@
     <el-form-item label="营业执照">
       <el-image :src="companyInfo.license" :fit="'scale-down'"></el-image>
     </el-form-item>
+  </el-form>
 
-    <h3>成员:</h3>
+  <h3>成员:</h3>
     <el-table style="width:100%" :data="companyInfo.members">
       <el-table-column label="姓名" prop="user">
 
@@ -118,12 +129,38 @@
 
       </el-table-column>
     </el-table>
-  </el-form>
 
   <span slot="footer" class="dialog-footer">
     <el-button type="primary" @click="visibleCompanyDialog = false">确 定</el-button>
   </span>
 </el-dialog>
+
+
+<!-- 机构信息 -->
+<el-dialog title="机构信息"
+  :visible.sync="visibleTrainDialog"
+  width="600px"
+  center>
+
+  <el-form label-width="100px" >
+    <el-form-item label="机构名称">{{trainInfo.name}}</el-form-item>
+    <el-form-item label="机构描述">{{trainInfo.desc}}</el-form-item>
+    <el-form-item label="法人姓名">{{trainInfo.contact}}</el-form-item>
+    <el-form-item label="法人手机">{{trainInfo.phone}}</el-form-item>
+    <el-form-item label="地址">{{trainInfo.province}} {{trainInfo.city}} {{trainInfo.area}} {{trainInfo.address}}</el-form-item>
+    <!-- <el-form-item label="推广员返点">{{companyInfo.commission}}%</el-form-item> -->
+    <!-- <el-form-item label="营业执照">
+      <el-image :src="companyInfo.license" :fit="'scale-down'"></el-image>
+    </el-form-item> -->
+  </el-form>
+
+
+<span slot="footer" class="dialog-footer">
+    <el-button type="primary" @click="visibleTrainDialog = false">确 定</el-button>
+  </span>
+</el-dialog>
+
+
   </div>
 </template>
 
@@ -131,6 +168,7 @@
 import { user_list, user_del } from '@/api/user'
 import {getList as company_gudon_list } from '@/api/company_gudon';
 import {get_company_info_by_uid} from '@/api/company';
+import {get_info_by_uid} from '@/api/train';
 export default {
   data() {
     return {
@@ -139,7 +177,19 @@ export default {
       page: 0,
       limit: 25,
       keyword: '',
-      type: '',
+      type: -1,
+
+      userTypes:[
+        {value:0, label:'家长'},
+        {value:1, label:'子公司'},
+        {value:2, label:'培训机构'},
+        {value:3, label:'股东'},
+        {value:4, label:'学生'},
+        {value:6, label:'学校'},
+        {value:5, label:'未知'},
+        {value:-1, label:'全部'}
+      ],
+
 
       // 显示公司信息对话框
       visibleCompanyDialog:false,
@@ -157,6 +207,23 @@ export default {
         commission:'',
         members:[], // 成员列表
       },
+
+      // 显示培训机构
+      visibleTrainDialog:false,
+      // 机构信息
+      trainInfo:{
+        name:'',
+        license:'',
+        desc:'',
+        image:'',
+        province:'',
+        city:'',
+        area:'',
+        address:'',
+        contact:'',
+        phone:'',
+        rebate:0,
+      }
     }
   },
   created() {
@@ -179,7 +246,7 @@ export default {
         this.page = 1
       }
       this.userList = []
-      user_list(this.page, this.limit, this.keyword).then(
+      user_list(this.page, this.limit, this.keyword, this.type).then(
         ({ code, msg, data, count }) => {
           if (code === 0) {
             data.forEach(user => {
@@ -200,6 +267,17 @@ export default {
           this.visibleCompanyDialog=true
         } else {
           this.$$message.error('查询失败')
+        }
+      }).catch(()=>{})
+    },
+    // 显示机构信息对话框
+    showTrainDialog(row) {
+      get_info_by_uid(row.id).then(({code,data,msg,count})=>{
+        if (code===0) {
+          this.trainInfo=data
+          this.visibleTrainDialog=true
+        } else {
+          this.$message.error(msg||'查询失败')
         }
       }).catch(()=>{})
     },
