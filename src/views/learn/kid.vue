@@ -20,9 +20,9 @@
           <el-option v-for="item in learn_cate" :key="item.id" :label="item.title" :value="item.id" />
         </el-select>
 
-        <el-select v-model="listQuery.grade" style="width: 140px" class="filter-item" @change="handleFilter">
-          <el-option key="all" label="全部-年级" value="all" />
-          <el-option v-for="item in grade" :key="item.key" :label="item.key" :value="item.key" />
+        <el-select v-model="listQuery.category_two" style="width: 140px" class="filter-item" @change="handleFilter">
+          <el-option key="all" label="全部-年级" value="" />
+          <el-option v-for="item in learn_cate_two" :key="item.id" :label="item.title" :value="item.id" />
         </el-select>
 
       </p>
@@ -54,11 +54,17 @@
         </template>
       </el-table-column>
 
-      <el-table-column label="年级" prop="category">
+      <el-table-column label="二级分类" prop="category">
         <template slot-scope="{row}">
-          <span>{{ row.grade }}</span>
+          <span>{{ row.cate_two.title }}</span>
         </template>
       </el-table-column>
+
+<!--      <el-table-column label="年级" prop="category">-->
+<!--        <template slot-scope="{row}">-->
+<!--          <span>{{ row.grade }}</span>-->
+<!--        </template>-->
+<!--      </el-table-column>-->
 
       <el-table-column label="封面图片" prop="type" align="center" width="200" :class-name="getSortClass('id')">
         <template slot-scope="{row}">
@@ -132,9 +138,15 @@
           <el-input v-model="temp.title" />
         </el-form-item>
         <el-form-item label="视频分类" prop="category">
-          <el-select v-model="temp.category" style="width: 140px" class="filter-item">
-            <el-option v-for="item in learn_cate" :key="item.id" :label="item.title" :value="item.id" />
-          </el-select>
+          <!--          <el-select v-model="temp.category" style="width: 140px" class="filter-item">-->
+          <!--            <el-option v-for="item in learn_cate" :key="item.id" :label="item.title" :value="item.id" />-->
+          <!--          </el-select>-->
+          <el-cascader
+            v-model="temp.category"
+            :options="learn_cate"
+            :props="optionProps"
+            @change="handleCategory"
+          />
         </el-form-item>
         <el-form-item label="视频简介" prop="desc">
           <el-input
@@ -147,11 +159,11 @@
         <el-form-item label="发布人" prop="author">
           <el-input v-model="temp.author" />
         </el-form-item>
-        <el-form-item label="年级">
-          <el-select v-model="temp.grade" style="width: 140px" class="filter-item">
-            <el-option v-for="item in grade" :key="item.key" :label="item.key" :value="item.key" />
-          </el-select>
-        </el-form-item>
+<!--        <el-form-item label="年级">-->
+<!--          <el-select v-model="temp.grade" style="width: 140px" class="filter-item">-->
+<!--            <el-option v-for="item in grade" :key="item.key" :label="item.key" :value="item.key" />-->
+<!--          </el-select>-->
+<!--        </el-form-item>-->
         <el-form-item label="封面图片">
           <el-upload
             :show-file-list="false"
@@ -207,6 +219,7 @@
 
 <script>
   import { learn } from '@/api/learn'
+  import { category } from '@/api/category'
   import Pagination from '@/components/Pagination'
   import EditorBar from '@/components/wangEnduit'
   const grade = [
@@ -218,6 +231,12 @@
     components: { Pagination, EditorBar },
     data() {
       return {
+        learn_cate_two: [],
+        optionProps: {
+          value: 'id',
+          label: 'title',
+          children: 'children'
+        },
         videoRes: '',
         grade: grade,
         learn_cate: [],
@@ -236,7 +255,8 @@
           keyword: '',
           type: '4',
           category: 'all',
-          grade: 'all'
+          grade: 'all',
+          category_two: ''
         },
         dialogStatus: '',
         dialogFormVisible: false,
@@ -250,7 +270,9 @@
           id: undefined,
           title: '',
           desc: '',
-          imageFile: ''
+          imageFile: '',
+          category: '',
+          category_two: ''
         },
         textMap: {
           update: '编辑',
@@ -268,19 +290,29 @@
       search() {
         this.getList()
       },
-      handleFilter() {
+      handleCategory(value) {
+        this.temp.category = value[0]
+        this.temp.category_two = value[1]
+      },
+      handleFilter(row, index) {
         this.listQuery.page = 1
         this.getList()
+        this.getCateTwo()
       },
       getCate() {
-        learn.cate().then(({ code, msg, data, count }) => {
+        category.getlist(1, 9999, '', 'learn').then(({ code, msg, data, count }) => {
           this.learn_cate = data
+        })
+      },
+      getCateTwo() {
+        category.getlist(1, 9999, '', 'learn', this.listQuery.category).then(({ code, msg, data, count }) => {
+          this.learn_cate_two = data
         })
       },
       getList() {
         this.listLoading = false
         this.list = []
-        learn.list(this.listQuery.page, this.listQuery.limit, this.listQuery.keyword, this.listQuery.type, this.listQuery.category, this.listQuery.grade).then(({ code, msg, data, count }) => {
+        learn.list(this.listQuery.page, this.listQuery.limit, this.listQuery.keyword, this.listQuery.type, this.listQuery.category, this.listQuery.category_two).then(({ code, msg, data, count }) => {
           if (code === 0) {
             data.forEach(row => {
               row.images = this.imgsrc + row.images
@@ -306,12 +338,12 @@
           title: '',
           desc: '',
           images: '',
-          imageFile: null
+          imageFile: null,
+          category: ''
         }
       },
       play(row) {
         this.temp = Object.assign({}, row)
-        console.log(row)
         this.dialogStatus = 'play'
         this.playDialogFormVisible = true
       },
@@ -348,8 +380,9 @@
               data.append('id', tempData.id)
               data.append('title', tempData.title)
               data.append('category', tempData.category)
+              data.append('category_two', tempData.category_two)
               data.append('content', tempData.content)
-              data.append('grade', tempData.grade)
+              // data.append('grade', tempData.grade)
               if (that.videoRes === '') {
                 return that.$message.error('没有上传视频')
               }
@@ -396,11 +429,12 @@
               return this.$message.warning('请选择分类')
             }
             data.append('category', tempData.category)
+            data.append('category_two', tempData.category_two)
             data.append('content', tempData.content)
-            if (tempData.grade === undefined) {
-              return this.$message.warning('请选择年级')
-            }
-            data.append('grade', tempData.grade)
+            // if (tempData.grade === undefined) {
+            //   return this.$message.warning('请选择年级')
+            // }
+            // data.append('grade', tempData.grade)
             if (this.videoRes === '') {
               return this.$message.error('没有上传视频')
             }
