@@ -125,13 +125,10 @@ export function user_kid(id) {
   })
 }
 
-// 孩子信息
-// export function user_kid(id) {
-//   return request({
-//     url: '/v1/user/getSonByUid?id=' + id,
-//     method: 'get'
-//   })
-// }
-
-
-
+// 学校信息
+export function user_school(id) {
+  return request({
+    url: '/v1/user/getSchool?id=' + id,
+    method: 'get'
+  })
+}
