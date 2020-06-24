@@ -85,7 +85,7 @@
     </el-table>
 
     <!-- 分页 -->
-    <pagination v-show="total>0" :total="total" :page.sync="listQuery.page" :limit.sync="listQuery.limit" @pagination="getList" />
+    <pagination v-show="total>0" :total="total" :page.sync="listQuery.page" :limit.sync="listQuery.limit" @pagination="getList1" />
 
     <!-- 弹窗页面   -->
     <el-dialog :title="textMap[dialogStatus]" width="500" :visible.sync="dialogFormVisible">
@@ -201,17 +201,17 @@
       }
     },
     mounted() {
-      this.getCategoryList()
     },
     created() {
-      this.getList()
+      this.getCategoryList()
+      this.getList1()
     },
     methods: {
       change(val) {
         console.log(val)
       },
       search() {
-        this.getList()
+        this.getList1()
       },
       getCategoryList() {
         category.getlist(1, 999, '', 'train').then(res => {
@@ -222,9 +222,9 @@
       },
       handleFilter() {
         this.listQuery.page = 1
-        this.getList()
+        this.getList1()
       },
-      getList() {
+      getList1() {
         this.listLoading = false
         this.list = []
         organization.train_list(this.listQuery.page, this.listQuery.limit, this.listQuery.keyword, this.listQuery.status).then(({ code, msg, data, count }) => {
@@ -319,7 +319,7 @@
             data.append('phone', tempData.phone)
             data.append('rebate', tempData.rebate)
             organization.edit(data).then(() => {
-              this.getList()
+              this.getList1()
               this.dialogFormVisible = false
               this.$notify({
                 title: 'Success',
