@@ -1,6 +1,6 @@
 <template>
   <div class="app-container">
-    <el-tabs :activeName="tab_select">
+    <el-tabs :active-name="tab_select">
       <el-tab-pane
         v-for="(item, index) in configList"
         :key="index"
@@ -14,7 +14,7 @@
             <!-- 加长文本框 -->
             <el-input
               v-else-if="row.type ==='text'"
-              v-model="row.value" 
+              v-model="row.value"
               type="textarea"
               :placeholder="row.desc"
             />
@@ -47,13 +47,23 @@
             />
             <!-- 图片上传 -->
             <div v-else-if="row.type==='image'">
-              <!-- <el-upload
-  action="https://jsonplaceholder.typicode.com/posts/"
-  list-type="picture-card"
-  :on-preview="handlePictureCardPreview"
-  :on-success="img"
-  <i class="el-icon-plus"></i>
-              </el-upload>-->
+              <el-upload
+              class="avatar-uploader"
+                :action="url+'/v1/uploads/all'"
+                list-type="picture-card"
+                :data="attach"
+                name="images"
+                :multiple="false"
+                :show-file-list="false"
+                :before-upload="onBeforeUpload"
+                :on-success="handleUploadSuccess"
+                :limit="1"
+                :value="row.value"
+              >
+              <!-- TODO: 修改不了 -->
+                <img v-if="row.value" :src="url+row.value" class="avatar">
+                <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+              </el-upload>
             </div>
           </el-form-item>
         </el-form>
@@ -64,12 +74,19 @@
 </template>
 
 <script>
+import { uploadImage } from '@/api/common'
 import { getAllConfig, updateAll } from '@/api/configs'
 export default {
   data() {
     return {
+      url:process.env.VUE_APP_BASE_API,
       configList: [],
-      tab_select:''
+      tab_select: '',
+
+      // 上传附带
+      attach:{
+        type:'configs'
+      }
     }
   },
   created() {
@@ -89,6 +106,24 @@ export default {
         })
         .catch(() => {})
     },
+    // 文件上传成功
+    handleUploadSuccess(res, file, fileList)
+    {
+      console.log(this.$refs);
+      console.log(res);
+      // if (res.code===0) {
+      //   row.value=res.data
+      // }
+    },
+    // 文件上传
+    onBeforeUpload(file) {
+        const isLt2M = file.size / 1024 / 1024 < 2
+
+        if (!isLt2M) {
+          this.$message.error('上传头像图片大小不能超过 2MB!')
+        }
+        return true
+    },
     // 提交更改
     submitUpdate() {
       const submitData = {}
@@ -96,7 +131,7 @@ export default {
         for (let n = 0; this.configList[i].item.length > n; n++) {
           const key = this.configList[i].item[n].key
           const value = this.configList[i].item[n].value
-          console.log(key);
+          console.log(key)
           submitData[key] = value
         }
       }
@@ -116,4 +151,28 @@ export default {
 }
 </script>
 
-<style lang="stylus"></style>
+<style>
+.avatar-uploader .el-upload {
+    border: 1px dashed #d9d9d9;
+    border-radius: 6px;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+  }
+  .avatar-uploader .el-upload:hover {
+    border-color: #409EFF;
+  }
+  .avatar-uploader-icon {
+    font-size: 28px;
+    color: #8c939d;
+    width: 178px;
+    height: 178px;
+    line-height: 178px;
+    text-align: center;
+  }
+  .avatar {
+    width: 178px;
+    height: 178px;
+    display: block;
+  }
+</style>
