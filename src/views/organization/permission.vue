@@ -42,16 +42,16 @@
           <span>{{ row.name }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="分类" prop="title" align="center" width="200" :class-name="getSortClass('id')">
-        <template slot-scope="{row}">
-          <span>{{ row.category.title }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="推广子公司名称" prop="title" width="200" align="center" :class-name="getSortClass('id')">
-        <template slot-scope="{row}">
-          <span>{{ row.company.title }}</span>
-        </template>
-      </el-table-column>
+<!--      <el-table-column label="分类" prop="title" align="center" width="200" :class-name="getSortClass('id')">-->
+<!--        <template slot-scope="{row}">-->
+<!--          <span>{{ row.category.title }}</span>-->
+<!--        </template>-->
+<!--      </el-table-column>-->
+<!--      <el-table-column label="推广子公司名称" prop="title" width="200" align="center" :class-name="getSortClass('id')">-->
+<!--        <template slot-scope="{row}">-->
+<!--          <span>{{ row.company.title }}</span>-->
+<!--        </template>-->
+<!--      </el-table-column>-->
       <el-table-column label="联系人" prop="type" align="center" width="150" style="height: 150px;" :class-name="getSortClass('id')">
         <template slot-scope="{row}">
           <span>{{ row.contact }}</span>
@@ -93,14 +93,14 @@
         <el-form-item label="机构名称">
           <el-input v-model="temp.name" :readonly="readonly" />
         </el-form-item>
-        <el-form-item label="推广公司名称">
-          <el-input v-model="temp.company.title" readonly />
-        </el-form-item>
-        <el-form-item label="分类">
-          <el-select v-model="temp.category_id" style="width: 140px" class="filter-item" @change="handleFilter">
-            <el-option v-for="item in categoryList" :key="item.id" :label="item.title" :value="item.id" :disabled="disabled"/>
-          </el-select>
-        </el-form-item>
+<!--        <el-form-item label="推广公司名称">-->
+<!--          <el-input v-model="temp.company.title" readonly />-->
+<!--        </el-form-item>-->
+<!--        <el-form-item label="分类">-->
+<!--          <el-select v-model="temp.category_id" style="width: 140px" class="filter-item" @change="handleFilter">-->
+<!--            <el-option v-for="item in categoryList" :key="item.id" :label="item.title" :value="item.id" :disabled="disabled"/>-->
+<!--          </el-select>-->
+<!--        </el-form-item>-->
         <el-form-item label="营业执照">
           <el-image
             style="width: 300px; height: 200px"
