@@ -269,7 +269,7 @@
           title: '',
           desc: '',
           imageFile: '',
-          category: undefined,
+          category: '',
           category_two: ''
         },
         textMap: {

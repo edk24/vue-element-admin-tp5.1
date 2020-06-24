@@ -231,7 +231,8 @@
           id: undefined,
           title: '',
           desc: '',
-          imageFile: ''
+          imageFile: '',
+          category: ''
         },
         textMap: {
           update: '编辑',
@@ -366,14 +367,11 @@
             data.append('id', tempData.id)
             data.append('title', tempData.title)
             data.append('author', tempData.author)
-            if (tempData.category === undefined) {
+            if (tempData.kid_type === '') {
               return this.$message.warning('请选择分类')
             }
             data.append('kid_type', tempData.kid_type)
             data.append('content', tempData.content)
-            if (tempData.grade === undefined) {
-              return this.$message.warning('请选择年级')
-            }
             data.append('grade', tempData.grade)
             if (this.videoRes === '') {
               return this.$message.error('没有上传视频')
