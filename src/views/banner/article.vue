@@ -60,7 +60,7 @@
           <el-input v-model="form.abstract" />
         </el-form-item>
         <el-form-item label="内容:">
-          <el-input v-model="form.content" />
+          <el-input type="textarea" :autosize="{ minRows: 2, maxRows: 5}" v-model="form.content" />
         </el-form-item>
       </el-form>
 

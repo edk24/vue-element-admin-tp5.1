@@ -211,24 +211,18 @@
       width="600px"
       center
     >
-      <span v-if="school_list.length === 0" style="width: 100%; text-align: center;display:inline-block;">孩子信息暂未绑定</span>
+      <span v-if="school_list.length === 0" style="width: 100%; text-align: center;display:inline-block;">学校信息暂未绑定</span>
       <el-form
+        v-if="school_list.length != 0"
         style="margin-top: 10px;border-bottom: 1px solid #000000"
         label-width="100px"
       >
         <el-form-item label="学校名称">{{ school_list.title }}</el-form-item>
-        <el-form-item label="学校联系方式">{{ school.phone }}</el-form-item>
-        <el-form-item label="生日">{{ item.birthday }}</el-form-item>
-        <el-form-item label="详细地址">{{ item.address }}</el-form-item>
-        <el-form-item label="学校">
-          <span v-if="item.school != null">{{ item.school.title }}</span>
-          <span v-if="item.school === null">暂未绑定学校</span>
-        </el-form-item>
-        <el-form-item label="班级">{{ item.class }}</el-form-item>
-        <el-form-item label="性别">
-          <span v-if="item.sex === 0">女</span>
-          <span v-if="item.sex === 1">男</span>
-        </el-form-item>
+        <el-form-item label="学校联系方式">{{ school_list.phone }}</el-form-item>
+        <el-form-item label="省">{{ school_list.province }}</el-form-item>
+        <el-form-item label="市">{{ school_list.city }}</el-form-item>
+        <el-form-item label="区">{{school_list.area}}</el-form-item>
+        <el-form-item label="详细地址">{{ school_list.address }}</el-form-item>
       </el-form>
 
       <span slot="footer" class="dialog-footer">
@@ -326,7 +320,7 @@
       },
       handleSchool(row) {
         this.visibleSchoolDialog = true
-        this.getSchoolList(row.id)
+        this.getSchoolList(row.school)
       },
       // 刷新数据
       refreshData() {
