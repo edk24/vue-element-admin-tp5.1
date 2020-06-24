@@ -75,8 +75,8 @@
       <el-table-column label="管理" width="200">
         <template slot-scope="scope">
           <el-button-group>
-            <el-button v-if="scope.row.type === 0" size="mini" type="primary">查看孩子</el-button>
-            <el-button v-else-if="scope.row.type === 6" size="mini" type="primary">学校信息</el-button>
+            <el-button v-if="scope.row.type === 0" size="mini" type="primary" @click="handleChildren(scope.row)">查看孩子</el-button>
+            <el-button v-else-if="scope.row.type === 6" size="mini" type="primary" @click="handleSchool(scope.row)">学校信息</el-button>
             <el-button
               v-else-if="scope.row.type === 1 || scope.row.type === 3"
               size="mini"
@@ -104,7 +104,7 @@
       width="600px"
       center
     >
-
+      <span v-if="companyInfo === null">公司信息暂未完善</span>
       <el-form label-width="100px">
         <el-form-item label="公司名称">{{ companyInfo.name }}</el-form-item>
         <el-form-item label="统一社会代码">{{ companyInfo.code }}</el-form-item>
@@ -159,17 +159,47 @@
       </span>
     </el-dialog>
 
+    <!--  孩子信息  -->
+    <el-dialog
+      title="孩子信息"
+      :visible.sync="visibleKidDialog"
+      width="600px"
+      center
+    >
+      <span v-if="user_kid.length === 0" style="width: 100%; text-align: center;display:inline-block;">孩子信息暂未绑定</span>
+      <el-form style="margin-top: 10px;border-bottom: 1px solid #000000" v-for="(item, index) in user_kid" :key="index" label-width="100px" :value="index">
+        <el-form-item label="姓名">{{ item.nickname }}</el-form-item>
+        <el-form-item label="手机号码">{{ item.phone }}</el-form-item>
+        <el-form-item label="生日">{{ item.birthday }}</el-form-item>
+        <el-form-item label="详细地址">{{ item.address }}</el-form-item>
+        <el-form-item label="学校">
+          <span v-if="item.school != null">{{item.school.title}}</span>
+          <span v-if="item.school === null">暂未绑定学校</span>
+        </el-form-item>
+        <el-form-item label="班级">{{ item.class }}</el-form-item>
+        <el-form-item label="性别">
+          <span v-if="item.sex === 0">女</span>
+          <span v-if="item.sex === 1">男</span>
+        </el-form-item>
+      </el-form>
+
+      <span slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="visibleKidDialog = false">确 定</el-button>
+      </span>
+    </el-dialog>
+
   </div>
 </template>
 
 <script>
-import { user_list, user_del } from '@/api/user'
+import { user_list, user_del, user_kid } from '@/api/user'
 import { getList as company_gudon_list } from '@/api/company_gudon'
 import { get_company_info_by_uid } from '@/api/company'
 import { get_info_by_uid } from '@/api/train'
 export default {
   data() {
     return {
+      user_kid: [],
       userList: [],
       count: 0,
       page: 0,
@@ -187,7 +217,8 @@ export default {
         { value: 6, label: '学校' },
         { value: 5, label: '未知' }
       ],
-
+      // 孩子
+      visibleKidDialog: false,
       // 显示公司信息对话框
       visibleCompanyDialog: false,
       // 公司信息
@@ -237,6 +268,14 @@ export default {
       this.page++
       this.refreshData()
     },
+    handleChildren(row) {
+      this.visibleKidDialog = true
+      this.getKidList(row.id)
+    },
+    handleSchool(row){
+      this.visibleSchoolDialog = true
+      this.getSchoolList(row.id)
+    },
     // 刷新数据
     refreshData() {
       if (this.page <= 0) {
@@ -255,6 +294,20 @@ export default {
           }
         }
       )
+    },
+    // 获取学校
+    getSchool(){
+
+    },
+    // 获取孩子信息
+    getKidList(id) {
+      user_kid(id).then(res => {
+        // console.log(res)
+        this.user_kid = res.data.kid
+        console.log(this.user_kid)
+      }).catch(e => {
+        console.log(e)
+      })
     },
     // 显示公司信息对话框
     showCompanyDialog(row) {
