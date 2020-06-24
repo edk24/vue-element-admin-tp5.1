@@ -138,11 +138,8 @@
           <el-input v-model="temp.title" />
         </el-form-item>
         <el-form-item label="视频分类" prop="category">
-          <!--          <el-select v-model="temp.category" style="width: 140px" class="filter-item">-->
-          <!--            <el-option v-for="item in learn_cate" :key="item.id" :label="item.title" :value="item.id" />-->
-          <!--          </el-select>-->
           <el-cascader
-            v-model="temp.category"
+            v-model="selectedOptions"
             :options="learn_cate"
             :props="optionProps"
             @change="handleCategory"
@@ -231,6 +228,7 @@
     components: { Pagination, EditorBar },
     data() {
       return {
+        selectedOptions: [],
         learn_cate_two: [],
         optionProps: {
           value: 'id',
@@ -359,6 +357,8 @@
       handleUpdate(row) {
         this.videoRes = 'init'
         this.temp = Object.assign({}, row) // copy obj
+        var str = row.category + ',' + row.category_two
+        this.selectedOptions = str.split(',')
         this.dialogStatus = 'update'
         this.dialogFormVisible = true
         this.$nextTick(() => {
@@ -422,7 +422,6 @@
           if (valid) {
             const tempData = Object.assign({}, this.temp)
             const data = new FormData()
-            data.append('id', tempData.id)
             data.append('title', tempData.title)
             data.append('author', tempData.author)
             if (tempData.category === undefined) {
