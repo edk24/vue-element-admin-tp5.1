@@ -68,8 +68,8 @@ export default {
     }
     return {
       loginForm: {
-        phone: '18230771271',
-        password: '123123'
+        phone: '',
+        password: ''
       },
       // md5用法  					password:md5.hex_md5(this.passwd),
       loginRules: {
