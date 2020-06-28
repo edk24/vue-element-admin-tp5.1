@@ -15,10 +15,10 @@
         />
         <el-button type="primary" @click="search()">搜索</el-button>
 
-<!--        <el-select v-model="listQuery.type" style="width: 140px" class="filter-item" @change="handleFilter">-->
-<!--          <el-option label="全部" value="all" />-->
-<!--          <el-option v-for="item in type" :key="item.key" :label="item.name" :value="item.key" />-->
-<!--        </el-select>-->
+        <!--        <el-select v-model="listQuery.type" style="width: 140px" class="filter-item" @change="handleFilter">-->
+        <!--          <el-option label="全部" value="all" />-->
+        <!--          <el-option v-for="item in type" :key="item.key" :label="item.name" :value="item.key" />-->
+        <!--        </el-select>-->
       </p>
     </div>
 
@@ -38,45 +38,40 @@
       </el-table-column>
       <el-table-column label="公司" prop="title" width="200" align="center" :class-name="getSortClass('id')">
         <template slot-scope="{row}">
-          <span>{{ row.title }}</span>
+          <span>{{ row.company.title }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="学校" prop="type" align="center" width="200" style="height: 150px;" :class-name="getSortClass('id')">
+      <el-table-column label="用户" align="center" width="150">
         <template slot-scope="{row}">
-          <el-image class="image" :src="row.image">
-            <div slot="error" class="image-slot">
-              暂未上传
-            </div>
-          </el-image>
+          <span>{{ row.user.nickname }}</span>
         </template>
       </el-table-column>
       <el-table-column label="名称" prop="note" align="center" width="150" :class-name="getSortClass('id')">
         <template slot-scope="{row}">
-          <span v-if="row.type_title != ''">{{ row.type_title }}</span>
-          <span v-if="row.type_title === undefined">{{ row.title }}</span>
+          <span>{{ row.title }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="联系电话" prop="note" align="center" width="200" :class-name="getSortClass('id')">
+      <el-table-column label="联系电话" prop="note" align="center" width="160" :class-name="getSortClass('id')">
         <template slot-scope="{row}">
-          <span>{{ row.desc }}</span>
+          <span>{{ row.phone }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="水费" prop="note" align="center" width="200" :class-name="getSortClass('id')">
+      <el-table-column label="水费" prop="note" align="center" width="100" :class-name="getSortClass('id')">
         <template slot-scope="{row}">
-          <span>{{ row.desc }}</span>
+          <span>{{ row.water }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="缴费提成" prop="note" align="center" width="200" :class-name="getSortClass('id')">
+      <el-table-column label="缴费提成" prop="note" align="center" width="100" :class-name="getSortClass('id')">
         <template slot-scope="{row}">
-          <span>{{ row.desc }}</span>
+          <span>{{ row.bonus }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="创建时间" prop="create_time" align="center" width="250" :class-name="getSortClass('id')">
+      <el-table-column label="创建时间" prop="create_time" align="center" width="200" :class-name="getSortClass('id')">
         <template slot-scope="{row}">
           <span>{{ row.create_time }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="修改时间" prop="update_time" align="center" width="250" :class-name="getSortClass('id')">
+      <el-table-column label="修改时间" prop="update_time" align="center" width="200" :class-name="getSortClass('id')">
         <template slot-scope="{row}">
           <span>{{ row.update_time }}</span>
         </template>
@@ -94,16 +89,29 @@
     </el-table>
 
     <!-- 分页 -->
-    <pagination v-show="total>0" :total="total" :page.sync="listQuery.page" :limit.sync="listQuery.limit" @pagination="getList" />
+    <pagination
+      v-show="total>0"
+      :total="total"
+      :page.sync="listQuery.page"
+      :limit.sync="listQuery.limit"
+      @pagination="getList"
+    />
 
     <!-- 弹窗页面   -->
     <el-dialog :title="textMap[dialogStatus]" width="500" :visible.sync="dialogFormVisible">
-      <el-form ref="dataForm" :rules="rules" :model="temp" label-position="left" label-width="100px" style="padding:0 5px;margin-right:5px;margin-left:50px;">
+      <el-form
+        ref="dataForm"
+        :rules="rules"
+        :model="temp"
+        label-position="left"
+        label-width="100px"
+        style="padding:0 5px;margin-right:5px;margin-left:50px;"
+      >
         <el-form-item label="名称" prop="title">
           <el-input v-model="temp.title" />
         </el-form-item>
         <el-form-item label="公司">
-          <el-select v-model="temp.company_id" placeholder="公司" @change="typeChange()">
+          <el-select v-model="temp.company_id" placeholder="公司">
             <el-option v-for="item in school_list" :key="item.id" :label="item.title" :value="item.id" />
           </el-select>
         </el-form-item>
@@ -119,7 +127,7 @@
           >
             <el-option
               v-for="item in userList"
-              :key="item.nickname"
+              :key="item.id"
               :label="item.nickname"
               :value="item.id"
             />
@@ -136,13 +144,17 @@
             @change="handleChange"
           />
         </el-form-item>
-        <el-form-item label="详细地址">
+        <el-form-item label="详细地址" prop="address">
+          <el-input v-model="temp.address" />
         </el-form-item>
-        <el-form-item label="联系电话">
+        <el-form-item label="联系电话" prop="phone">
+          <el-input v-model="temp.phone" />
         </el-form-item>
-        <el-form-item label="水费">
+        <el-form-item label="水费" prop="water">
+          <el-input v-model="temp.water" maxlength="10" oninput="value=value.replace(/[^\d.]/g,'')" />
         </el-form-item>
-        <el-form-item label="缴费提成">
+        <el-form-item label="缴费提成" prop="bonus">
+          <el-input v-model="temp.bonus" maxlength="10" oninput="value=value.replace(/[^\d.]/g,'')" />
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -170,6 +182,7 @@
     CodeToText,
     TextToCode
   } from 'element-china-area-data'
+
   const type = [
     { key: 'forum', name: '论坛' },
     { key: 'goods', name: '商品分类' },
@@ -213,7 +226,19 @@
         dialogStatus: '',
         dialogFormVisible: false,
         rules: {
-          title: [{ required: true, message: '分类名称不能为空', trigger: 'change' }]
+          title: [{ required: true, message: '不能为空', trigger: 'change' }],
+          address: [{ required: true, message: '不能为空', trigger: 'change' }],
+          phone: [{ required: true, message: '不能为空', trigger: 'change' }],
+          water: [{ required: true, type: 'string', trigger: 'blur', message: '金额不能为空' },
+            {
+              pattern: /(^[1-9]([0-9]+)?(\.[0-9]{1,2})?$)|(^(0){1}$)|(^[0-9]\.[0-9]([0-9])?$)/,
+              message: '请输入正确额格式,可保留两位小数'
+            }],
+          bonus: [{ required: true, type: 'string', trigger: 'blur', message: '金额不能为空' },
+            {
+              pattern: /(^[1-9]([0-9]+)?(\.[0-9]{1,2})?$)|(^(0){1}$)|(^[0-9]\.[0-9]([0-9])?$)/,
+              message: '请输入正确额格式,可保留两位小数'
+            }]
         },
         temp: {
           imageFile: '',
@@ -246,10 +271,13 @@
         this.getList()
       },
       // 获取省市区地址级联
-      handleChange(e) {
-        console.log(e)
+      handleChange(value) {
+        this.temp.province = value[0]
+        this.temp.city = value[1]
+        this.temp.area = value[2]
+        this.temp.selectedOptions = value
       },
-      getCompanyList(){
+      getCompanyList() {
         getList(1, 9999, '', -1).then(res => {
           this.school_list = res.data
         }).catch(e => {
@@ -284,10 +312,10 @@
         school.getlist(this.listQuery.page, this.listQuery.limit, this.listQuery.keyword).then(({ code, msg, data, count }) => {
           if (code === 0) {
             data.forEach(row => {
-              row.image = this.imgsrc + row.image
               this.list.push(row)
             })
             this.total = count
+            console.log(data)
           } else {
             this.$message.error(msg || '查询失败')
           }
@@ -304,15 +332,21 @@
         this.temp = {
           id: undefined,
           title: '',
-          desc: '',
-          image: '',
-          imageFile: '',
-          pid: 0,
-          type: ''
+          company_id: undefined,
+          user_id: undefined,
+          phone: '',
+          selectedOptions: [],
+          address: '',
+          water: '',
+          bonus: '',
+          province: '',
+          city: '',
+          area: ''
         }
       },
       handleCreate() {
         this.resetTemp()
+        this.selectedOptions = []
         this.dialogStatus = 'create'
         this.dialogFormVisible = true
         this.$nextTick(() => {
@@ -321,6 +355,8 @@
       },
       handleUpdate(row) {
         this.temp = Object.assign({}, row) // copy obj
+        var str = row.province + ',' + row.city + ',' + row.area
+        this.selectedOptions = str.split(',')
         this.dialogStatus = 'update'
         this.dialogFormVisible = true
         this.$nextTick(() => {
@@ -332,15 +368,27 @@
           if (valid) {
             const tempData = Object.assign({}, this.temp)
             const data = new FormData()
-            data.append('id', tempData.id)
+            // data.append('id', tempData.id)
             data.append('title', tempData.title)
-            data.append('desc', tempData.desc)
-            data.append('type', tempData.type)
-            data.append('pid', tempData.pid)
-            if (this.temp.imageFile != null) {
-              data.append('image', this.temp.imageFile)
+            if (tempData.company_id === undefined) {
+              return this.$message.warning('必须选择公司')
             }
-            category.edit(data).then(response => {
+            data.append('company_id', tempData.company_id)
+            if (tempData.user_id === undefined) {
+              return this.$message.warning('必须选择用户')
+            }
+            data.append('user_id', tempData.user_id)
+            if (tempData.selectedOptions === '') {
+              return this.$message.warning('必须选择省市区')
+            }
+            data.append('province', tempData.province)
+            data.append('city', tempData.city)
+            data.append('area', tempData.area)
+            data.append('address', tempData.address)
+            data.append('water', tempData.water)
+            data.append('bonus', tempData.bonus)
+            data.append('phone', tempData.phone)
+            school.edit(tempData.id, data).then(response => {
               // const index = this.list.findIndex(v => v.id === this.temp.id)
               // this.list.splice(index, 1, tempData)
               this.getList()
@@ -362,18 +410,26 @@
           if (valid) {
             const tempData = Object.assign({}, this.temp)
             const data = new FormData()
-            data.append('id', tempData.id)
             data.append('title', tempData.title)
-            data.append('desc', tempData.desc)
-            data.append('type', tempData.type)
-            data.append('pid', tempData.pid)
-            if (tempData.type === '') {
-              return this.$message.error('必须选择分类')
+            if (tempData.company_id === undefined) {
+              return this.$message.warning('必须选择公司')
             }
-            if (this.temp.imageFile != null) {
-              data.append('image', this.temp.imageFile)
+            data.append('company_id', tempData.company_id)
+            if (tempData.user_id === undefined) {
+              return this.$message.warning('必须选择用户')
             }
-            category.add(data).then(() => {
+            data.append('user_id', tempData.user_id)
+            if (tempData.selectedOptions === '') {
+              return this.$message.warning('必须选择省市区')
+            }
+            data.append('province', tempData.province)
+            data.append('city', tempData.city)
+            data.append('area', tempData.area)
+            data.append('address', tempData.address)
+            data.append('water', tempData.water)
+            data.append('bonus', tempData.bonus)
+            data.append('phone', tempData.phone)
+            school.add(data).then(() => {
               // this.list.push(this.temp)
               this.getList()
               this.dialogFormVisible = false

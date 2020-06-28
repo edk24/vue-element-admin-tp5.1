@@ -336,7 +336,6 @@
           if (valid) {
             const tempData = Object.assign({}, this.temp)
             const data = new FormData()
-            data.append('id', tempData.id)
             data.append('title', tempData.title)
             data.append('desc', tempData.desc)
             data.append('type', tempData.type)
