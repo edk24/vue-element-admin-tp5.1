@@ -80,6 +80,9 @@
             <el-button v-else-if="scope.row.type === 6" size="mini" type="primary" @click="handleSchool(scope.row)">
               学校信息
             </el-button>
+            <el-button v-else-if="scope.row.type === 4" size="mini" type="primary" @click="handleSchool(scope.row)">
+              学校信息
+            </el-button>
             <el-button
               v-else-if="scope.row.type === 1 || scope.row.type === 3"
               size="mini"
