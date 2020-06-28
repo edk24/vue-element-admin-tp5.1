@@ -60,11 +60,11 @@
         </template>
       </el-table-column>
 
-<!--      <el-table-column label="年级" prop="category">-->
-<!--        <template slot-scope="{row}">-->
-<!--          <span>{{ row.grade }}</span>-->
-<!--        </template>-->
-<!--      </el-table-column>-->
+      <!--      <el-table-column label="年级" prop="category">-->
+      <!--        <template slot-scope="{row}">-->
+      <!--          <span>{{ row.grade }}</span>-->
+      <!--        </template>-->
+      <!--      </el-table-column>-->
 
       <el-table-column label="封面图片" prop="type" align="center" width="200" :class-name="getSortClass('id')">
         <template slot-scope="{row}">
@@ -156,11 +156,11 @@
         <el-form-item label="发布人" prop="author">
           <el-input v-model="temp.author" />
         </el-form-item>
-<!--        <el-form-item label="年级">-->
-<!--          <el-select v-model="temp.grade" style="width: 140px" class="filter-item">-->
-<!--            <el-option v-for="item in grade" :key="item.key" :label="item.key" :value="item.key" />-->
-<!--          </el-select>-->
-<!--        </el-form-item>-->
+        <!--        <el-form-item label="年级">-->
+        <!--          <el-select v-model="temp.grade" style="width: 140px" class="filter-item">-->
+        <!--            <el-option v-for="item in grade" :key="item.key" :label="item.key" :value="item.key" />-->
+        <!--          </el-select>-->
+        <!--        </el-form-item>-->
         <el-form-item label="封面图片">
           <el-upload
             :show-file-list="false"
@@ -270,7 +270,8 @@
           desc: '',
           imageFile: '',
           category: '',
-          category_two: ''
+          category_two: '',
+          selectedOptions: []
         },
         textMap: {
           update: '编辑',
@@ -358,7 +359,7 @@
         this.videoRes = 'init'
         this.temp = Object.assign({}, row) // copy obj
         var str = row.category + ',' + row.category_two
-        this.selectedOptions = str.split(',')
+        this.selectedOptions = str.split(',').map(Number)
         this.dialogStatus = 'update'
         this.dialogFormVisible = true
         this.$nextTick(() => {

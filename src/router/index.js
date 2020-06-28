@@ -134,6 +134,26 @@ export const constantRoutes = [{
       }
     ]
   },
+  {
+    path: '/school',
+    component: Layout,
+    name: '学校管理',
+    meta: {
+      title: '学校管理',
+      tree: 'tree',
+      icon: 'example'
+    },
+    children: [{
+      path: 'index',
+      name: '学校管理',
+      component: () => import('@/views/school/index'),
+      meta: {
+        title: '学校管理',
+        icon: 'tree'
+      }
+    }
+    ]
+  },
 
   // 分部管理  --合伙人管理--股东管理
   {

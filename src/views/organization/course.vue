@@ -16,7 +16,8 @@
         <el-button type="primary" @click="search()">搜索</el-button>
 
         <el-select v-model="listQuery.type" style="width: 140px" class="filter-item" @change="handleFilter">
-          <el-option v-for="item in type" :key="item.key" :label="item.name" :value="item.key" />
+          <el-option label="全部" value="all" />
+          <el-option v-for="item in trainList" :key="item.id" :label="item.name" :value="item.id" />
         </el-select>
       </p>
     </div>
@@ -351,13 +352,14 @@
       getList() {
         this.listLoading = false
         this.list = []
-        course.getlist(this.listQuery.page, this.listQuery.limit, this.user.id).then(({ code, msg, data, count }) => {
+        course.getlist(this.listQuery.page, this.listQuery.limit, this.listQuery.type).then(({ code, msg, data, count }) => {
           if (code === 0) {
             data.forEach(row => {
               row.image = this.imgsrc + row.image
               this.list.push(row)
             })
             this.total = count
+            console.log(data)
           } else {
             this.$message.error(msg || '查询失败')
           }

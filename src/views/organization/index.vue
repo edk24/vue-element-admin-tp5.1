@@ -103,8 +103,6 @@
 </template>
 
 <script>
-  // import EditorBar from '@/components/wangEnduit'
-  import quillConfig from '@/utils/quill-config.js'
   import { organization } from '@/api/organization'
   import {
     provinceAndCityData,

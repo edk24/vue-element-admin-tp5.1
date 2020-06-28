@@ -132,3 +132,11 @@ export function user_school(id) {
     method: 'get'
   })
 }
+
+// 设置贫困学生
+export function set_poverty(id) {
+  return request({
+    url: '/v1/user/set_poverty?id=' + id,
+    method: 'get'
+  })
+}

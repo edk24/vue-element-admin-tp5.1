@@ -80,8 +80,11 @@
             <el-button v-else-if="scope.row.type === 6" size="mini" type="primary" @click="handleSchool(scope.row)">
               学校信息
             </el-button>
-            <el-button v-else-if="scope.row.type === 4" size="mini" type="primary" @click="handleSchool(scope.row)">
-              学校信息
+            <el-popconfirm v-else-if="scope.row.type === 4 && scope.row.is_poverty === 0" title="确认设置贫困学生吗?" @onConfirm="handlePoverty(scope.row)">
+              <el-button slot="reference" size="mini" type="primary">设置贫困学生</el-button>
+            </el-popconfirm>
+            <el-button v-else-if="scope.row.type === 4 && scope.row.is_poverty != 0" size="mini" type="warning">
+              贫困学生
             </el-button>
             <el-button
               v-else-if="scope.row.type === 1 || scope.row.type === 3"
@@ -207,7 +210,7 @@
       </span>
     </el-dialog>
 
-<!--     学校信息-->
+    <!--     学校信息-->
     <el-dialog
       title="学校信息"
       :visible.sync="visibleSchoolDialog"
@@ -224,7 +227,7 @@
         <el-form-item label="学校联系方式">{{ school_list.phone }}</el-form-item>
         <el-form-item label="省">{{ school_list.province }}</el-form-item>
         <el-form-item label="市">{{ school_list.city }}</el-form-item>
-        <el-form-item label="区">{{school_list.area}}</el-form-item>
+        <el-form-item label="区">{{ school_list.area }}</el-form-item>
         <el-form-item label="详细地址">{{ school_list.address }}</el-form-item>
       </el-form>
 
@@ -237,7 +240,7 @@
 </template>
 
 <script>
-  import { user_list, user_del, user_kid, user_school } from '@/api/user'
+  import { user_list, user_del, user_kid, user_school, set_poverty } from '@/api/user'
   import { getList as company_gudon_list } from '@/api/company_gudon'
   import { get_company_info_by_uid } from '@/api/company'
   import { get_info_by_uid } from '@/api/train'
@@ -344,10 +347,19 @@
             }
         )
       },
+      // 设置贫困学生
+      handlePoverty(row) {
+        set_poverty(row.id).then(res => {
+          this.$message.success('设置成功')
+          this.refreshData()
+        }).catch(e => {
+          console.log(e)
+        })
+      },
       // 获取学校
       getSchoolList(id) {
         user_school(id).then(res => {
-          if (res.code === 0){
+          if (res.code === 0) {
             this.school_list = res.data
           }
         }).catch(e => {

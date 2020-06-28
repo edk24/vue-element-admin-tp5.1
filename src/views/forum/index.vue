@@ -183,7 +183,6 @@
           } else {
             this.$message.error(msg || '查询失败')
           }
-          console.log(data)
             this.listLoading = false
         })
       },
@@ -201,7 +200,6 @@
         forum.detail(row.id).then(({ code, msg, data, count }) => {
           this.comment = data.comment
         })
-        console.log(this.comment)
         return
       },
       posts_del(row, index) {
