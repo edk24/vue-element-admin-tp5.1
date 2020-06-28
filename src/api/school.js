@@ -14,16 +14,16 @@ const school = {
       method: 'get'
     })
   },
-  edit: function(data) {
+  edit: function(id, data) {
     return request({
-      url: '/v1/category/edit',
-      method: 'post',
-      data
+      url: '/v1/school/' + id,
+      method: 'put',
+      data: qs.stringify(data)
     })
   },
   add: function(data) {
     return request({
-      url: '/v1/category/add',
+      url: '/v1/school',
       method: 'post',
       data
     })
