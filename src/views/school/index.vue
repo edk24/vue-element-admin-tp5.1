@@ -116,20 +116,28 @@
           </el-select>
         </el-form-item>
         <el-form-item label="用户">
-          <el-select
-            v-model="temp.user_id"
-            filterable
-            remote
-            reserve-keyword
-            placeholder="请输入手机号检索"
-            :remote-method="userSearch"
-            :loading="loading"
-          >
+<!--                    <el-select-->
+<!--                      v-model="temp.user_id"-->
+<!--                      filterable-->
+<!--                      remote-->
+<!--                      reserve-keyword-->
+<!--                      placeholder="请输入手机号检索"-->
+<!--                      :remote-method="userSearch"-->
+<!--                      :loading="loading"-->
+<!--                    >-->
+<!--                      <el-option-->
+<!--                        v-for="item in userList"-->
+<!--                        :key="item.nickname"-->
+<!--                        :label="item.nickname"-->
+<!--                        :value="item.id"-->
+<!--                      />-->
+<!--                    </el-select>-->
+          <el-select v-model="temp.user_id" filterable :filter-method="userFilter" placeholder="请选择">
             <el-option
-              v-for="item in userList"
-              :key="item.id"
-              :label="item.nickname"
-              :value="item.id"
+              v-for="item in userSelect"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
             />
           </el-select>
         </el-form-item>
@@ -173,7 +181,7 @@
   import { school } from '@/api/school'
   import { getList } from '@/api/company'
   import Pagination from '@/components/Pagination'
-  import { user_search } from '@/api/user'
+  import { user_search, user_list } from '@/api/user'
   import {
     provinceAndCityData,
     regionData,
@@ -193,6 +201,8 @@
     components: { Pagination },
     data() {
       return {
+        userSelect: [],
+        // clearable:false,
         // 省市区联动
         optionProps: {
           value: 'label',
@@ -255,6 +265,7 @@
     },
     mounted() {
       this.getCompanyList()
+      this.getUserList()
     },
     created() {
       this.getList()
@@ -265,6 +276,22 @@
       },
       search() {
         this.getList()
+      },
+      userFilter(val) {
+        const that = this
+        this.userList.forEach(function(row) {
+          if (row.phone === val) {
+            that.userSelect = []
+            that.userSelect.push({ value: row.id, label: row.nickname })
+          }
+        })
+      },
+      getUserList() {
+        user_list(1, 9999).then(res => {
+          this.userList = res.data
+        }).catch(e => {
+          console.log(e)
+        })
       },
       handleFilter() {
         this.listQuery.page = 1
@@ -315,7 +342,6 @@
               this.list.push(row)
             })
             this.total = count
-            console.log(data)
           } else {
             this.$message.error(msg || '查询失败')
           }
@@ -347,6 +373,7 @@
       handleCreate() {
         this.resetTemp()
         this.selectedOptions = []
+        this.userSelect = []
         this.dialogStatus = 'create'
         this.dialogFormVisible = true
         this.$nextTick(() => {
@@ -354,9 +381,16 @@
         })
       },
       handleUpdate(row) {
+        const that = this
         this.temp = Object.assign({}, row) // copy obj
         var str = row.province + ',' + row.city + ',' + row.area
         this.selectedOptions = str.split(',')
+        this.userList.forEach(function(val) {
+          if (val.id === row.user_id) {
+            that.userSelect = []
+            that.userSelect.push({ value: val.id, label: val.nickname })
+          }
+        })
         this.dialogStatus = 'update'
         this.dialogFormVisible = true
         this.$nextTick(() => {
@@ -368,7 +402,7 @@
           if (valid) {
             const tempData = Object.assign({}, this.temp)
             const data = new FormData()
-            // data.append('id', tempData.id)
+            data.append('id', tempData.id)
             data.append('title', tempData.title)
             if (tempData.company_id === undefined) {
               return this.$message.warning('必须选择公司')
@@ -388,7 +422,7 @@
             data.append('water', tempData.water)
             data.append('bonus', tempData.bonus)
             data.append('phone', tempData.phone)
-            school.edit(tempData.id, data).then(response => {
+            school.edit(data).then(response => {
               // const index = this.list.findIndex(v => v.id === this.temp.id)
               // this.list.splice(index, 1, tempData)
               this.getList()
@@ -444,7 +478,7 @@
         })
       },
       handleDelete(row, index) {
-        category.del(row.id).then(({ code, msg }) => {
+        school.del(row.id).then(({ code, msg }) => {
           if (code === 0) {
             this.list.splice(index, 1)
             this.$notify({

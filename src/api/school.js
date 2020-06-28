@@ -14,11 +14,11 @@ const school = {
       method: 'get'
     })
   },
-  edit: function(id, data) {
+  edit: function(data) {
     return request({
-      url: '/v1/school/' + id,
-      method: 'put',
-      data: qs.stringify(data)
+      url: '/v1/school/update',
+      method: 'post',
+      data
     })
   },
   add: function(data) {
@@ -30,8 +30,8 @@ const school = {
   },
   del: function(id) {
     return request({
-      url: '/v1/category/del?id=' + id,
-      method: 'get'
+      url: '/v1/school/' + id,
+      method: 'delete'
     })
   }
 }
