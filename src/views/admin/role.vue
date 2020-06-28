@@ -1,8 +1,8 @@
 <template>
   <div class="app-container">
-    <p>
-      <el-button type="primary" @click="createRole()">添加角色</el-button>
-    </p>
+    <el-row>
+      <el-button type="primary" size="small" @click="createRole()">添加角色</el-button>
+    </el-row>
 
     <el-table
       :data="roleList"
@@ -76,7 +76,14 @@
           label="角色权限"
           prop="note"
         >
-          <el-transfer v-model="formData.permissions" :titles="['权限列表', '拥有权限']" :data="all_permissions" />
+          <el-tree
+            :data="menus"
+            node-key="id"
+            :props="{children:'child', label:'title'}"
+            :default-checked-keys="formData.permissions"
+            show-checkbox
+            ref="tree"
+          />
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -89,8 +96,9 @@
 </template>
 
 <script>
-import { role_getlist, role_add, role_update, role_del ,role_info } from '@/api/role'
+import { role_getlist, role_add, role_update, role_del, role_info } from '@/api/role'
 import { get_permission_list } from '@/api/permission'
+import { get_menu_tree } from '@/api/menu'
 
 export default {
   data() {
@@ -104,7 +112,12 @@ export default {
         note: ''
       },
       // 全部权限
-      all_permissions: [{ key: 0, label: 'ww' }]
+      all_permissions: [],
+      menus: [],
+      defaultProps: {
+          children: 'child',
+          label: 'label'
+        }
     }
   },
   created() {
@@ -114,11 +127,11 @@ export default {
   methods: {
     // 查询所有权限
      get_all_permissions() {
-      get_permission_list().then(({ data, code, msg }) => {
+      get_menu_tree().then(({ code, data, msg }) => {
         if (code === 0) {
-          this.all_permissions = data
+          this.menus = data
         } else {
-          this.$message.error('系统错误')
+ this.$message.warning('查询菜单列表失败')
         }
       }).catch(() => {})
     },
@@ -129,16 +142,7 @@ export default {
         if (code === 0) {
           this.roleList = []
           data.forEach(row => {
-            console.log(row);
-            if (row.permissions !== '') {
-              row.permissions = row.permissions.split(',')
-              // to Int
-              for (let i = 0; row.permissions.length > i; i++) {
-                row.permissions[i] = parseFloat(row.permissions[i])
-              }
-            } else {
-              row.permissions = []
-            }
+            row.permissions = JSON.parse(row.permissions)
             this.roleList.push(row)
           })
         } else {
@@ -174,24 +178,22 @@ export default {
     },
     // 提交
     submit() {
-      // TODO: 保存会出现增加0的问题
-      console.log(this.formData.permissions)
       const data = {
         title: this.formData.title,
         note: this.formData.note,
-        permissions: this.formData.permissions.join(','),
+        permissions: JSON.stringify(this.$refs.tree.getCheckedKeys()),
         id: this.formData.id
       }
-      
+
       if (this.formData.id === 0) {
         // add
-        if(!this.formData.title){
-          this.$message.error('请输入角色名称');
-          return;
+        if (!this.formData.title) {
+          this.$message.error('请输入角色名称')
+          return
         }
-        if(!this.formData.note){
-          this.$message.error('请输入角色备注');
-          return;
+        if (!this.formData.note) {
+          this.$message.error('请输入角色备注')
+          return
         }
         role_add(data).then(({ code, msg }) => {
           if (code === 0) {

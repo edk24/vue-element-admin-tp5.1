@@ -40,6 +40,7 @@ export const constantRoutes = [{
     path: '/admin',
     component: Layout,
     name: '权限管理',
+    
     meta: {
       title: '权限管理',
       tree: 'tree',
