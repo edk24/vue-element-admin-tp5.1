@@ -17,7 +17,7 @@
     </p>
     <el-table v-loading="listLoading" :data="list" element-loading-text="Loading" fit highlight-current-row>
       <el-table-column
-        label="序号" 
+        label="序号"
         type="index"
         width="50"
         align="center"

@@ -15,9 +15,6 @@
         />
         <el-button type="primary" @click="search()">搜索</el-button>
 
-<!--        <el-select v-model="listQuery.status" style="width: 140px" class="filter-item" @change="handleFilter">-->
-<!--          <el-option v-for="item in status" :key="item.key" :label="item.name" :value="item.key" />-->
-<!--        </el-select>-->
       </p>
       <el-tabs v-model="listQuery.status" @tab-click="handleFilter">
         <el-tab-pane  v-for="item in status" :key="item.key" :label="item.name" :value="item.key"></el-tab-pane>
@@ -154,6 +151,7 @@
   import { organization } from '@/api/organization'
   import Pagination from '@/components/Pagination'
   import { category } from '@/api/category'
+  
   const status = [
     { key: '0', name: '待审核' },
     { key: '1', name: '审核过关' },
