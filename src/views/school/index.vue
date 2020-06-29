@@ -116,30 +116,30 @@
           </el-select>
         </el-form-item>
         <el-form-item label="用户">
-<!--                    <el-select-->
-<!--                      v-model="temp.user_id"-->
-<!--                      filterable-->
-<!--                      remote-->
-<!--                      reserve-keyword-->
-<!--                      placeholder="请输入手机号检索"-->
-<!--                      :remote-method="userSearch"-->
-<!--                      :loading="loading"-->
-<!--                    >-->
-<!--                      <el-option-->
-<!--                        v-for="item in userList"-->
-<!--                        :key="item.nickname"-->
-<!--                        :label="item.nickname"-->
-<!--                        :value="item.id"-->
-<!--                      />-->
-<!--                    </el-select>-->
-          <el-select v-model="temp.user_id" filterable :filter-method="userFilter" placeholder="请选择">
+          <el-select
+            v-model="temp.user_id"
+            filterable
+            remote
+            reserve-keyword
+            placeholder="请输入手机号检索"
+            :remote-method="userSearch"
+            :loading="loading"
+          >
             <el-option
-              v-for="item in userSelect"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value"
+              v-for="item in userList"
+              :key="item.id"
+              :label="item.nickname"
+              :value="item.id"
             />
           </el-select>
+          <!--          <el-select v-model="temp.user_id" filterable :filter-method="userFilter" placeholder="请选择">-->
+          <!--            <el-option-->
+          <!--              v-for="item in userSelect"-->
+          <!--              :key="item.value"-->
+          <!--              :label="item.label"-->
+          <!--              :value="item.value"-->
+          <!--            />-->
+          <!--          </el-select>-->
         </el-form-item>
         <el-form-item label="省/市/区">
           <el-cascader
@@ -265,7 +265,7 @@
     },
     mounted() {
       this.getCompanyList()
-      this.getUserList()
+      // this.getUserList()
     },
     created() {
       this.getList()
@@ -315,7 +315,7 @@
       userSearch(query) {
         if (query !== '') {
           this.loading = true
-          user_search(query)
+          user_search(query, 5)
               .then(({ code, count, data, msg }) => {
                 if (code === 0) {
                   this.userList = data
@@ -381,16 +381,11 @@
         })
       },
       handleUpdate(row) {
-        const that = this
         this.temp = Object.assign({}, row) // copy obj
         var str = row.province + ',' + row.city + ',' + row.area
         this.selectedOptions = str.split(',')
-        this.userList.forEach(function(val) {
-          if (val.id === row.user_id) {
-            that.userSelect = []
-            that.userSelect.push({ value: val.id, label: val.nickname })
-          }
-        })
+        this.userList = []
+        this.userList.push({ id: row.user.id, nickname: row.user.nickname })
         this.dialogStatus = 'update'
         this.dialogFormVisible = true
         this.$nextTick(() => {

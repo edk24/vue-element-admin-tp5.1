@@ -1,9 +1,9 @@
 <template>
   <div class="app-container">
     <div class="filter-container">
-      <el-button class="filter-item" type="primary" icon="el-icon-edit" @click="handleCreate">
-        添加
-      </el-button>
+<!--      <el-button class="filter-item" type="primary" icon="el-icon-edit" @click="handleCreate">-->
+<!--        添加-->
+<!--      </el-button>-->
 
       <p>
         <el-input
@@ -105,15 +105,27 @@
             :preview-src-list="licenseList"
           />
         </el-form-item>
-        <el-form-item label="省">
-          <el-input v-model="temp.province" :readonly="readonly" />
+        <el-form-item label="省/市/区">
+          <el-cascader
+            v-model="selectedOptions"
+            size="large"
+            :options="options"
+            placeholder="请选择机构所在地区"
+            style="width: 300px;"
+            :props="optionProps"
+            :disabled="disabled"
+            @change="handleChange"
+          />
         </el-form-item>
-        <el-form-item label="市">
-          <el-input v-model="temp.city" :readonly="readonly" />
-        </el-form-item>
-        <el-form-item label="区">
-          <el-input v-model="temp.area" :readonly="readonly" />
-        </el-form-item>
+<!--        <el-form-item label="省">-->
+<!--          <el-input v-model="temp.province" :readonly="readonly" />-->
+<!--        </el-form-item>-->
+<!--        <el-form-item label="市">-->
+<!--          <el-input v-model="temp.city" :readonly="readonly" />-->
+<!--        </el-form-item>-->
+<!--        <el-form-item label="区">-->
+<!--          <el-input v-model="temp.area" :readonly="readonly" />-->
+<!--        </el-form-item>-->
         <el-form-item label="详细地址">
           <el-input v-model="temp.address" :readonly="readonly" />
         </el-form-item>
@@ -151,7 +163,10 @@
   import { organization } from '@/api/organization'
   import Pagination from '@/components/Pagination'
   import { category } from '@/api/category'
-  
+  import {
+    regionData,
+  } from 'element-china-area-data'
+
   const status = [
     { key: '0', name: '待审核' },
     { key: '1', name: '审核过关' },
@@ -162,6 +177,13 @@
     components: { Pagination },
     data() {
       return {
+        optionProps: {
+          value: 'label',
+          label: 'label',
+          children: 'children'
+        },
+        options: regionData,
+        selectedOptions: [],
         disabled: true,
         categoryList: [],
         readonly: true,
@@ -218,6 +240,12 @@
           console.log(e)
         })
       },
+      // 获取省市区地址级联
+      handleChange(value) {
+        this.temp.province = value[0]
+        this.temp.city = value[1]
+        this.temp.area = value[2]
+      },
       handleFilter() {
         this.listQuery.page = 1
         this.getList1()
@@ -267,14 +295,17 @@
         this.licenseList.push(row.license)
         if (this.listQuery.status === '1') {
           this.readonly = false
+          this.dialogStatus = 'create'
           this.disabled = false
         }
         if (this.listQuery.status === '0') {
           this.dialogStatus = 'update'
         }
-        if (this.listQuery.status === '1') {
-          this.dialogStatus = 'create'
-        }
+        // if (this.listQuery.status === '1') {
+        //
+        // }
+        var str = row.province + ',' + row.city + ',' + row.area
+        this.selectedOptions = str.split(',')
         this.dialogFormVisible = true
         this.$nextTick(() => {
           this.$refs['dataForm'].clearValidate()
@@ -310,6 +341,7 @@
             data.append('id', tempData.id)
             data.append('name', tempData.name)
             data.append('category_id', tempData.category_id)
+            data.append('province', tempData.province)
             data.append('city', tempData.city)
             data.append('area', tempData.area)
             data.append('address', tempData.address)

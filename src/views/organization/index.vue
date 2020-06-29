@@ -181,6 +181,7 @@
       }
     },
     mounted() {
+
     },
     created() {
       this.user.id = this.$store.state.user.id
