@@ -49,7 +49,6 @@
       </el-form>
 
     </el-dialog>
-
   </div>
 </template>
 
@@ -90,11 +89,9 @@
         }
         const formData = new FormData()
         formData.append('title', that.form.title)
-        console.log(this.form.title)
 
         if (this.form.id) {
-          formData.append('id', this.DataForm.id)
-
+          formData.append('id', this.form.id)
           news_type_update(formData).then(res => {
             console.log(res)
             if (res.code === 0) {
