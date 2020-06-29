@@ -9,11 +9,12 @@
             <el-table-column prop="phone" label="联系电话" align="center" />
             <el-table-column prop="email" label="邮箱" align="center" />
             <el-table-column prop="content" label="留言内容" align="center" />
+            <el-table-column prop="audit_title" label="回访状态" align="center" />
             <el-table-column label="管理" width="200">
               <template slot-scope="scope">
-                <div>
+                <div v-if="scope.row.audit === 0">
                   <el-popconfirm title="确定已回访吗？" @onConfirm="data_update(scope.row)">
-                    <el-button size="small" type="primary">回访</el-button>
+                    <el-button slot="reference" size="small" type="primary">回访</el-button>
                   </el-popconfirm>
                 </div>
               </template>

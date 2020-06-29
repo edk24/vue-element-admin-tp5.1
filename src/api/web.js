@@ -154,11 +154,9 @@ export function news_type_update(data) {
 }
 
 // 新闻分类删除
-export function news_type_delete(data) {
+export function news_type_delete(id) {
   return request({
-    url: '/v1/Web/NewsTypeDelete',
-    method: 'get',
-    data
+    url: '/v1/Web/NewsTypeDelete?id=' + id
   })
 }
 
