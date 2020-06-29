@@ -36,7 +36,6 @@ module.exports = {
       warnings: false,
       errors: true
     },
-    before: require('./mock/mock-server.js')
   },
   configureWebpack: {
     // 在webpack的名称字段中提供应用程序的标题，以便

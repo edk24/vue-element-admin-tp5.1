@@ -1,369 +1,420 @@
 <template>
   <div class="app-container">
-    <p>
-      <el-input
-        v-model="keyword"
-        maxlength="16"
-        style="width:300px;margin-right:15px"
-        placeholder="请输入关键字进行搜索"
-        @keyup.enter.native="search()"
-      />
-      <el-button type="primary" @click="search()">搜索</el-button>
-      <el-button type="primary" @click="all()">全部</el-button>
-    </p>
-    <p>
-      <!-- <el-button type="primary" @click="create()">添加合伙人</el-button> -->
-    </p>
-    <el-table v-loading="listLoading" :data="list" element-loading-text="Loading" fit highlight-current-row>
-      <el-table-column label="序号" type="index" width="50" align="center">
-        <template scope="scope">
-          <span>{{ (page - 1) * limit + scope.$index + 1 }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="机构名称">
-        <template slot-scope="scope">
-          {{ scope.row.name }}
-        </template>
-      </el-table-column>
-
-      <el-table-column label="省">
-        <template slot-scope="scope">
-          {{ scope.row.province }}
-        </template>
-      </el-table-column>
-
-      <el-table-column label="市">
-        <template slot-scope="scope">
-          {{ scope.row.city }}
-        </template>
-      </el-table-column>
-
-      <el-table-column label="区">
-        <template slot-scope="scope">
-          {{ scope.row.area }}
-        </template>
-      </el-table-column>
-
-      <el-table-column label="详细地址">
-        <template slot-scope="scope">
-          {{ scope.row.address }}
-        </template>
-      </el-table-column>
-
-      <el-table-column label="联系人" width="110" align="center">
-        <template slot-scope="scope">
-          {{ scope.row.contact }}
-        </template>
-      </el-table-column>
-
-      <el-table-column label="联系人电话">
-        <template slot-scope="scope">
-          {{ scope.row.phone }}
-        </template>
-      </el-table-column>
-
-      <el-table-column label="对推广员返点">
-        <template slot-scope="scope">
-          {{ scope.row.rebate }}
-        </template>
-      </el-table-column>
-
-      <el-table-column align="center" label="注册时间" width="200">
-        <template slot-scope="scope">
-          <span>{{ scope.row.create_time }}</span>
-        </template>
-      </el-table-column>
-
-      <el-table-column align="center" label="更新时间" width="200">
-        <template slot-scope="scope">
-          <span>{{ scope.row.update_time }}</span>
-        </template>
-      </el-table-column>
-
-      <el-table-column label="管理">
-        <template slot-scope="scope">
-          <div>
-            <el-button size="small" type="primary" @click="edit(scope.row)">编辑</el-button>
-            <el-popconfirm title="确定删除这行信息吗?" @onConfirm="del(scope.row)">
-              <el-button slot="reference" size="small" type="danger">删除</el-button>
-            </el-popconfirm>
-          </div>
-        </template>
-      </el-table-column>
-    </el-table>
-
-    <el-dialog :visible.sync="centerDialogVisible" width="600px" center>
-      <el-form ref="form" :model="form" label-width="80px">
-        <el-form-item label="机构名称">
-          <el-input v-model="form.name" />
-        </el-form-item>
-        <!-- <el-form-item label="省">
-          <el-input v-model="form.province" />
-        </el-form-item>
-        <el-form-item label="市">
-          <el-input v-model="form.city" />
-        </el-form-item>
-        <el-form-item label="区">
-          <el-input v-model="form.area" />
-        </el-form-item>
-        <el-form-item label="详细地址">
-          <el-input v-model="form.address" />
-        </el-form-item> -->
-        <el-form-item label="联系人">
-          <el-input v-model="form.contact" />
-        </el-form-item>
-        <el-form-item label="联系人电话">
-          <el-input v-model="form.phone" type="tel" maxlength="11" />
-        </el-form-item>
-        <el-form-item label="对推广员返点">
-          <el-input v-model="form.rebate" />
-        </el-form-item>
-
-      </el-form>
-      <span slot="footer" class="dialog-footer">
-        <el-button @click="centerDialogVisible = false">取 消</el-button>
-        <el-button type="primary" @click="submit()">确 定</el-button>
-      </span>
-    </el-dialog>
-
-    <p>
-      <el-pagination
-        background
-        :current-page.sync="page"
-        :page-size="limit"
-        layout="total, prev, pager, next"
-        :total="count"
-        @current-change="fetchData"
-      />
-    </p>
-
+    <div class="filter-container" />
+    <el-form ref="dataForm" v-model="list" :rules="rules" label-position="left" label-width="100px" style="padding:0 5px;margin-right:5px;margin-left:150px;">
+      <el-form-item label="机构名称" style="width: 30%;">
+        <span>{{ list.name }}</span>
+      </el-form-item>
+      <el-form-item label="推广公司">
+        <span>{{ company.title }}</span>
+      </el-form-item>
+      <el-form-item label="营业执照">
+        <el-image
+          style="width: 300px; height: 200px"
+          :src="list.license"
+          :preview-src-list="licenseList"
+        />
+      </el-form-item>
+      <el-form-item label="描述">
+        <el-input
+          v-model="list.desc"
+          type="textarea"
+          :autosize="{ minRows: 3, maxRows: 6}"
+          placeholder="请输入内容"
+          style="width: 50%;"
+        />
+      </el-form-item>
+      <el-form-item label="分类">
+        <span>{{ category.title }}</span>
+      </el-form-item>
+      <el-form-item label="展示图">
+        <el-upload
+          :show-file-list="false"
+          :multiple="false"
+          action="post"
+          :before-upload="selectImg"
+          :on-change="changeImage"
+        >
+          <img
+            v-if="list.image"
+            :src="list.image"
+            class="avatar"
+          >
+          <i
+            v-else
+            class="el-icon-plus avatar-uploader-icon"
+          />
+        </el-upload>
+      </el-form-item>
+      <el-form-item label="轮播图">
+        <el-upload
+          action="post"
+          list-type="picture-card"
+          :file-list="silderimgList"
+          :on-preview="handlePictureCardPreview"
+          :on-change="imgPreview"
+          :before-upload="selectImg"
+          :on-remove="handleRemove"
+          :auto-upload="false"
+        >
+          <i class="el-icon-plus" />
+        </el-upload>
+        <el-dialog :visible.sync="dialogVisible">
+          <img width="100%" :src="list.silder_image" alt="">
+        </el-dialog>
+      </el-form-item>
+      <el-form-item label="省/市/区">
+        <el-cascader
+          v-model="selectedOptions"
+          size="large"
+          :options="options"
+          placeholder="请选择机构所在地区"
+          style="width: 300px;"
+          :props="optionProps"
+          disabled
+          @change="handleChange"
+        />
+      </el-form-item>
+      <el-form-item label="详细地址">
+        <span>{{ list.address }}</span>
+      </el-form-item>
+      <el-form-item label="联系人">
+        <span>{{ list.contact }}</span>
+      </el-form-item>
+      <el-form-item label="联系人电话">
+        <span>{{ list.phone }}</span>
+      </el-form-item>
+      <el-form-item label="对推广员返点">
+        <span>{{ list.rebate }}</span>
+      </el-form-item>
+      <el-form-item label="详情">
+        <editor-bar v-model="list.content" :is-clear="isClear" style="width: 800px;" />
+      </el-form-item>
+    </el-form>
+    <div slot="footer" class="dialog-footer" style="margin-left: 254px;">
+      <!--          <el-button @click="dialogFormVisible = false">-->
+      <!--            取消-->
+      <!--          </el-button>-->
+      <el-button type="primary" @click="updateData()">
+        确认修改
+      </el-button>
+    </div>
   </div>
 </template>
 
 <script>
+  import { organization } from '@/api/organization'
   import {
-    exchange_add,
-    train_list,
-    train_del,
-    train_edit
-  } from '@/api/organization'
+    provinceAndCityData,
+    regionData,
+    provinceAndCityDataPlus,
+    regionDataPlus,
+    CodeToText,
+    TextToCode
+  } from 'element-china-area-data'
+  import { mapGetters } from 'vuex'
+  import EditorBar from '@/components/wangEnduit'
+  const type = [
+    { key: 'forum', name: '论坛' },
+    { key: 'goods', name: '商品分类' },
+    { key: 'learn', name: '学生课程' },
+    { key: 'train', name: '培训机构' }
+  ]
   export default {
-    components: {},
-    filters: {
-      statusFilter(status) {
-        const statusMap = {
-          published: 'success',
-          draft: 'gray',
-          deleted: 'danger'
-        }
-        return statusMap[status]
-      }
+    components: { EditorBar },
+    computed: {
+      ...mapGetters([
+        'name',
+        'avatar',
+        'id'
+      ])
     },
     data() {
       return {
-        url: process.env.VUE_APP_BASE_API,
-        list: [],
-        count: 0,
-        page: 1,
-        limit: 10,
-        keyword: '',
-        listLoading: true,
-        centerDialogVisible: false,
-        formData: {
-          title: undefined,
-          icon: null,
-          id: 0,
-          // 欲上传文件对象
-          fileIcon: null
+        category: [],
+        imgStatus: false,
+        dialogImageUrl: '',
+        dialogVisible: false,
+        isClear: false,
+        detail: '',
+        silderimgList: [],
+        licenseList: [],
+        user: {},
+        company: '',
+        optionProps: {
+          value: 'label',
+          label: 'label',
+          children: 'children'
         },
-
+        options: regionData,
+        // selectedOptions: ['贵州省', '贵阳市', '南明区'],
+        selectedOptions: [],
+        imgsrc: process.env.VUE_APP_BASE_API,
+        tableKey: 0,
+        list: {
+          silder_image: []
+        },
+        total: 0,
+        listLoading: false,
+        listQuery: {
+          page: 1,
+          limit: 10,
+          type: 'all',
+          keyword: ''
+        },
+        dialogStatus: '',
+        dialogFormVisible: false,
         rules: {
-          title: [{
-            required: true,
-            message: '请输入名称',
-            trigger: 'blur'
-          }]
+          title: [{ required: true, message: '分类名称不能为空', trigger: 'change' }]
         },
-        current: '否', // 当前选中 是否推送 0-否  1-是
-        // 表单
-        form: {
-          name: '',
-          province: '',
-          city: '',
-          area: '',
-          address: '',
-          contact: '',
-          phone: '',
-          rebate: ''
-        }
+        temp: {
+          imageFile: '',
+          id: undefined,
+          title: '',
+          type: ''
+        },
+        textMap: {
+          update: '编辑',
+          create: '创建'
+        },
+        typelist: {}
       }
     },
+    mounted() {
+    },
     created() {
-      this.fetchData(1)
+      this.user.id = this.$store.state.user.id
+      this.user.type = this.$store.state.user.type
+      this.getList()
     },
     methods: {
-      /**
-       * 添加产品
-       */
-      create() {
-        this.form = {
-          name: '',
-          // province: '',
-          // city: '',
-          // area: '',
-          // address: '',
-          contact: '',
-          phone: '',
-          rebate: ''
-        }
-        this.centerDialogVisible = true
-      },
-      /**
-       * 编辑产品
-       */
-      edit(obj) {
-        this.form = obj
-        this.centerDialogVisible = true
-      },
-      // 拉取数据
-      fetchData(page) {
-        const that = this
-        if (page) {
-          this.page = page
-          if (page <= 1) {
-            that.page = 1
-          }
-        }
-        this.listLoading = true
-        train_list(this.page, this.limit, this.keyword).then(response => {
-          that.list = []
-          response.data.forEach(row => {
-            that.list.push(row)
+      handleRemove(file) {
+        if (this.list.id) {
+          organization.del_image(this.list.id, file.url).then(res => {
+            this.$notify({
+              title: 'Success',
+              message: '删除成功',
+              type: 'success',
+              duration: 1200
+            })
           })
-          this.count = response.count
-          this.listLoading = false
-        }).catch((err) => {
-          console.log(err.message)
+        }
+      },
+      // 点击放大图片
+      handlePictureCardPreview(file) {
+        this.list.silder_image = file.url
+        this.dialogVisible = true
+      },
+      // 图片上传事件
+      imgPreview(file) {
+        // const that = this
+        this.imgStatus = true
+        const fileName = file.name
+        const regex = /(.jpg|.jpeg|.gif|.png|.bmp)$/
+        if (regex.test(fileName.toLowerCase())) {
+          this.list.silder_image = file.url
+        } else {
+          this.$message.error('请选择图片文件')
+        }
+        if (this.silderimgList.length >= 8) {
+          return this.$message.warning('轮播图超过8张，无效上传')
+        }
+        if (this.list.id) {
+          const data = new FormData()
+          data.append('id', this.list.id)
+          data.append('images', file.raw)
+          organization.upload_image(data).then(res => {
+            var img = this.imgsrc + res.data
+            this.silderimgList.push({ url: img })
+            console.log(this.silderimgList)
+            this.$notify({
+              title: 'Success',
+              message: '添加成功',
+              type: 'success',
+              duration: 1200
+            })
+          }).catch(error => {
+            console.log(error)
+          })
+        }
+      },
+      change(val) {
+        console.log(val)
+      },
+      search() {
+        this.getList()
+      },
+      // 获取省市区地址级联
+      handleChange(e) {
+        console.log(e)
+      },
+      handleFilter() {
+        this.listQuery.page = 1
+        this.getList()
+      },
+      getList() {
+        const that = this
+        this.listLoading = false
+        organization.train_info(this.user.id).then(({ code, msg, data, count }) => {
+          if (code === 0) {
+            data.license = this.imgsrc + data.license
+            this.licenseList.push(data.license)
+            data.image = this.imgsrc + data.image
+            var str = data.province + ',' + data.city + ',' + data.area
+            this.selectedOptions = str.split(',')
+            if (data.images !== '') {
+              var img = data.images.split(';')
+              img.forEach(function(row) {
+                row = that.imgsrc + row
+                that.silderimgList.push({ url: row })
+              })
+            }
+            this.category = data.category
+            this.company = data.company
+
+            this.list = data
+          } else {
+            this.$message.error(msg || '查询失败')
+          }
+          setTimeout(() => {
+            this.listLoading = false
+          }, 1.5 * 1000)
         })
       },
-      submit() {
-        // const form = new FormData()
-        // form.append('name', JSON.stringify(this.form.name))
-        // form.append('province', this.form.province)
-        // form.append('city', this.form.city)
-        // form.append('area', this.form.area)
-        // form.append('address', this.form.address)
-        // form.append('contact', JSON.stringify(this.form.contact))
-        // form.append('phone', JSON.stringify(this.form.phone))
-        // form.append('rebate', JSON.stringify(this.form.rebate))
-        var form = {
-          name: this.form.name,
-          contact: this.form.contact,
-          phone: this.form.phone,
-          rebate: this.form.rebate
-        }
-        if (!this.form.name) {
-          this.$message.error('请输入机构名称')
-          return
-        }
-        console.log(form)
-        // if(!this.form.province){
-        //   this.$message.error('请输入省')
-        //   return
-        // }
-        // if(!this.form.city){
-        //   this.$message.error('请输入市')
-        //   return
-        // }
-        // if(!this.form.area){
-        //   this.$message.error('请输入区')
-        //   return
-        // }
-        // if(!this.form.address){
-        //   this.$message.error('请输入详细地址')
-        //   return
-        // }
-        if (!this.form.contact) {
-          this.$message.error('请输入联系人')
-          return
-        }
-        if (!this.form.phone) {
-          this.$message.error('请输入联系人电话')
-          return
-        }
-        if (!this.form.rebate) {
-          this.$message.error('请输入对推广人员返点')
-          return
-        }
-        if (this.form.id) {
-          // update
-         // form.append('id', this.form.id)
-          train_edit(this.form.id, form).then(({
-            code,
-            msg
-          }) => {
-            if (code === 0) {
-              this.$message.success('操作成功')
-              this.fetchData(true)
-              this.centerDialogVisible = false
-            } else {
-              this.$message.error(msg || '操作失败')
-            }
-          }).catch(() => {})
-        } else {
-          // create
-          exchange_add(this.form).then(({
-            code,
-            msg
-          }) => {
-            if (code === 0) {
-              this.$message.success('操作成功')
-              this.fetchData(true)
-              this.centerDialogVisible = false
-            } else {
-              this.$message.error(msg || '操作失败')
-            }
-          }).catch(() => {})
+      getSortClass: function(key) {
+        const sort = this.listQuery.sort
+        return sort === `+${key}` ? 'ascending' : 'descending'
+      },
+      resetTemp() {
+        this.temp = {
+          id: undefined,
+          title: '',
+          desc: '',
+          image: '',
+          imageFile: '',
+          pid: 0,
+          type: ''
         }
       },
-      /**
-       * 删除产品
-       */
-      del(obj) {
-        train_del(obj.id).then(({
-          code,
-          msg
-        }) => {
+      handleCreate() {
+        this.resetTemp()
+        this.getPidList()
+        this.dialogStatus = 'create'
+        this.dialogFormVisible = true
+        this.$nextTick(() => {
+          this.$refs['dataForm'].clearValidate()
+        })
+      },
+      handleUpdate(row) {
+        this.temp = Object.assign({}, row) // copy obj
+        this.getPidList()
+        this.dialogStatus = 'update'
+        this.dialogFormVisible = true
+        this.$nextTick(() => {
+          this.$refs['dataForm'].clearValidate()
+        })
+      },
+      updateData() {
+        const tempData = Object.assign({}, this.list)
+        const data = new FormData()
+        data.append('id', tempData.id)
+        data.append('desc', tempData.desc)
+        data.append('content', tempData.content)
+        if (this.list.imageFile != null) {
+          data.append('image', this.list.imageFile)
+        }
+        organization.edit(data).then(response => {
+          this.getList()
+          this.dialogFormVisible = false
+          this.$notify({
+            title: 'Success',
+            message: '修改成功',
+            type: 'success',
+            duration: 2000
+          })
+        }).catch(error => {
+          console.log(error)
+        })
+      },
+      createData() {
+        this.$refs['dataForm'].validate((valid) => {
+          if (valid) {
+            const tempData = Object.assign({}, this.temp)
+            const data = new FormData()
+            data.append('id', tempData.id)
+            data.append('title', tempData.title)
+            data.append('desc', tempData.desc)
+            data.append('type', tempData.type)
+            data.append('pid', tempData.pid)
+            if (tempData.type === '') {
+              return this.$message.error('必须选择分类')
+            }
+            if (this.temp.imageFile != null) {
+              data.append('image', this.temp.imageFile)
+            }
+            category.add(data).then(() => {
+              // this.list.push(this.temp)
+              this.getList()
+              this.dialogFormVisible = false
+              this.$notify({
+                title: 'Success',
+                message: 'Created Successfully',
+                type: 'success',
+                duration: 2000
+              })
+            })
+          }
+        })
+      },
+      handleDelete(row, index) {
+        category.del(row.id).then(({ code, msg }) => {
           if (code === 0) {
-            this.$message.success('操作成功')
-            this.fetchData(true)
+            this.list.splice(index, 1)
+            this.$notify({
+              title: 'Success',
+              message: '删除成功',
+              type: 'success',
+              duration: 2000
+            })
           } else {
             this.$message.error(msg || '删除失败')
           }
-        }).catch(() => {})
+        }).catch(error => {
+          console.log(error)
+        })
       },
-      // 搜索
-      search() {
-        if (this.keyword) {
-          this.fetchData()
-        } else {
-          this.$message.warning('请输入关键词')
+      /**
+       * 事件-选择图片
+       */
+      selectImg(file) {
+        // 验证
+        const isRightSize = file.size / 1024 < 500
+        if (!isRightSize) {
+          this.$message.error('文件大小超过 500KB')
         }
+        const isAccept = new RegExp('image/*').test(file.type)
+        if (!isAccept) {
+          this.$message.error('应该选择image/*类型的文件')
+        }
+
+        this.list.imageFile = file
+        return false // don't auto upload
       },
-      // 查询全部
-      all() {
-        this.keyword = ''
-        this.fetchData()
+      // 图片被改变
+      changeImage(file) {
+        // 读图片预览
+        const that = this
+        var reader = new FileReader()
+        reader.onload = (e) => {
+          that.list.image = e.target.result
+        }
+        reader.readAsDataURL(file.raw)
       }
     }
   }
+
 </script>
-
-<style>
-  .el-upload__tip {
-    line-height: 1.2;
-  }
-
+<style type="text/css">
   .avatar-uploader .el-upload {
     border: 1px dashed #d9d9d9;
     border-radius: 6px;
@@ -390,10 +441,11 @@
     height: 178px;
     display: block;
   }
-
-  .icon {
-    width: 50px;
-    height: 50px;
-    border-radius: 3px;
+  .el-input.is-disabled .el-input__inner{
+    color: #000;
+  }
+  .editor{
+    margin: 0;
   }
 </style>
+

@@ -130,7 +130,7 @@
             <div slot="tip" class="el-upload__tip">只能上传一个视频文件</div>
           </el-upload>
         </el-form-item>
-        <el-form-item label="分类描述">
+        <el-form-item label="描述">
           <el-input v-model="temp.desc" type="textarea" :autosize="{ minRows: 2 }" />
         </el-form-item>
       </el-form>
@@ -308,7 +308,6 @@
           if (valid) {
             const tempData = Object.assign({}, this.temp)
             const data = new FormData()
-            data.append('id', tempData.id)
             data.append('title', tempData.title)
             if (this.videoRes === '') {
               return this.$message.error('没有上传视频')

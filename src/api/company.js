@@ -1,30 +1,31 @@
 import request from '@/utils/request'
 import qs from 'qs'
 
-// 查询服务商列表
-export function getList(page, limit, type) {
-  return request({
-    url: '/company/list?' + qs.stringify({ page, limit, type }),
-    method: 'get'
+// 创建企业
+export function create(data) {
+  return request.request({
+    url: 'v1/company/add',
+    method: 'POST',
+    data: data
   })
 }
 
-// 服务商审核
-export function company_audit(data) {
-  data = qs.stringify(data)
-  return request({
-    url: '/company/audit',
-    method: 'post',
-    data
-  })
+// 查询企业
+export function getList(page, limit, keyword) {
+  return request.get('v1/company?' + qs.stringify({ page, limit, keyword }))
 }
 
-// 服务商举报
-export function company_report(data) {
-  data = qs.stringify(data)
-  return request({
-    url: '/company/report',
-    method: 'post',
-    data
-  })
+// 删除企业
+export function del(id) {
+  return request.delete('v1/company/' + id)
+}
+
+// 修改企业信息
+export function update(id, data) {
+  return request.post('/v1/company/' + id, data)
+}
+
+//  根据用户uid查询公司信息
+export function get_company_info_by_uid(uid) {
+  return request.get('/v1/company/' + uid);
 }

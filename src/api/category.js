@@ -2,9 +2,9 @@ import request from '@/utils/request'
 import qs from 'qs'
 
 const category = {
-  getlist: function(page, limit, keyword, type) {
+  getlist: function(page, limit, keyword, type, pid) {
     return request({
-      url: '/v1/category/list?' + qs.stringify({ page, limit, keyword, type }),
+      url: '/v1/category/list?' + qs.stringify({ page, limit, keyword, type, pid }),
       method: 'get'
     })
   },

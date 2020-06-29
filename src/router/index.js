@@ -12,7 +12,6 @@ export const constantRoutes = [{
       title: '登录系统'
     }
   },
-
   {
     path: '/404',
     component: () => import('@/views/404'),
@@ -41,6 +40,7 @@ export const constantRoutes = [{
     path: '/admin',
     component: Layout,
     name: '权限管理',
+    
     meta: {
       title: '权限管理',
       tree: 'tree',
@@ -90,40 +90,69 @@ export const constantRoutes = [{
     },
     children: [{
         path: 'parent',
-        name: '家长管理',
-        component: () => import('@/views/user/parent'),
+        name: '用户列表',
+        component: () => import('@/views/user/index'),
         meta: {
-          title: '家长管理',
+          title: '用户列表',
           icon: 'tree'
         }
-      },
-      {
-        path: 'child',
-        name: '学生管理',
-        component: () => import('@/views/user/child'),
-        meta: {
-          title: '学生管理',
-          icon: 'tree'
-        }
-      },
+    },
+    {
+      path: 'audit',
+      name: '待审核用户',
+      component: () => import('@/views/user/audit'),
+      meta: {
+        title: '待审核用户',
+        icon: 'tree'
+      }
+    },
+      // {
+      //   path: 'bankPermission',
+      //   name: '银行卡审核',
+      //   component: () => import('@/views/user/bankPermission'),
+      //   meta: {
+      //     title: '银行卡审核',
+      //     icon: 'tree'
+      //   }
+      // },
       {
         path: 'bank',
-        name: '银行卡',
+        name: '银行卡列表',
         component: () => import('@/views/user/bank'),
         meta: {
-          title: '银行卡',
+          title: '银行卡列表',
           icon: 'tree'
         }
       },
       {
-        path: 'bankPermission',
-        name: '银行卡审核',
-        component: () => import('@/views/user/bankPermission'),
+        path: 'feedback',
+        name: '意见反馈',
+        component: () => import('@/views/user/feedback'),
         meta: {
-          title: '银行卡审核',
+          title: '意见反馈',
           icon: 'tree'
         }
       }
+    ]
+  },
+  {
+    path: '/school',
+    component: Layout,
+    name: '学校管理',
+    meta: {
+      title: '学校管理',
+      tree: 'tree',
+      icon: 'example'
+    },
+    children: [{
+      path: 'index',
+      name: '学校管理',
+      component: () => import('@/views/school/index'),
+      meta: {
+        title: '学校管理',
+        icon: 'tree'
+      }
+    }
     ]
   },
 
@@ -143,15 +172,6 @@ export const constantRoutes = [{
         component: () => import('@/views/branch/partner'),
         meta: {
           title: '合伙人管理',
-          icon: 'tree'
-        }
-      },
-      {
-        path: 'shareholder',
-        name: '股东管理',
-        component: () => import('@/views/branch/shareholder'),
-        meta: {
-          title: '股东管理',
           icon: 'tree'
         }
       }
@@ -176,15 +196,6 @@ export const constantRoutes = [{
           title: '提现审核',
           icon: 'tree'
         }
-      },
-      {
-        path: 'record',
-        name: '交易记录',
-        component: () => import('@/views/finance/record'),
-        meta: {
-          title: '交易记录',
-          icon: 'tree'
-        }
       }
     ]
   },
@@ -201,10 +212,10 @@ export const constantRoutes = [{
     },
     children: [{
         path: 'exchange',
-        name: '礼品兑换订单',
+        name: '积分订单',
         component: () => import('@/views/order/exchange'),
         meta: {
-          title: '礼品兑换订单',
+          title: '积分订单',
           icon: 'tree'
         }
       },
@@ -281,10 +292,10 @@ export const constantRoutes = [{
       },
       {
         path: 'index',
-        name: '列表',
+        name: '机构管理',
         component: () => import('@/views/organization/index'),
         meta: {
-          title: '列表',
+          title: '机构管理',
           icon: 'tree'
         }
       },
@@ -330,49 +341,17 @@ export const constantRoutes = [{
     ]
   },
 
-  // 平台设置  --看视频时间和积分设置--新用户注册赠送积分设置--每日最高积分设置--消费最低积分设置
   {
-    path: '/platform',
+    path: '/configs',
     component: Layout,
-    name: '平台设置',
-    alwaysShow: true,
-    meta: {
-      title: '平台设置',
-      icon: 'table'
-    },
+    name: '系统设置',
+
     children: [{
-        path: 'timeAndIntegral',
-        name: '看视频时间和积分设置',
-        component: () => import('@/views/platform/timeAndIntegral'),
+        path: 'index',
+        name: '系统设置',
+        component: () => import('@/views/configs/index'),
         meta: {
-          title: '看视频时间和积分设置',
-          icon: 'tree'
-        }
-      },
-      {
-        path: 'integral',
-        name: '新用户注册送积分',
-        component: () => import('@/views/platform/integral'),
-        meta: {
-          title: '新用户注册送积分',
-          icon: 'tree'
-        }
-      },
-      {
-        path: 'height',
-        name: '每日最高积分设置',
-        component: () => import('@/views/platform/height'),
-        meta: {
-          title: '每日最高积分设置',
-          icon: 'tree'
-        }
-      },
-      {
-        path: 'lower',
-        name: '消费最低积分设置',
-        component: () => import('@/views/platform/lower'),
-        meta: {
-          title: '消费最低积分设置',
+          title: '系统设置',
           icon: 'tree'
         }
       }
@@ -409,27 +388,49 @@ export const constantRoutes = [{
       }
     ]
   },
-  // 反馈管理  --
   {
-    path: '/feedback',
+    path: '/coupon',
     component: Layout,
-    name: '用户反馈',
+    name: '优惠券管理',
     alwaysShow: true,
     meta: {
-      title: '用户反馈',
+      title: '优惠券管理',
       icon: 'table'
     },
-    children: [{
+    children: [
+      {
         path: 'index',
-        name: '意见反馈',
-        component: () => import('@/views/feedback/index'),
+        name: '培训机构优惠券',
+        component: () => import('@/views/coupon/index'),
         meta: {
-          title: '意见反馈',
+          title: '培训机构优惠券',
           icon: 'tree'
         }
       }
     ]
   },
+
+  // 反馈管理  --
+  // {
+  //   path: '/feedback',
+  //   component: Layout,
+  //   name: '用户反馈',
+  //   alwaysShow: true,
+  //   meta: {
+  //     title: '用户反馈',
+  //     icon: 'table'
+  //   },
+  //   children: [{
+  //       path: 'index',
+  //       name: '意见反馈',
+  //       component: () => import('@/views/feedback/index'),
+  //       meta: {
+  //         title: '意见反馈',
+  //         icon: 'tree'
+  //       }
+  //     }
+  //   ]
+  // },
   // 论坛管理  --
   {
     path: '/forum',
@@ -470,6 +471,28 @@ export const constantRoutes = [{
           icon: 'tree'
         }
       }
+    ]
+  },
+
+  {
+    path: '/message',
+    component: Layout,
+    name: '消息管理',
+    alwaysShow: true,
+    meta: {
+      title: '消息管理',
+      tree: 'tree',
+      icon: 'table'
+    },
+    children: [{
+      path: 'systemMessage',
+      name: '系统消息',
+      component: () => import('@/views/message/systemMessage'),
+      meta: {
+        title: '系统消息',
+        icon: 'tree'
+      }
+    }
     ]
   },
 

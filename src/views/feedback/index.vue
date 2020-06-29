@@ -1,9 +1,9 @@
 <template>
   <div class="app-container">
     <div class="filter-container">
-<!--      <el-button class="filter-item" type="primary" icon="el-icon-edit" @click="handleCreate">-->
-<!--        添加-->
-<!--      </el-button>-->
+      <el-button class="filter-item" type="primary" icon="el-icon-edit" @click="handleCreate">
+        添加
+      </el-button>
 
       <p>
         <el-input
@@ -35,25 +35,30 @@
       <!--        </template>-->
       <!--      </el-table-column>-->
       <el-table-column type="index" label="序号" sortable="custom" align="center" width="80" :class-name="getSortClass('id')" />
-      <el-table-column label="联系人" prop="type" align="center" width="150" style="height: 150px;" :class-name="getSortClass('id')">
+      <el-table-column label="分类名称" prop="title" align="center" :class-name="getSortClass('id')">
         <template slot-scope="{row}">
-          <span>{{ row.username }}</span>
+          <span>{{ row.title }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="联系方式" prop="note" align="center" width="250" :class-name="getSortClass('id')">
+      <el-table-column label="分类图片" prop="type" align="center" width="150" style="height: 150px;" :class-name="getSortClass('id')">
         <template slot-scope="{row}">
-          <span>{{ row.phone }}</span>
+          <el-image class="image" :src="row.image">
+            <div slot="error" class="image-slot">
+              暂未上传
+            </div>
+          </el-image>
         </template>
       </el-table-column>
-      <el-table-column label="反馈主题" prop="note" align="center" width="250" :class-name="getSortClass('id')">
+      <el-table-column label="所属类别" prop="note" align="center" width="250" :class-name="getSortClass('id')">
         <template slot-scope="{row}">
-          <span>{{ row.topic }}</span>
+          <span v-if="row.type === 'learn'">学习课程</span>
+          <span v-if="row.type === 'forum'">论坛</span>
+          <span v-if="row.type === 'goods'">商品分类</span>
         </template>
       </el-table-column>
-      <el-table-column label="是否已读" prop="note" align="center" width="250" :class-name="getSortClass('id')">
+      <el-table-column label="分类描述" prop="note" align="center" width="250" :class-name="getSortClass('id')">
         <template slot-scope="{row}">
-          <span v-if="row.is_read === 0">未读</span>
-          <span v-if="row.is_read === 1">已读</span>
+          <span>{{ row.desc }}</span>
         </template>
       </el-table-column>
       <el-table-column label="创建时间" prop="create_time" align="center" width="250" :class-name="getSortClass('id')">
@@ -69,7 +74,7 @@
       <el-table-column label="操作" fixed="right" align="center" width="350" class-name="small-padding fixed-width">
         <template slot-scope="{row,$index}">
           <el-button type="primary" size="mini" @click="handleUpdate(row)">
-            查看详情
+            编辑
           </el-button>
           <el-popconfirm title="确定删除这行信息吗?" @onConfirm="handleDelete(row,$index)">
             <el-button slot="reference" size="small" type="danger">删除</el-button>
@@ -84,37 +89,48 @@
     <!-- 弹窗页面   -->
     <el-dialog :title="textMap[dialogStatus]" width="500" :visible.sync="dialogFormVisible">
       <el-form ref="dataForm" :rules="rules" :model="temp" label-position="left" label-width="100px" style="padding:0 5px;margin-right:5px;margin-left:50px;">
-        <el-form-item label="联系人">
-          <el-input v-model="temp.username" readonly=""/>
+        <el-form-item label="分类名称" prop="title">
+          <el-input v-model="temp.title" />
         </el-form-item>
-        <el-form-item label="联系方式">
-          <el-input v-model="temp.phone" readonly=""/>
+        <el-form-item label="分类图片">
+          <el-upload
+            :show-file-list="false"
+            :multiple="false"
+            action="post"
+            :before-upload="selectImg"
+            :on-change="changeImage"
+            style="width: 200px; height: 200px"
+          >
+            <img v-if="temp.image" style="width: 200px; height: 200px" :src="temp.image" class="avatar">
+            <i v-else class="el-icon-plus avatar-uploader-icon" />
+          </el-upload>
         </el-form-item>
-        <el-form-item label="反馈主题">
-          <el-input v-model="temp.topic" readonly=""/>
+        <el-form-item label="所属分类">
+          <el-select v-model="temp.type" placeholder="所属分类">
+            <el-option label="论坛" value="forum" />
+            <el-option label="商品分类" value="goods" />
+            <el-option label="学生课程" value="learn" />
+          </el-select>
         </el-form-item>
-        <el-form-item label="反馈图片">
-          <el-image
-            v-for="(item,index) in imglist"
-            :key="index"
-            style="width: 100px; height: 100px;margin: 0 8px"
-            :preview-src-list="imglist"
-            :src="item"></el-image>
-        </el-form-item>
-        <el-form-item label="反馈内容">
-          <el-input type="textarea" v-model="temp.username" readonly=""/>
+        <el-form-item label="分类描述">
+          <!--          <tinymce v-model="temp.desc" height="300" />-->
+          <!--          <quill-editor ref="QuillEditor" v-model="temp.desc" :options="quillOption" />-->
+          <!--          <editor-bar v-model="temp.desc" :is-clear="isClear" @change="change" />-->
+          <el-input
+            type="textarea"
+            :autosize="{ minRows: 2, maxRows: 5}"
+            placeholder="请输入内容"
+            style="font-size: 16px"
+            v-model="temp.desc">
+          </el-input>
         </el-form-item>
       </el-form>
-<!--      <span slot="footer" class="dialog-footer">-->
-<!--        <el-button type="danger" @click="refuse()">已读</el-button>-->
-<!--        <el-button type="success" @click="pass()">返回</el-button>-->
-<!--      </span>-->
       <div slot="footer" class="dialog-footer">
-        <el-button v-if="temp.is_read === 0" type="success" @click="read(temp.id)">
-          已读
+        <el-button @click="dialogFormVisible = false">
+          取消
         </el-button>
-        <el-button type="primary" @click="dialogFormVisible = false">
-          返回
+        <el-button type="primary" @click="dialogStatus==='create'?createData():updateData()">
+          确认
         </el-button>
       </div>
     </el-dialog>
@@ -122,18 +138,26 @@
 </template>
 
 <script>
-  import { feedback } from '@/api/feedback'
+  import EditorBar from '@/components/wangEnduit'
+  import { category } from '@/api/category'
   import Pagination from '@/components/Pagination'
+  // import Tinymce from '@/components/Tinymce'
+  // import { quillEditor } from 'vue-quill-editor'
+  import quillConfig from '@/utils/quill-config.js'
   const type = [
     { key: 'all', name: '全部' },
-    { key: '0', name: '未读' },
-    { key: '1', name: '已读' }
+    { key: 'forum', name: '论坛' },
+    { key: 'goods', name: '商品分类' },
+    { key: 'learn', name: '学生课程' }
   ]
   export default {
-    components: { Pagination },
+    // components: { Pagination, quillEditor, Tinymce, EditorBar },
+    components: { Pagination, EditorBar },
     data() {
       return {
-        imglist: [],
+        isClear: false,
+        detail: '',
+        quillOption: quillConfig,
         type,
         imgsrc: process.env.VUE_APP_BASE_API,
         tableKey: 0,
@@ -154,13 +178,17 @@
         temp: {
           imageFile: '',
           id: undefined,
+          timestamp: new Date(),
+          create_time: new Date(),
           title: '',
-          type: ''
+          type: '',
+          type_title: ''
         },
         textMap: {
-          update: '查看详情',
+          update: '编辑',
           create: '创建'
         },
+        typelist: {}
       }
     },
     created() {
@@ -171,7 +199,11 @@
         console.log(val)
       },
       search() {
+        // if (this.listQuery.keyword) {
         this.getList()
+        // } else {
+        //   this.$message.warning('请输入关键词')
+        // }
       },
       handleFilter() {
         this.listQuery.page = 1
@@ -180,7 +212,7 @@
       getList() {
         this.listLoading = false
         this.list = []
-        feedback.getlist(this.listQuery.page, this.listQuery.limit, this.listQuery.keyword, this.listQuery.type).then(({ code, msg, data, count }) => {
+        category.getlist(this.listQuery.page, this.listQuery.limit, this.listQuery.keyword, this.listQuery.type).then(({ code, msg, data, count }) => {
           if (code === 0) {
             data.forEach(row => {
               row.image = this.imgsrc + row.image
@@ -195,23 +227,20 @@
           }, 1.5 * 1000)
         })
       },
-      getSortClass: function(key) {
-        const sort = this.listQuery.sort
-        return sort === `+${key}` ? 'ascending' : 'descending'
-      },
-      read(id) {
-        feedback.read(id).then(res => {
-          this.dialogFormVisible = false
-          this.$notify({
-            title: 'Success',
-            message: '阅读成功',
-            type: 'success',
-            duration: 2000
-          })
-          this.getList()
+      getTypeList() {
+        category.type().then(({ code, msg, data, count }) => {
+          if (code === 0) {
+            this.typelist = data
+          } else {
+            this.$message.error(msg || '查询失败')
+          }
         }).catch(error => {
           console.log(error)
         })
+      },
+      getSortClass: function(key) {
+        const sort = this.listQuery.sort
+        return sort === `+${key}` ? 'ascending' : 'descending'
       },
       resetTemp() {
         this.temp = {
@@ -222,23 +251,79 @@
           imageFile: ''
         }
       },
-      handleUpdate(row) {
-        this.imglist = []
-        const that = this
-        this.temp = Object.assign({}, row) // copy obj
-        var img = (row.images).split(';')
-        img.forEach(function(res) {
-          res = that.imgsrc + res
-          that.imglist.push(res)
+      handleCreate() {
+        this.resetTemp()
+        this.dialogStatus = 'create'
+        this.dialogFormVisible = true
+        this.$nextTick(() => {
+          this.$refs['dataForm'].clearValidate()
         })
+      },
+      handleUpdate(row) {
+        this.temp = Object.assign({}, row) // copy obj
         this.dialogStatus = 'update'
         this.dialogFormVisible = true
         this.$nextTick(() => {
           this.$refs['dataForm'].clearValidate()
         })
       },
+      updateData() {
+        this.$refs['dataForm'].validate((valid) => {
+          if (valid) {
+            const tempData = Object.assign({}, this.temp)
+            const data = new FormData()
+            data.append('id', tempData.id)
+            data.append('title', tempData.title)
+            data.append('type', tempData.type)
+            if (this.temp.imageFile != null) {
+              data.append('image', this.temp.imageFile)
+            }
+            category.edit(data).then(response => {
+              const index = this.list.findIndex(v => v.id === this.temp.id)
+              this.list.splice(index, 1, tempData)
+              this.dialogFormVisible = false
+              this.$notify({
+                title: 'Success',
+                message: '修改成功',
+                type: 'success',
+                duration: 2000
+              })
+            }).catch(error => {
+              console.log(error)
+            })
+          }
+        })
+      },
+      createData() {
+        this.$refs['dataForm'].validate((valid) => {
+          if (valid) {
+            const tempData = Object.assign({}, this.temp)
+            const data = new FormData()
+            data.append('id', tempData.id)
+            data.append('title', tempData.title)
+            data.append('type', tempData.type)
+            if (tempData.type === undefined) {
+              return this.$message.error('必须选择分类')
+            }
+            if (this.temp.imageFile != null) {
+              data.append('image', this.temp.imageFile)
+            }
+            category.add(data).then(() => {
+              this.temp.create_time = new Date(this.temp.timestamp)
+              this.list.push(this.temp)
+              this.dialogFormVisible = false
+              this.$notify({
+                title: 'Success',
+                message: 'Created Successfully',
+                type: 'success',
+                duration: 2000
+              })
+            })
+          }
+        })
+      },
       handleDelete(row, index) {
-        feedback.del(row.id).then(({ code, msg }) => {
+        category.del(row.id).then(({ code, msg }) => {
           if (code === 0) {
             this.list.splice(index, 1)
             this.$notify({
@@ -253,6 +338,33 @@
         }).catch(error => {
           console.log(error)
         })
+      },
+      /**
+       * 事件-选择图片
+       */
+      selectImg(file) {
+        // 验证
+        const isRightSize = file.size / 1024 < 500
+        if (!isRightSize) {
+          this.$message.error('文件大小超过 500KB')
+        }
+        const isAccept = new RegExp('image/*').test(file.type)
+        if (!isAccept) {
+          this.$message.error('应该选择image/*类型的文件')
+        }
+
+        this.temp.imageFile = file
+        return false // don't auto upload
+      },
+      // 图片被改变
+      changeImage(file) {
+        // 读图片预览
+        const that = this
+        var reader = new FileReader()
+        reader.onload = (e) => {
+          that.temp.image = e.target.result
+        }
+        reader.readAsDataURL(file.raw)
       }
     }
   }

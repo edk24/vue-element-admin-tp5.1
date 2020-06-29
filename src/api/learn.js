@@ -2,9 +2,9 @@ import request from '@/utils/request'
 import qs from 'qs'
 
 const learn = {
-  list: function(page, limit, keyword, type) {
+  list: function(page, limit, keyword, type, category, category_two, kid_type) {
     return request({
-      url: '/v1/learn/getlist?' + qs.stringify({ page, limit, keyword, type }),
+      url: '/v1/learn/getlist?' + qs.stringify({ page, limit, keyword, type, category, category_two, kid_type }),
       method: 'get'
     })
   },

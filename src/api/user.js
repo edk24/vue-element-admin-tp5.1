@@ -7,7 +7,7 @@ export function login(data) {
     url: '/v1/user/login',
     method: 'post',
     data: qs.stringify(data)
-})
+  })
 }
 
 // 获取用户信息
@@ -24,11 +24,18 @@ export function logout() {
     method: 'get'
   })
 }
-
-// 查询管理员用户列表
-export function user_list(page, limit) {
+// 用户删除
+export function user_del(id) {
   return request({
-    url: '/v1/admin/list?' + qs.stringify(limit, page)
+    url: '/v1/user/' + id,
+    method: 'delete'
+  })
+}
+
+// 查询用户列表
+export function user_list(page, limit, keyword, type, audit = -1) {
+  return request({
+    url: '/v1/user/list?' + qs.stringify({ page, limit, keyword, type, audit })
   })
 }
 
@@ -66,30 +73,6 @@ export function user_do_audit(user_id, type, real_content) {
   })
 }
 
-// 查询家长列表-家长
-export function user_parent(page, limit, keyword) {
-  return request({
-    url: '/v1/user/list?' + qs.stringify({ limit, page, keyword }),
-    method: 'get'
-  })
-}
-
-// 查询孩子列表
-export function user_child(page, limit, keyword) {
-  return request({
-    url: '/v1/user/getAllSon?' + qs.stringify({ limit, page, keyword }),
-    method: 'get'
-  })
-}
-
-// 查询孩子列表
-export function user_get_child(id) {
-  return request({
-    url: '/v1/user/getSonByUid?uid=' + id,
-    method: 'get'
-  })
-}
-
 // 查询银行卡列表
 export function bank_list(page, limit, keyword, status) {
   return request({
@@ -98,18 +81,62 @@ export function bank_list(page, limit, keyword, status) {
   })
 }
 
-// 银行卡审核列表
 export function bank_status(data) {
   return request({
     url: '/v1/bank/status',
     method: 'post',
-    data: qs.stringify(data)
+    data
   })
 }
 
 // 银行卡删除
 export function bank_del(id) {
   return request({
-    url: '/v1/bank/del?' + qs.stringify({ id })
+    url: '/v1/bank/del?id=' + id,
+    method: 'get'
+  })
+}
+
+// 用户搜索, 每次拉取25个
+export function user_search(keyword) {
+  return request({
+    url: 'v1/user/list?keyword=' + keyword
+  })
+}
+
+// 实名认证提交
+export function user_audit(user_id, audit) {
+  const data = { user_id, audit }
+  return request({
+    url: '/v1/user/audit',
+    method: 'post',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    data: data
+  })
+}
+
+// 孩子信息
+export function user_kid(id) {
+  return request({
+    url: '/v1/user/getSonByUid?id=' + id,
+    method: 'get'
+  })
+}
+
+// 学校信息
+export function user_school(id) {
+  return request({
+    url: '/v1/user/getSchool?id=' + id,
+    method: 'get'
+  })
+}
+
+// 设置贫困学生
+export function set_poverty(id) {
+  return request({
+    url: '/v1/user/set_poverty?id=' + id,
+    method: 'get'
   })
 }
