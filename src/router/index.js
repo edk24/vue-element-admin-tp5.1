@@ -1,10 +1,12 @@
 import Vue from 'vue'
 import Router from 'vue-router'
+
 Vue.use(Router)
 
 import Layout from '@/layout'
 
-export const constantRoutes = [{
+export const constantRoutes = [
+  {
     path: '/login',
     component: () => import('@/views/login/index'),
     hidden: true,
@@ -40,21 +42,21 @@ export const constantRoutes = [{
     path: '/admin',
     component: Layout,
     name: '权限管理',
-    
+
     meta: {
       title: '权限管理',
       tree: 'tree',
       icon: 'user'
     },
     children: [{
-        path: 'user',
-        name: '管理员管理',
-        component: () => import('@/views/admin/index'),
-        meta: {
-          title: '管理员管理',
-          icon: 'tree'
-        }
-      },
+      path: 'user',
+      name: '管理员管理',
+      component: () => import('@/views/admin/index'),
+      meta: {
+        title: '管理员管理',
+        icon: 'tree'
+      }
+    },
       {
         path: 'index',
         name: '角色管理',
@@ -89,23 +91,23 @@ export const constantRoutes = [{
       icon: 'user'
     },
     children: [{
-        path: 'parent',
-        name: '用户列表',
-        component: () => import('@/views/user/index'),
-        meta: {
-          title: '用户列表',
-          icon: 'tree'
-        }
-    },
-    {
-      path: 'audit',
-      name: '待审核用户',
-      component: () => import('@/views/user/audit'),
+      path: 'parent',
+      name: '用户列表',
+      component: () => import('@/views/user/index'),
       meta: {
-        title: '待审核用户',
+        title: '用户列表',
         icon: 'tree'
       }
     },
+      {
+        path: 'audit',
+        name: '待审核用户',
+        component: () => import('@/views/user/audit'),
+        meta: {
+          title: '待审核用户',
+          icon: 'tree'
+        }
+      },
       // {
       //   path: 'bankPermission',
       //   name: '银行卡审核',
@@ -167,14 +169,14 @@ export const constantRoutes = [{
       icon: 'example'
     },
     children: [{
-        path: 'partner',
-        name: '合伙人管理',
-        component: () => import('@/views/branch/partner'),
-        meta: {
-          title: '合伙人管理',
-          icon: 'tree'
-        }
+      path: 'partner',
+      name: '合伙人管理',
+      component: () => import('@/views/branch/partner'),
+      meta: {
+        title: '合伙人管理',
+        icon: 'tree'
       }
+    }
     ]
   },
 
@@ -189,14 +191,14 @@ export const constantRoutes = [{
       icon: 'nested'
     },
     children: [{
-        path: 'withdrawal',
-        name: '提现审核',
-        component: () => import('@/views/finance/withdrawal'),
-        meta: {
-          title: '提现审核',
-          icon: 'tree'
-        }
+      path: 'withdrawal',
+      name: '提现审核',
+      component: () => import('@/views/finance/withdrawal'),
+      meta: {
+        title: '提现审核',
+        icon: 'tree'
       }
+    }
     ]
   },
 
@@ -211,14 +213,14 @@ export const constantRoutes = [{
       icon: 'form'
     },
     children: [{
-        path: 'exchange',
-        name: '积分订单',
-        component: () => import('@/views/order/exchange'),
-        meta: {
-          title: '积分订单',
-          icon: 'tree'
-        }
-      },
+      path: 'exchange',
+      name: '积分订单',
+      component: () => import('@/views/order/exchange'),
+      meta: {
+        title: '积分订单',
+        icon: 'tree'
+      }
+    },
       {
         path: 'product',
         name: '产品订单',
@@ -242,14 +244,14 @@ export const constantRoutes = [{
       icon: 'table'
     },
     children: [{
-        path: 'index',
-        name: '轮播图管理',
-        component: () => import('@/views/banner/index'),
-        meta: {
-          title: '轮播图管理',
-          icon: 'tree'
-        }
-      },
+      path: 'index',
+      name: '轮播图管理',
+      component: () => import('@/views/banner/index'),
+      meta: {
+        title: '轮播图管理',
+        icon: 'tree'
+      }
+    },
       {
         path: 'video',
         name: '宣传视频管理',
@@ -282,14 +284,14 @@ export const constantRoutes = [{
       icon: 'table'
     },
     children: [{
-        path: 'permission',
-        name: '入驻审核',
-        component: () => import('@/views/organization/permission'),
-        meta: {
-          title: '入驻审核',
-          icon: 'tree'
-        }
-      },
+      path: 'permission',
+      name: '入驻审核',
+      component: () => import('@/views/organization/permission'),
+      meta: {
+        title: '入驻审核',
+        icon: 'tree'
+      }
+    },
       {
         path: 'index',
         name: '机构管理',
@@ -310,7 +312,7 @@ export const constantRoutes = [{
       }
     ]
   },
-    // 学习课程
+  // 学习课程
   {
     path: '/learn',
     component: Layout,
@@ -330,14 +332,14 @@ export const constantRoutes = [{
       }
     },
       {
-      path: 'parent',
-      name: '家长课程',
-      component: () => import('@/views/learn/parent'),
-      meta: {
-        title: '家长课程',
-        icon: 'tree'
+        path: 'parent',
+        name: '家长课程',
+        component: () => import('@/views/learn/parent'),
+        meta: {
+          title: '家长课程',
+          icon: 'tree'
+        }
       }
-    }
     ]
   },
 
@@ -347,14 +349,14 @@ export const constantRoutes = [{
     name: '系统设置',
 
     children: [{
-        path: 'index',
-        name: '系统设置',
-        component: () => import('@/views/configs/index'),
-        meta: {
-          title: '系统设置',
-          icon: 'tree'
-        }
+      path: 'index',
+      name: '系统设置',
+      component: () => import('@/views/configs/index'),
+      meta: {
+        title: '系统设置',
+        icon: 'tree'
       }
+    }
     ]
   },
   // 产品管理  --
@@ -442,14 +444,14 @@ export const constantRoutes = [{
       icon: 'table'
     },
     children: [{
-        path: 'index',
-        name: '论坛列表',
-        component: () => import('@/views/forum/index'),
-        meta: {
-          title: '论坛列表',
-          icon: 'tree'
-        }
+      path: 'index',
+      name: '论坛列表',
+      component: () => import('@/views/forum/index'),
+      meta: {
+        title: '论坛列表',
+        icon: 'tree'
       }
+    }
     ]
   },
   {
@@ -463,14 +465,14 @@ export const constantRoutes = [{
       icon: 'table'
     },
     children: [{
-        path: 'index',
-        name: '列表管理',
-        component: () => import('@/views/category/index'),
-        meta: {
-          title: '列表管理',
-          icon: 'tree'
-        }
+      path: 'index',
+      name: '列表管理',
+      component: () => import('@/views/category/index'),
+      meta: {
+        title: '列表管理',
+        icon: 'tree'
       }
+    }
     ]
   },
 
@@ -507,14 +509,14 @@ export const constantRoutes = [{
       icon: 'table'
     },
     children: [{
-        path: 'chat',
-        name: '聊天管理',
-        component: () => import('@/views/chat/chat'),
-        meta: {
-          title: '聊天管理',
-          icon: 'tree'
-        }
+      path: 'chat',
+      name: '聊天管理',
+      component: () => import('@/views/chat/chat'),
+      meta: {
+        title: '聊天管理',
+        icon: 'tree'
       }
+    }
     ]
   },
   {

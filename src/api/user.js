@@ -98,9 +98,9 @@ export function bank_del(id) {
 }
 
 // 用户搜索, 每次拉取25个
-export function user_search(keyword) {
+export function user_search(keyword, type) {
   return request({
-    url: 'v1/user/list?keyword=' + keyword
+    url: 'v1/user/list?' + qs.stringify({ keyword, type })
   })
 }
 
