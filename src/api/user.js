@@ -140,3 +140,20 @@ export function set_poverty(id) {
     method: 'get'
   })
 }
+
+export function getAuthMenu() {
+  return request({
+    url:'/v1/menu/tree'
+  })
+}
+
+
+export function getRouter(roule) {
+  return request({
+    url: '/v1/menu/getRouter',
+    method: 'post',
+    data: {
+      type: roule
+    }
+  })
+}

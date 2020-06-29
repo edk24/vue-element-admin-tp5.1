@@ -10,6 +10,8 @@ import Layout from '@/layout'
  * @param route
  */
 function hasPermission(roles, route) {
+  console.log('啊哈哈哈');
+  console.log(route.meta.roles);
   if (route.meta && route.meta.roles) {
     return roles.some(role => route.meta.roles.includes(role))
   } else {
@@ -26,7 +28,7 @@ export function generaMenu(routes, data) {
     // var i = JSON.stringify(item)
     // console.log('item:' + i)
 
-    // alert(JSON.stringify(item))
+    alert(JSON.stringify(item))
     const menu = {
       path: item.url === '#' ? item.id + '_key' : item.id + item.url,
       component: item.url === '#' ? Layout : () => import(`@/views${item.url}`),
@@ -38,6 +40,7 @@ export function generaMenu(routes, data) {
       // meta: item.name
       meta: { title: item.name, id: item.id, roles: item.roles }
     }
+    console.log(menu)
 
     if (item.son) {
       generaMenu(menu.children, item.son)
@@ -53,7 +56,8 @@ export function generaMenu(routes, data) {
  */
 export function filterAsyncRoutes(routes, roles) {
   const res = []
-
+  console.log(99999);
+  console.log(routes);
   routes.forEach(route => {
     const tmp = { ...route }
     if (hasPermission(roles, tmp)) {
@@ -81,43 +85,47 @@ const mutations = {
 
 const actions = {
   generateRoutes({ commit }, roles) {
+    console.log(666)
     return new Promise(resolve => {
       let accessedRoutes
-      if (roles.includes('admin')) {
+      if (roles.roles.indexOf('admin')) {
         accessedRoutes = asyncRoutes || []
       } else {
+        console.log(777);
         accessedRoutes = filterAsyncRoutes(asyncRoutes, roles)
       }
       commit('SET_ROUTES', accessedRoutes)
       resolve(accessedRoutes)
 
-      // const loadMenuData = []
-      // // 先查询后台并返回左侧菜单数据并把数据添加到路由
-      // getAuthMenu().then(response => {
-      //   let data = response
-      //   if (response.code !== 0) {
-      //     alert(JSON.stringify('菜单数据加载异常'))
-      //     // throw new Error('菜单数据加载异常')
-      //   } else {
-      //     data = response.data
-      //     Object.assign(loadMenuData, data)
-      //     const tempAsyncRoutes = Object.assign([], asyncRoutes)
-      //     // tempAsyncRoutes = asyncRoutes
-      //     generaMenu(tempAsyncRoutes, loadMenuData)
-      //     let accessedRoutes
-      //     if (roles.includes('admin')) {
-      //       // alert(JSON.stringify(asyncRoutes))
-      //       accessedRoutes = tempAsyncRoutes || []
-      //     } else {
-      //       accessedRoutes = filterAsyncRoutes(tempAsyncRoutes, roles)
-      //     }
-      //     commit('SET_ROUTES', accessedRoutes)
-      //     resolve(accessedRoutes)
-      //   }
-      //   // generaMenu(asyncRoutes, data)
-      // }).catch(error => {
-      //   console.log(error)
-      // })
+      const loadMenuData = [
+        { id: 1, url: '#', name: 'woc' }
+      ]
+      // 先查询后台并返回左侧菜单数据并把数据添加到路由
+      getAuthMenu().then(response => {
+        let data = response
+        if (response.code !== 0) {
+          alert(JSON.stringify('菜单数据加载异常'))
+          // throw new Error('菜单数据加载异常')
+        } else {
+          data = response.data
+          Object.assign(loadMenuData, data)
+          const tempAsyncRoutes = Object.assign([], asyncRoutes)
+          // tempAsyncRoutes = asyncRoutes
+          generaMenu(tempAsyncRoutes, loadMenuData)
+          let accessedRoutes
+          if (roles.includes('admin')) {
+            // alert(JSON.stringify(asyncRoutes))
+            accessedRoutes = tempAsyncRoutes || []
+          } else {
+            accessedRoutes = filterAsyncRoutes(tempAsyncRoutes, roles)
+          }
+          commit('SET_ROUTES', accessedRoutes)
+          resolve(accessedRoutes)
+        }
+        // generaMenu(asyncRoutes, data)
+      }).catch(error => {
+        console.log(error)
+      })
     })
   }
 }
