@@ -8,3 +8,12 @@ export function getUserInfo(id) {
     method: 'get'
   })
 }
+
+// 上传聊天文件
+export function fileUpload(data) {
+  return request({
+    url: '/v1/chat/index/',
+    method: 'post',
+    data
+  })
+}
