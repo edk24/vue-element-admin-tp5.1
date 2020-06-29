@@ -104,7 +104,7 @@ router.afterEach(() => {
 function gotoRouter(to, next) {
   getRouter(store.getters.token) // 获取动态路由的方法
     .then(res => {
-      console.log('解析后端动态路由', res.data.router)
+      // console.log('解析后端动态路由', res.data.router)
       const asyncRouter = addRouter(res.data.router) // 进行递归解析
       store.dispatch('user/setroles', res.data.permit)
       return asyncRouter
@@ -117,8 +117,8 @@ function gotoRouter(to, next) {
         hidden: true
       })
       router.addRoutes(asyncRouter) // vue-router提供的addRouter方法进行路由拼接
-      console.log(888);
-      console.log(asyncRouter)
+      // console.log(888)
+      // console.log(asyncRouter)
       store.dispatch('user/setRouterList', asyncRouter) // 存储到vuex
       store.dispatch('user/getInfo')
       store.commit('user/set_init', true)
