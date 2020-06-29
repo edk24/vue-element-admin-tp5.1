@@ -9,6 +9,14 @@ export function get_menu_tree() {
   })
 }
 
+// 获取我的右侧菜单 TODO
+export function get_my_menu() {
+  return request({
+    url: '/v1/menu/tree',
+    method:'get'
+  })
+}
+
 // 查询菜单列表
 export function get_menu_list() {
   return request({

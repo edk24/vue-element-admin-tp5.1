@@ -31,7 +31,9 @@ export default {
       'sidebar'
     ]),
     routes() {
-      return this.$router.options.routes
+      // return this.$router.options.routes
+      console.log(this.$store.getters.routerList);
+      return this.$store.getters.routerList
     },
     activeMenu() {
       const route = this.$route

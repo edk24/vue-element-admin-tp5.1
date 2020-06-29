@@ -5,8 +5,7 @@ Vue.use(Router)
 
 import Layout from '@/layout'
 
-export const constantRoutes = [
-  {
+export const StaticRouterMap = [{
     path: '/login',
     component: () => import('@/views/login/index'),
     hidden: true,
@@ -594,11 +593,11 @@ export const constantRoutes = [
       }
     }]
   },
-  {
-    path: '*',
-    redirect: '/404',
-    hidden: true
-  }
+  // {
+  //   path: '*',
+  //   redirect: '/404',
+  //   hidden: true
+  // }
 ]
 
 const createRouter = () => new Router({
@@ -606,7 +605,7 @@ const createRouter = () => new Router({
   scrollBehavior: () => ({
     y: 0
   }),
-  routes: constantRoutes
+  routes: StaticRouterMap
 })
 
 const router = createRouter()
