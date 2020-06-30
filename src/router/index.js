@@ -78,16 +78,14 @@ export const StaticRouterMap = [
       // 不展示  一般
       // { path: 'permission', name: '权限管理', component: () => import('@/views/admin/permission'), meta: { title: '权限管理', icon: 'tree' }}
     ]
-  },
+  }
 
-  
   // {
   //   path: '*',
   //   redirect: '/404',
   //   hidden: true
   // }
 ]
-
 
 const defaultMap = [
   // 用户管理  --家长管理--学生管理
@@ -615,7 +613,6 @@ const defaultMap = [
     }]
   }
 ]
-
 
 // 合并固定路由
 // StaticRouterMap.concat(defaultMap)
