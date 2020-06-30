@@ -674,6 +674,7 @@
           }
         }
         this.setUnRead(data.result.from)
+        this.toBottom()
       },
       // 设置未读消息
       setUnRead(uid) {
