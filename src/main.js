@@ -12,7 +12,9 @@ import store from './store'
 import 'quill/dist/quill.core.css'
 import 'quill/dist/quill.snow.css'
 
-// 将ElementUI lang设置为EN
+  const { mockXHR } = require('../mock')
+  mockXHR()
+
 Vue.use(ElementUI, { locale })
 // 如果想要中文版 element-ui，按如下方式声明
 // Vue.use(ElementUI)

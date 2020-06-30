@@ -10,8 +10,6 @@ import Layout from '@/layout'
  * @param route
  */
 function hasPermission(roles, route) {
-  console.log('啊哈哈哈');
-  console.log(route.meta.roles);
   if (route.meta && route.meta.roles) {
     return roles.some(role => route.meta.roles.includes(role))
   } else {
@@ -56,8 +54,8 @@ export function generaMenu(routes, data) {
  */
 export function filterAsyncRoutes(routes, roles) {
   const res = []
-  console.log(99999);
-  console.log(routes);
+  console.log(99999)
+  console.log(routes)
   routes.forEach(route => {
     const tmp = { ...route }
     if (hasPermission(roles, tmp)) {
@@ -91,7 +89,7 @@ const actions = {
       if (roles.roles.indexOf('admin')) {
         accessedRoutes = asyncRoutes || []
       } else {
-        console.log(777);
+        console.log(777)
         accessedRoutes = filterAsyncRoutes(asyncRoutes, roles)
       }
       commit('SET_ROUTES', accessedRoutes)

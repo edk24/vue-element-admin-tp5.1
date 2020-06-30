@@ -40,7 +40,7 @@
 
     <!-- 表单 -->
     <el-dialog :visible.sync="dialogFormVisible">
-      <el-form label-width="80px" :model="formLabelAlign">
+      <el-form label-width="130px" :model="formLabelAlign">
         <el-form-item label="企业名称">
           <el-input v-model="formLabelAlign.title" />
         </el-form-item>

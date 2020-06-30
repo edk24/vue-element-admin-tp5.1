@@ -5,7 +5,8 @@ Vue.use(Router)
 
 import Layout from '@/layout'
 
-export const StaticRouterMap = [{
+export const StaticRouterMap = [
+  {
     path: '/login',
     component: () => import('@/views/login/index'),
     hidden: true,
@@ -77,8 +78,16 @@ export const StaticRouterMap = [{
       // 不展示  一般
       // { path: 'permission', name: '权限管理', component: () => import('@/views/admin/permission'), meta: { title: '权限管理', icon: 'tree' }}
     ]
-  },
+  }
 
+  // {
+  //   path: '*',
+  //   redirect: '/404',
+  //   hidden: true
+  // }
+]
+
+const defaultMap = [
   // 用户管理  --家长管理--学生管理
   {
     path: '/user',
@@ -167,15 +176,25 @@ export const StaticRouterMap = [{
       tree: 'tree',
       icon: 'example'
     },
-    children: [{
-      path: 'partner',
-      name: '合伙人管理',
-      component: () => import('@/views/branch/partner'),
-      meta: {
-        title: '合伙人管理',
-        icon: 'tree'
+    children: [
+      {
+        path: 'partner',
+        name: '合伙人管理',
+        component: () => import('@/views/branch/partner'),
+        meta: {
+          title: '合伙人管理',
+          icon: 'tree'
+        }
+      },
+      {
+        path: 'manager',
+        name: '市场经理',
+        component: () => import('@/views/branch/manager'),
+        meta: {
+          title: '市场经理',
+          icon: 'tree'
+        }
       }
-    }
     ]
   },
 
@@ -592,13 +611,11 @@ export const StaticRouterMap = [{
         icon: 'tree'
       }
     }]
-  },
-  // {
-  //   path: '*',
-  //   redirect: '/404',
-  //   hidden: true
-  // }
+  }
 ]
+
+// 合并固定路由
+// StaticRouterMap.concat(defaultMap)
 
 const createRouter = () => new Router({
   // mode: 'history', // require service support
