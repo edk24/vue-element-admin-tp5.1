@@ -1,5 +1,5 @@
 <template>
-  <div class="app-container">
+  <div v-if="list.length === '0'" class="app-container">
     <div class="filter-container" />
     <el-form ref="dataForm" v-model="list" :rules="rules" label-position="left" label-width="100px" style="padding:0 5px;margin-right:5px;margin-left:150px;">
       <el-form-item label="机构名称" style="width: 30%;">
@@ -151,9 +151,7 @@
         selectedOptions: [],
         imgsrc: process.env.VUE_APP_BASE_API,
         tableKey: 0,
-        list: {
-          silder_image: []
-        },
+        list: [],
         total: 0,
         listLoading: false,
         listQuery: {
@@ -184,9 +182,13 @@
 
     },
     created() {
-      this.user.id = this.$store.state.user.id
-      this.user.type = this.$store.state.user.type
-      this.getList()
+      if (this.$store.state.user.type === 2) {
+        this.user.id = this.$store.state.user.id
+        this.user.type = this.$store.state.user.type
+        console.log(this.user.id)
+        this.getList()
+      }
+      console.log(this.list)
     },
     methods: {
       handleRemove(file) {
@@ -257,6 +259,7 @@
         const that = this
         this.listLoading = false
         organization.train_info(this.user.id).then(({ code, msg, data, count }) => {
+          this.list.silder_image = []
           if (code === 0) {
             data.license = this.imgsrc + data.license
             this.licenseList.push(data.license)
