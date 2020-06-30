@@ -287,11 +287,15 @@
     methods: {
       // 获取用户列表
       getUserList() {
-        this.userList = JSON.parse(localStorage.getItem('userList'))
+        var data = localStorage.getItem('userList')
+        this.userList = JSON.parse(data)
+        for (let i = 0; i < this.userList.length; i++) {
+          this.NotHistory(this.userList[i].id)
+        }
       },
       // 设置用户列表
       setUserList() {
-        localStorage.setItem('userList', this.userList)
+        localStorage.setItem('userList', JSON.stringify(this.userList))
       },
       // 获取当前登录用户信息
       getMyInfo() {
@@ -313,6 +317,7 @@
       },
       // 连接初始化
       initEventHandle(socket) {
+        this.Socket = socket
         // 连接关闭时触发
         socket.onclose = () => {
           this.Config.online = false
@@ -329,7 +334,7 @@
         socket.onopen = () => {
           // 连接建立, 登录聊天
           this.Socket = socket
-          this.Login(socket)
+          this.Login()
           console.log('连接成功')
         }
         // 客户端接收服务端数据时触发
@@ -347,9 +352,6 @@
               break
             case 'user.get':// 用户信息
                   this.getUserReturn(data)
-                  break
-            case 'chat.unread_history':// 未读历史
-                  this.NotHistoryReturn(data)
                   break
             case 'chat.recv':// 收到消息
                   this.getMessage(data)
@@ -446,7 +448,7 @@
         })
       },
       // 登录方法
-      Login(socket) {
+      Login() {
         const message = JSON.stringify({
           call: 'login.do',
           body: {
@@ -454,7 +456,7 @@
             pass: 'f8053a97efd69963b5173749ce378e19'
           }
         })
-        socket.send(message)
+        this.Socket.send(message)
       },
       // 登录返回
       LoginReturn(data) {
@@ -463,6 +465,7 @@
         } else {
           this.$message.error(data.errMsg)
         }
+        this.NotRead()
       },
       // 获取未读消息
       NotRead() {
@@ -474,12 +477,10 @@
       },
       // 未读消息返回
       NotReadReturn(data) {
-        if (data.body) {
-          console.log(data.body)
-        }
+        console.log(data)
       },
       // 获取历史记录
-      History(to = 27) {
+      History(to) {
         this.Socket.send(JSON.stringify({
           call: 'chat.history',
           body: {
@@ -490,6 +491,7 @@
           },
           token: this.Config.token
         }))
+        this.NotHistory(to)
       },
       // 获取历史返回
       HistoryReturn(data) {
@@ -526,12 +528,18 @@
             havaUser = true
           }
         }
+        var unRead = 0
+        if (this.Chating) {
+          if (this.ChatUser.id !== data.result.id) {
+            unRead = 2
+          }
+        }
         if (havaUser === false) {
           this.userList.push({
             id: data.result.id,
             avatar: data.result.avatar,
             nickname: data.result.nickname,
-            unRead: false
+            unRead: unRead
           })
           localStorage.setItem('userList', JSON.stringify(this.userList))
         }
@@ -540,24 +548,20 @@
       changeUser(index) {
         this.Chating = true
         this.ChatUser = this.userList[index]
-        this.userList[index].unRead = false
+        this.userList[index].unRead = 0
         this.History(this.ChatUser.id)
         this.setUserList()
       },
       // 获取未读历史
-      NotHistory() {
+      NotHistory(to) {
         this.Socket.send(JSON.stringify({
           call: 'chat.unread_history',
           body: {
             type: 's', // 类型: g=群聊, s=单聊
-            to: 27 // uid or 群号
+            to: to // uid or 群号
           },
           token: this.Config.token
         }))
-      },
-      // 未读历史返回
-      NotHistoryReturn(data) {
-        console.log(data)
       },
       // 发送消息
       send() {
@@ -654,10 +658,10 @@
           if (this.userList[i].id === uid) {
             if (this.Chating) {
               if (this.ChatUser.id !== uid) {
-                this.userList[i].unRead = 1
+                this.userList[i].unRead = 5
               }
             } else {
-              this.userList[i].unRead = 1
+              this.userList[i].unRead = 5
             }
           }
         }
@@ -849,13 +853,15 @@
             position: relative;
 
             .message {
-              height: 65%;
+              height: 100px;
               width: 100%;
               padding: 10px;
+              overflow: hidden;
               box-sizing: border-box;
               outline: none;
-              border: none;
               resize: none;
+              word-break:break-all!important;
+              word-wrap:break-word!important;
             }
 
             .submit {
