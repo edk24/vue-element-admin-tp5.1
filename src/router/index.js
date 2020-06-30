@@ -168,15 +168,25 @@ export const StaticRouterMap = [
       tree: 'tree',
       icon: 'example'
     },
-    children: [{
-      path: 'partner',
-      name: '合伙人管理',
-      component: () => import('@/views/branch/partner'),
-      meta: {
-        title: '合伙人管理',
-        icon: 'tree'
+    children: [
+      {
+        path: 'partner',
+        name: '合伙人管理',
+        component: () => import('@/views/branch/partner'),
+        meta: {
+          title: '合伙人管理',
+          icon: 'tree'
+        }
+      },
+      {
+        path: 'manager',
+        name: '市场经理',
+        component: () => import('@/views/branch/manager'),
+        meta: {
+          title: '市场经理',
+          icon: 'tree'
+        }
       }
-    }
     ]
   },
 
