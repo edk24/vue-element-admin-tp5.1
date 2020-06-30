@@ -80,6 +80,16 @@ export const StaticRouterMap = [
     ]
   },
 
+  
+  // {
+  //   path: '*',
+  //   redirect: '/404',
+  //   hidden: true
+  // }
+]
+
+
+const defaultMap = [
   // 用户管理  --家长管理--学生管理
   {
     path: '/user',
@@ -604,12 +614,11 @@ export const StaticRouterMap = [
       }
     }]
   }
-  // {
-  //   path: '*',
-  //   redirect: '/404',
-  //   hidden: true
-  // }
 ]
+
+
+// 合并固定路由
+// StaticRouterMap.concat(defaultMap)
 
 const createRouter = () => new Router({
   // mode: 'history', // require service support

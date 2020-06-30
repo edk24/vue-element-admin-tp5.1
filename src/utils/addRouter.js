@@ -6,12 +6,14 @@
 export function addRouter(routerlist) {
   const router = []
   try {
-    console.log(routerlist)
-
     routerlist.forEach(e => {
       let e_new = {
-        path: e.route_path,
-        name: e.title,
+        path: e.url,
+        name: e.name,
+        // component: () =>
+        //   e.component === "layout"
+        //     ? import("@/layout")
+        //     : import(`@/views/${e.component}`)
         component: resolve => e.component === 'layout' ? require([`@/layout`], resolve) : require([`@/views/${e.component}`], resolve)
       }
       if (e.children) {
@@ -26,9 +28,9 @@ export function addRouter(routerlist) {
         e_new = { ...e_new, hidden: true }
       }
       if (e.icon !== '' && e.title !== '') {
-        e_new = { ...e_new, meta: { title: e.title, icon: e.icon }}
+        e_new = { ...e_new, meta: { title: e.title, icon: e.icon } }
       } else if (e.title !== '' && e.icon === '') {
-        e_new = { ...e_new, meta: { title: e.title }}
+        e_new = { ...e_new, meta: { title: e.title } }
       }
       router.push(e_new)
     })

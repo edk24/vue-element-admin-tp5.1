@@ -150,10 +150,13 @@ export function getAuthMenu() {
 
 export function getRouter(roule) {
   return request({
-    url: '/v1/menu/getRouter',
+    url: '/v1/menu/getRouter1',
     method: 'post',
     data: {
       type: roule
     }
   })
 }
+
+
+
