@@ -23,7 +23,7 @@
           >
             <img class="avatar" :src="item.avatar" alt>
             <div class="nickname">{{ item.nickname }}</div>
-            <div v-if="item.unRead" class="read" />
+            <div v-if="item.unRead" class="read">{{item.unRead}}</div>
           </div>
         </div>
         <!-- 用户列表 end -->
@@ -124,6 +124,7 @@
 <script>
   import { getInfo } from '@/api/user'
   import { fileUpload } from '@/api/chat'
+
   export default {
     data() {
       return {
@@ -289,9 +290,6 @@
       getUserList() {
         var data = localStorage.getItem('userList')
         this.userList = JSON.parse(data)
-        for (let i = 0; i < this.userList.length; i++) {
-          this.NotHistory(this.userList[i].id)
-        }
       },
       // 设置用户列表
       setUserList() {
@@ -317,7 +315,6 @@
       },
       // 连接初始化
       initEventHandle(socket) {
-        this.Socket = socket
         // 连接关闭时触发
         socket.onclose = () => {
           this.Config.online = false
@@ -333,8 +330,7 @@
         // 连接建立时触发
         socket.onopen = () => {
           // 连接建立, 登录聊天
-          this.Socket = socket
-          this.Login()
+          this.Login(socket)
           console.log('连接成功')
         }
         // 客户端接收服务端数据时触发
@@ -351,11 +347,11 @@
               this.HistoryReturn(data)
               break
             case 'user.get':// 用户信息
-                  this.getUserReturn(data)
-                  break
+              this.getUserReturn(data)
+              break
             case 'chat.recv':// 收到消息
-                  this.getMessage(data)
-                  break
+              this.getMessage(data)
+              break
           }
         }
       },
@@ -448,7 +444,8 @@
         })
       },
       // 登录方法
-      Login() {
+      Login(socket) {
+        this.Socket = socket
         const message = JSON.stringify({
           call: 'login.do',
           body: {
@@ -456,7 +453,7 @@
             pass: 'f8053a97efd69963b5173749ce378e19'
           }
         })
-        this.Socket.send(message)
+        socket.send(message)
       },
       // 登录返回
       LoginReturn(data) {
@@ -477,7 +474,32 @@
       },
       // 未读消息返回
       NotReadReturn(data) {
-        console.log(data)
+        var list = this.objToArray(data.result)
+        for (let i = 0; i < list.length; i++) {
+          if (list[i][0] === 'u') {
+            for (let j = 0; j < this.userList.length; j++) {
+              if (parseInt(list[i][1]) === parseInt(this.userList[j].id)) {
+                if (parseInt(list[i][2]) > 99) {
+                  list[i][2] = '99+'
+                }
+                this.userList[j].unRead = list[i][2]
+                this.setUserList()
+              }
+            }
+          }
+        }
+      },
+      // 对象转数组
+      objToArray(list) {
+        const keys = Object.keys(list)
+        const ret = []
+        keys.forEach(k => {
+          const flag = k.substr(0, 1)
+          const uid = k.substr(1, k.length - 1)
+          const val = list[k]
+          ret.push([flag, uid, val])
+        })
+        return ret
       },
       // 获取历史记录
       History(to) {
@@ -567,15 +589,15 @@
       send() {
         var obj = document.getElementById('message')
         this.Socket.send(JSON.stringify({
-            call: 'chat.send',
-            body: {
-              type: 'text',
-              msg: obj.innerHTML,
-              to: this.ChatUser.id,
-              origin: 's'
-            },
-            token: this.Config.token
-          }))
+          call: 'chat.send',
+          body: {
+            type: 'text',
+            msg: obj.innerHTML,
+            to: this.ChatUser.id,
+            origin: 's'
+          },
+          token: this.Config.token
+        }))
         this.messageList.push({
           type: 'text',
           msg: obj.innerHTML,
@@ -596,11 +618,11 @@
       },
       // 选择聊天表情
       getEmoji(index, e) {
-        var html = "<img src='" +
+        var html = '<img src=\'' +
           e.srcElement.src +
-          "' alt='" +
+          '\' alt=\'' +
           this.emojiList[index].alt +
-          "'>"
+          '\'>'
         this.tempMessage += html
         var obj = document.getElementById('message')
         this.insertAtCursor(obj, html)
@@ -619,7 +641,8 @@
           var el = document.createElement('div')
           el.innerHTML = html
           var frag = document.createDocumentFragment()
-          var node; var lastNode
+          var node
+          var lastNode
           while ((node = el.firstChild)) {
             lastNode = frag.appendChild(node)
           }
@@ -753,10 +776,14 @@
           }
 
           .read {
-            width: 12px;
-            height: 12px;
+            width: 20px;
+            height: 20px;
             background-color: #f00;
             border-radius: 50%;
+            text-align: center;
+            line-height: 20px;
+            font-size: 12px;
+            color: #fafafa;
           }
         }
       }
@@ -860,8 +887,8 @@
               box-sizing: border-box;
               outline: none;
               resize: none;
-              word-break:break-all!important;
-              word-wrap:break-word!important;
+              word-break: break-all !important;
+              word-wrap: break-word !important;
             }
 
             .submit {
