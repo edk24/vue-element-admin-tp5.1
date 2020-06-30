@@ -70,7 +70,7 @@
               :label="item.label"
               :value="item.value"
             >
-              <span style="float: left"><i :class="item.value" /> {{ item.label }}</span>
+              <span style="float: left"><i :class="'el-icon-'+item.value" /> {{ item.label }}</span>
             </el-option>
           </el-select>
         </el-form-item>
@@ -138,8 +138,13 @@ export default {
          { value: 'user', label: 'el-icon-user' },
          { value: 'user-solid', label: 'el-icon-user-solid' },
          { value: 's-tools', label: 'el-icon-s-tools' },
-         { value: 'tree', label: 'tree' }
-
+         { value: 'tree', label: 'tree' },
+         { value: 'table', label: 'table' },
+         { value: 'link', label: 'link' },
+         { value: 'nested', label: 'nested' },
+         { value: 'password', label: 'password' },
+         { value: 'example', label: 'example' },
+         { value: 'form', label: 'form' },
 
        ]
     }
