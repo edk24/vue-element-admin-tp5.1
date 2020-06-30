@@ -49,7 +49,7 @@ export const StaticRouterMap = [
       icon: 'user'
     },
     children: [{
-      path: 'user',
+      path: 'index',
       name: '管理员管理',
       component: () => import('@/views/admin/index'),
       meta: {
@@ -58,7 +58,7 @@ export const StaticRouterMap = [
       }
     },
       {
-        path: 'index',
+        path: 'role',
         name: '角色管理',
         component: () => import('@/views/admin/role'),
         meta: {
