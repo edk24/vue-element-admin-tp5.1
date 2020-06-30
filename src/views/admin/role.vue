@@ -153,7 +153,11 @@ export default {
     },
     // 创建
     createRole() {
-      this.formData = { id: 0, title: '', permissions: [], note: '' }
+      this.formData = Object.assign({}, {})
+      this.formData.permissions =[]
+      this.$nextTick(()=>{
+        this.$refs.tree.setCheckedKeys([]); 
+      })
       this.dialogFormVisible = true
     },
     // 修改
@@ -161,7 +165,11 @@ export default {
       this.formData.id = obj.id
       this.formData.title = obj.title
       this.formData.note = obj.note
+      this.formData.permissions = []
       this.formData.permissions = obj.permissions
+      this.$nextTick(()=>{
+        this.$refs.tree.setCheckedKeys( obj.permissions); 
+      })
       this.dialogFormVisible = true
       console.log(this.formData)
     },
