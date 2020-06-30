@@ -3,7 +3,7 @@
     <p>
       <el-input v-model="keyword" maxlength="16" style="width:300px;margin-right:15px" placeholder="请输入关键字进行搜索" @keyup.enter.native="search()" />
       <el-button type="primary" @click="search()">搜索</el-button>
-      <el-button type="primary" @click="dialogFormVisible = true">添加</el-button>
+      <el-button type="primary" @click="handleCreate">添加</el-button>
     </p>
     <el-table
       v-loading="listLoading"
@@ -32,21 +32,27 @@
         </template>
       </el-table-column>
 
-      <el-table-column label="昵称">
+      <el-table-column label="昵称" width="150">
         <template slot-scope="scope">
           {{ scope.row.nickname }}
         </template>
       </el-table-column>
 
-      <el-table-column label="真实姓名">
+      <el-table-column label="真实姓名" width="120">
         <template slot-scope="scope">
           {{ scope.row.username }}
         </template>
       </el-table-column>
 
-      <el-table-column label="手机号">
+      <el-table-column label="手机号" width="150">
         <template slot-scope="scope">
           {{ scope.row.phone }}
+        </template>
+      </el-table-column>
+
+      <el-table-column label="角色" width="150">
+        <template slot-scope="scope">
+          {{ scope.row.role.title }}
         </template>
       </el-table-column>
 
@@ -86,7 +92,7 @@
       >
         <template slot-scope="scope">
           <el-button type="danger" size="small" @click="admin_del(scope.row)">删除</el-button>
-          <el-button type="primary" size="small" @click="adminUpdateForm = true,UpdateForm.admin_id = scope.row.id">编辑</el-button>
+          <el-button type="primary" size="small" @click="handleUpdate(scope.row)">编辑</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -205,9 +211,18 @@ export default {
           row.avatar = that.url + row.avatar
           that.list.push(row)
         })
+        console.log(response.data)
         this.count = response.count
         this.listLoading = false
       }).catch((err) => { console.log(err.message) })
+    },
+    handleCreate() {
+      this.dialogFormVisible = true
+    },
+    handleUpdate(row) {
+      this.adminUpdateForm = true
+      this.UpdateForm.admin_id = row.id
+      this.UpdateForm.role = row.role.id
     },
     // 获取角色列表
     role_list() {
@@ -274,8 +289,12 @@ export default {
         this.$message.error('请选择角色')
         return false
       }
-      admin_role_update(this.UpdateForm.admin_id, this.UpdateForm.role).then(res => {
+      const data = new FormData()
+      data.append('admin_id', this.UpdateForm.admin_id)
+      data.append('role_id', this.UpdateForm.role)
+      admin_role_update(data).then(res => {
         if (res.code === 0) {
+          this.adminUpdateForm = false
           this.$message.success('修改成功')
           this.fetchData(1)
         } else {

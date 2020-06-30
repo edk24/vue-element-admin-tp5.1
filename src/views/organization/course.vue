@@ -15,7 +15,7 @@
         />
         <el-button type="primary" @click="search()">搜索</el-button>
 
-        <el-select v-model="listQuery.type" style="width: 140px" class="filter-item" @change="handleFilter">
+        <el-select v-if="selectTrain" v-model="listQuery.type" style="width: 140px" class="filter-item" @change="handleFilter">
           <el-option label="全部" value="all" />
           <el-option v-for="item in trainList" :key="item.id" :label="item.name" :value="item.id" />
         </el-select>
@@ -35,7 +35,7 @@
           <span>{{ (listQuery.page - 1) * listQuery.limit + scope.$index + 1 }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="所属机构" prop="title" width="200" align="center" :class-name="getSortClass('id')">
+      <el-table-column label="机构" prop="title" width="200" align="center" :class-name="getSortClass('id')">
         <template slot-scope="{row}">
           <span>{{ row.train.name }}</span>
         </template>
@@ -95,7 +95,7 @@
         <el-form-item label="课程名称" prop="title">
           <el-input v-model="temp.title" />
         </el-form-item>
-        <el-form-item label="选择培训机构">
+        <el-form-item v-if="selectTrain" label="选择培训机构">
           <el-select v-model="temp.train_id" filterable placeholder="请选择">
             <el-option
               v-for="item in trainList"
@@ -199,6 +199,7 @@
   import { course } from '@/api/course'
   import { organization } from '@/api/organization'
   import Pagination from '@/components/Pagination'
+  import { getInfo } from '@/api/user'
   import { mapGetters } from 'vuex'
   const type = [
     { key: 'all', name: '全部' },
@@ -206,6 +207,7 @@
     { key: 'goods', name: '商品分类' },
     { key: 'learn', name: '学生课程' }
   ]
+
   export default {
     // components: { Pagination, quillEditor, Tinymce, EditorBar },
     components: { Pagination, EditorBar },
@@ -218,7 +220,9 @@
     },
     data() {
       return {
-        user: {},
+        train_id: '',
+        selectTrain: true,
+        user: { id: -1 },
         trainList: [],
         isClear: false,
         detail: '',
@@ -260,12 +264,10 @@
       }
     },
     mounted() {
-      this.getTrainList()
     },
     created() {
-      this.user.id = this.$store.state.user.id
-      this.user.type = this.$store.state.user.type
-      this.getList()
+      this.getAdminInfo()
+      // this.getList()
     },
     methods: {
       change(val) {
@@ -344,18 +346,32 @@
       typeChange() {
 
       },
+      getAdminInfo() {
+        getInfo().then(res => {
+          if (res.data.type === 2) {
+            this.user = res.data
+            this.selectTrain = false
+          }
+          this.getList()
+          this.getTrainList()
+        }).catch(e => {
+          console.log(e)
+        })
+      },
       getTrainList() {
-        organization.train_list(1, 999, '', this.user.id).then(res => {
+        organization.train_list(1, 999, '', 1).then(res => {
           this.trainList = res.data
         })
       },
       getList() {
         this.listLoading = false
         this.list = []
-        course.getlist(this.listQuery.page, this.listQuery.limit, this.listQuery.type).then(({ code, msg, data, count }) => {
+        console.log(this.user.id)
+        course.getlist(this.listQuery.page, this.listQuery.limit, this.listQuery.type, this.user.id).then(({ code, msg, data, count }) => {
           if (code === 0) {
             data.forEach(row => {
               row.image = this.imgsrc + row.image
+              this.train_id = row.train.id
               this.list.push(row)
             })
             this.total = count
@@ -392,6 +408,9 @@
       },
       handleCreate() {
         this.resetTemp()
+        if (this.user.type === 2) {
+          this.temp.train_id = this.train_id
+        }
         this.dialogStatus = 'create'
         this.dialogFormVisible = true
         this.$nextTick(() => {
@@ -470,6 +489,7 @@
         this.$refs['dataForm'].validate((valid) => {
           if (valid) {
             const tempData = Object.assign({}, this.temp)
+
             const data = new FormData()
             data.append('title', tempData.title)
             if (tempData.train_id === undefined) {
@@ -569,7 +589,6 @@
       }
     }
   }
-
 </script>
 <style type="text/css">
   .avatar-uploader .el-upload {

@@ -2,9 +2,9 @@ import request from '@/utils/request'
 import qs from 'qs'
 
 const course = {
-  getlist: function(page, limit, train_id) {
+  getlist: function(page, limit, train_id, user_id) {
     return request({
-      url: '/v1/course?' + qs.stringify({ page, limit, train_id }),
+      url: '/v1/course?' + qs.stringify({ page, limit, train_id, user_id }),
       method: 'get'
     })
   },

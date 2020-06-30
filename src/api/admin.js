@@ -20,8 +20,7 @@ export function change_pwd(pwd) {
 }
 
 // 管理员角色修改
-export function admin_role_update(user_id, role_id) {
-  const data = qs.stringify({ admin_id: user_id, role_id })
+export function admin_role_update(data) {
   return request({
     url: '/v1/admin/update',
     method: 'post',

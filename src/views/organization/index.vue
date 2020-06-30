@@ -1,5 +1,5 @@
 <template>
-  <div v-if="list.length === '0'" class="app-container">
+  <div class="app-container" v-if="this.user.type === 2">
     <div class="filter-container" />
     <el-form ref="dataForm" v-model="list" :rules="rules" label-position="left" label-width="100px" style="padding:0 5px;margin-right:5px;margin-left:150px;">
       <el-form-item label="机构名称" style="width: 30%;">
@@ -104,6 +104,7 @@
 
 <script>
   import { organization } from '@/api/organization'
+  import { getInfo } from '@/api/user'
   import {
     provinceAndCityData,
     regionData,
@@ -120,6 +121,7 @@
     { key: 'learn', name: '学生课程' },
     { key: 'train', name: '培训机构' }
   ]
+
   export default {
     components: { EditorBar },
     computed: {
@@ -179,16 +181,10 @@
       }
     },
     mounted() {
-
     },
     created() {
-      if (this.$store.state.user.type === 2) {
-        this.user.id = this.$store.state.user.id
-        this.user.type = this.$store.state.user.type
-        console.log(this.user.id)
-        this.getList()
-      }
-      console.log(this.list)
+      this.getAdminInfo()
+      // console.log('11' + this.user.id)
     },
     methods: {
       handleRemove(file) {
@@ -244,6 +240,15 @@
       change(val) {
         console.log(val)
       },
+      getAdminInfo() {
+        getInfo().then(res => {
+          this.user = res.data
+          this.getList()
+          console.log(this.user.type)
+        }).catch(e => {
+          console.log(e)
+        })
+      },
       search() {
         this.getList()
       },
@@ -256,6 +261,7 @@
         this.getList()
       },
       getList() {
+        console.log('这是测试' + '2')
         const that = this
         this.listLoading = false
         organization.train_info(this.user.id).then(({ code, msg, data, count }) => {
@@ -416,7 +422,6 @@
       }
     }
   }
-
 </script>
 <style type="text/css">
   .avatar-uploader .el-upload {

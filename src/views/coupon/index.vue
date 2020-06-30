@@ -369,7 +369,7 @@
         })
       },
       getCourseList() {
-        course.getlist(1, 9999, this.listQuery.master_id).then(res => {
+        course.getlist(1, 9999, '', this.listQuery.master_id, -1).then(res => {
           this.course_list = res.data
           console.log(res.data)
         }).catch(e => {
