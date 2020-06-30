@@ -15,7 +15,7 @@
         />
         <el-button type="primary" @click="search()">搜索</el-button>
 
-        <el-select v-model="listQuery.master_id" style="width: 140px" class="filter-item" @change="handleFilter">
+        <el-select v-if="selectTrain" v-model="listQuery.master_id" style="width: 140px" class="filter-item" @change="handleFilter">
           <el-option label="培训班-全部" value="all" />
           <el-option v-for="item in train_list" :key="item.id" :label="item.name" :value="item.id" />
         </el-select>
@@ -242,6 +242,7 @@
 </template>
 
 <script>
+  import { getInfo } from '@/api/user'
   import { coupon } from '@/api/coupon'
   import { formatDate } from '@/utils/time.js'
   import Pagination from '@/components/Pagination'
@@ -265,6 +266,7 @@
     },
     data() {
       return {
+        selectTrain: true,
         user: {},
         train_list: [],
         course_list: [],
@@ -312,12 +314,11 @@
       }
     },
     mounted() {
-      this.getTrainList()
+      // this.getTrainList()
     },
     created() {
-      this.user.id = this.$store.state.user.id
-      this.user.type = this.$store.state.user.type
-      this.getList()
+      this.getAdminInfo()
+      // this.getList()
     },
     methods: {
       search() {
@@ -361,6 +362,18 @@
         this.listQuery.master_id = this.temp.master_id
         this.getCourseList()
       },
+      getAdminInfo() {
+        getInfo().then(res => {
+          if (res.data.type === 2) {
+            this.user = res.data
+            this.selectTrain = false
+          }
+          // this.getList()
+          // this.getTrainList()
+        }).catch(e => {
+          console.log(e)
+        })
+      },
       getTrainList() {
         organization.train_list(1, 9999, '', 1).then(res => {
           this.train_list = res.data
@@ -369,9 +382,9 @@
         })
       },
       getCourseList() {
-        course.getlist(1, 9999, '', this.listQuery.master_id, -1).then(res => {
+        course.getlist(1, 9999, this.listQuery.master_id, -1).then(res => {
           this.course_list = res.data
-          console.log(res.data)
+          console.log('hao' + res.data)
         }).catch(e => {
           console.log(e)
         })

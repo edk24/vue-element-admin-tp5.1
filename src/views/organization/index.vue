@@ -261,7 +261,6 @@
         this.getList()
       },
       getList() {
-        console.log('这是测试' + '2')
         const that = this
         this.listLoading = false
         organization.train_info(this.user.id).then(({ code, msg, data, count }) => {
