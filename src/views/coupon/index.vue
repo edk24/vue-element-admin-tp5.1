@@ -317,8 +317,9 @@
       // this.getTrainList()
     },
     created() {
-      this.getAdminInfo()
-      // this.getList()
+      this.getList()
+      this.getTrainList()
+      // this.getAdminInfo()
     },
     methods: {
       search() {
@@ -368,6 +369,7 @@
             this.user = res.data
             this.selectTrain = false
           }
+          console.log(res.data)
           // this.getList()
           // this.getTrainList()
         }).catch(e => {
