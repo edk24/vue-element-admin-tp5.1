@@ -9,7 +9,7 @@
         <el-table-column prop="title" label="名称" width="180" />
         <el-table-column label="图片" width="250">
           <template slot-scope="scope">
-            <el-image class="image" width="200" :src="scope.row.image">
+            <el-image class="image" width="200" :src="scope.row.image" style="width:100px; height:100px" fit="cover">
               <div slot="placeholder" class="image-slot">
                 加载中<span class="dot">...</span>
               </div>

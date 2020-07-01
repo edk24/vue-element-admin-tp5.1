@@ -47,7 +47,7 @@
       </el-table-column>
       <el-table-column label="展示图片" prop="type" align="center" width="150" style="height: 100px;" :class-name="getSortClass('id')">
         <template slot-scope="{row}">
-          <el-image class="image" :src="row.image">
+          <el-image class="image" :src="row.image" style="width:100px; height:100px" fit="cover">
             <div slot="error" class="image-slot">
               暂未上传
             </div>
