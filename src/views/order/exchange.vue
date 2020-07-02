@@ -369,6 +369,7 @@ export default {
     },
     // 发货提交
     submitShip() {
+      const that = this
       if (this.shipForm.id) {
         shipOrder(this.shipForm.id, this.shipForm)
           .then(({ code, msg }) => {
@@ -377,10 +378,10 @@ export default {
               if (this.page > 1) {
                 this.page--;
               }
-              this.fetchData();
             } else {
               this.$message.error(msg);
             }
+            that.fetchData();
           })
           .catch(() => {});
       }

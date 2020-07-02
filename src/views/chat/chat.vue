@@ -103,8 +103,8 @@
                 loop="false"
                 hidden="true"
               />
-              <div id="message" contenteditable="true" class="message" @focus="EmojiShow = false" />
-              <div class="submit" @click="send()">发送</div>
+              <div id="message" contenteditable="true" class="message" @focus="EmojiShow = false" @keyup.enter="send()" />
+              <div class="submit" @click="send()" >发送</div>
             </div>
           </div>
           <!-- 控制区域 end -->
@@ -599,12 +599,19 @@ export default {
     // 发送消息
     send() {
       var obj = document.getElementById('message')
+      let msgData = obj.innerHTML;
+      obj.innerHTML=''
+      if (msgData=='') {
+        this.$message.warning('请输入内容!');
+        return ;
+      }
+
       this.Socket.send(
         JSON.stringify({
           call: 'chat.send',
           body: {
             type: 'text',
-            msg: obj.innerHTML,
+            msg: msgData,
             to: this.ChatUser.id,
             origin: 's'
           },
@@ -613,13 +620,12 @@ export default {
       )
       this.messageList.push({
         type: 'text',
-        msg: obj.innerHTML,
+        msg: msgData,
         to: this.ChatUser.id,
         origin: 's',
         from: this.MyInfo.id
       })
       this.toBottom()
-      obj.innerHTML = ''
     },
     // 打开表情选择
     openEmoji() {

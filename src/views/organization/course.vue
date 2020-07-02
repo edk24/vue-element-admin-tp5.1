@@ -64,18 +64,21 @@
           <span>{{ row.money }}</span>
         </template>
       </el-table-column>
+      <el-table-column label="上下架" prop="note" align="center" width="150" :class-name="getSortClass('id')">
+        <template slot-scope="{row}">
+          <el-switch v-model="row.enable" @change="updateEnable(row)" :active-value="1" :inactive-value="0"></el-switch>
+        </template>
+      </el-table-column>
       <el-table-column label="创建时间" prop="create_time" align="center" width="250" :class-name="getSortClass('id')">
         <template slot-scope="{row}">
           <span>{{ row.create_time }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="修改时间" prop="update_time" align="center" width="250" :class-name="getSortClass('id')">
-        <template slot-scope="{row}">
-          <span>{{ row.update_time }}</span>
-        </template>
-      </el-table-column>
       <el-table-column label="操作" fixed="right" align="center" width="350" class-name="small-padding fixed-width">
         <template slot-scope="{row,$index}">
+          <el-button type="primary" size="mini" @click="handleMember(row)">
+            报名列表
+          </el-button>
           <el-button type="primary" size="mini" @click="handleUpdate(row)">
             编辑
           </el-button>
@@ -190,6 +193,27 @@
         </el-button>
       </div>
     </el-dialog>
+
+    <!-- 报名人员 -->
+    <el-dialog title="报名人员名单" :visible.sync="dialogMember" width="650">
+    <el-table :data="member" height="480">
+      <el-table-column prop="date" label="序号" width="50">
+        <template slot-scope="{row, $index}">
+          {{ $index+1 }}
+        </template>
+      </el-table-column>
+      <el-table-column prop="consignee" label="姓名" width="72"></el-table-column>
+      <el-table-column prop="phone" label="手机" width="120"></el-table-column>
+      <el-table-column prop="address" label="地址"></el-table-column>
+      <el-table-column  label="支付状态">
+        <template slot-scope="scope">
+          <span style="color:red" v-if="scope.row.paid_status==0">未支付</span>
+          <span style="color:green" v-else>已支付</span>
+        </template>
+      </el-table-column>
+      <el-table-column prop="create_time" label="报名时间"></el-table-column>
+    </el-table>
+  </el-dialog>
   </div>
 </template>
 
@@ -260,12 +284,17 @@
           update: '编辑',
           create: '创建'
         },
-        silderimgList: []
+        silderimgList: [],
+
+        // 报名成员信息
+        member:[{paid_status:0}],
+        dialogMember:false,
       }
     },
     mounted() {
     },
     created() {
+      this.member=[];
       this.getAdminInfo()
       // this.getList()
     },
@@ -299,6 +328,13 @@
           })
         }
       },
+      handleMember(row){
+        course.member(row.id, -1).then(({code,msg,data,count})=>{
+            this.member = data
+        }).catch(()=>{})
+        this.dialogMember=true
+      }
+      ,
       // 点击放大图片
       handlePictureCardPreview(file) {
         this.temp.silder_image = file.url
@@ -362,6 +398,20 @@
         organization.train_list(1, 999, '', 1).then(res => {
           this.trainList = res.data
         })
+      },
+      // 上下架
+      updateEnable(row){
+        const fdata=new FormData();
+        fdata.append('id', row.id)
+        fdata.append('enable', row.enable)
+
+        course.edit(fdata).then(({code,msg})=>{
+          if (code===0) {
+            this.$message.success('操作成功')
+          } else {
+            this.$message.error(msg)
+          }
+        }).catch(()=>{})
       },
       getList() {
         this.listLoading = false
