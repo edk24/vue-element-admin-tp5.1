@@ -403,7 +403,6 @@ export default {
     }
   },
   mounted() {
-    // this.getTrainList()
   },
   created() {
     this.getList()
@@ -498,7 +497,8 @@ export default {
           this.listQuery.keyword,
           this.listQuery.type,
           this.listQuery.master_id,
-          this.listQuery.target_id
+          this.listQuery.target_id,
+            this.user.id
         )
         .then(({ code, msg, data, count }) => {
           if (code === 0) {

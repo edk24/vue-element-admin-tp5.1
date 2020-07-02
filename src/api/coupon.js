@@ -2,9 +2,9 @@ import request from '@/utils/request'
 import qs from 'qs'
 
 const coupon = {
-  getlist: function(page, limit, keyword, type, master_id, target_id) {
+  getlist: function(page, limit, keyword, type, master_id, target_id, uid) {
     return request({
-      url: '/v1/coupon?' + qs.stringify({ page, limit, keyword, type, master_id, target_id }),
+      url: '/v1/coupon?' + qs.stringify({ page, limit, keyword, type, master_id, target_id, uid }),
       method: 'get'
     })
   },
