@@ -10,7 +10,9 @@
         <el-form label-width="160px">
           <el-form-item v-for="(row, n) in item.item" :key="n" :label="row.title">
             <!-- 文本框 -->
-            <el-input v-if="row.type==='number'" v-model="row.value" :placeholder="row.desc" />
+            <el-input v-if="row.type==='input'"  v-model="row.value" :placeholder="row.desc" />
+            <!-- 文本框 -->
+            <el-input-number v-if="row.type==='number'"  v-model="row.value" :placeholder="row.desc" />
             <!-- 加长文本框 -->
             <el-input
               v-else-if="row.type ==='text'"
@@ -123,6 +125,10 @@ export default {
           this.$message.error('上传头像图片大小不能超过 2MB!')
         }
         return true
+    },
+    woc(d){
+      console.log('哈哈哈哈');
+console.log(d);
     },
     // 提交更改
     submitUpdate() {

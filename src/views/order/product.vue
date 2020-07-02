@@ -377,10 +377,10 @@ export default {
               if (this.page > 1) {
                 this.page--;
               }
-              this.fetchData();
             } else {
               this.$message.error(msg);
             }
+              this.fetchData();
           })
           .catch(() => {});
       }
