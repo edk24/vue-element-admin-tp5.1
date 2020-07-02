@@ -78,6 +78,12 @@
             />
           </el-select>
         </el-form-item>
+        <el-form-item label="选择市场经理">
+          <el-select v-model="formLabelAlign.manager_id" style="width: 140px" class="filter-item">
+            <el-option label="顶级" :value="0" />
+            <el-option v-for="item in manager_list" :key="item.id" :label="item.name" :value="item.id" />
+          </el-select>
+        </el-form-item>
         <el-form-item label="联系人">
           <el-input v-model="formLabelAlign.username" />
         </el-form-item>
@@ -173,9 +179,11 @@ import {
   update as gudonUpdate
 } from '@/api/company_gudon'
 import { user_search } from '@/api/user'
+import { manager } from '@/api/manager'
 export default {
   data() {
     return {
+      manager_list: [],
       url: process.env.VUE_APP_BASE_API,
       list: [],
       page: 1,
@@ -202,7 +210,8 @@ export default {
         area: '',
         address: '',
         commission: '',
-        license_obj: ''
+        license_obj: '',
+        manager_id: ''
       },
 
       // 股东管理
@@ -217,6 +226,9 @@ export default {
         phone: ''
       }
     }
+  },
+  mounted() {
+    this.getManagerList()
   },
   created() {
     this.fetchData(true)
@@ -243,6 +255,13 @@ export default {
         .catch(err => {
           console.log(err)
         })
+    },
+    getManagerList(){
+      manager.getlist(1, 9999, '').then(res => {
+        this.manager_list = res.data
+      }).catch(e => {
+        console.log(e)
+      })
     },
     // 修改表单
     edit(item) {
@@ -277,13 +296,14 @@ export default {
       formdata.append('title', this.formLabelAlign.title)
       formdata.append('code', this.formLabelAlign.code)
       formdata.append('username', this.formLabelAlign.username)
+      formdata.append('manager_id', this.formLabelAlign.manager_id)
       formdata.append('phone', this.formLabelAlign.phone)
       formdata.append('province', this.formLabelAlign.province)
       formdata.append('city', this.formLabelAlign.city)
       formdata.append('area', this.formLabelAlign.area)
       formdata.append('address', this.formLabelAlign.address)
       formdata.append('commission', this.formLabelAlign.commission)
-      if (this.formLabelAlign.license_obj) {
+      if (this.formLabelAlign.license_obj !== undefined) {
         formdata.append('license', this.formLabelAlign.license_obj)
       }
 

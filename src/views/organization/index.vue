@@ -263,7 +263,7 @@
       getList() {
         const that = this
         this.listLoading = false
-        organization.train_info(this.user.id).then(({ code, msg, data, count }) => {
+        organization.train_detail(this.user.id).then(({ code, msg, data, count }) => {
           this.list.silder_image = []
           if (code === 0) {
             data.license = this.imgsrc + data.license

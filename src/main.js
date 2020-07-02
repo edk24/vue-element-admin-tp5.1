@@ -11,6 +11,7 @@ import router from './router'
 import store from './store'
 import 'quill/dist/quill.core.css'
 import 'quill/dist/quill.snow.css'
+import 'video.js/dist/video-js.css'
 
   const { mockXHR } = require('../mock')
   mockXHR()

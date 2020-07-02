@@ -78,9 +78,9 @@
       </el-table-column>
       <el-table-column label="操作" fixed="right" align="center" width="350" class-name="small-padding fixed-width">
         <template slot-scope="{row,$index}">
-          <el-button type="success" size="mini" @click="play(row)">
+          <!-- <el-button type="success" size="mini" @click="play(row)">
             查看视频
-          </el-button>
+          </el-button> -->
           <el-button type="primary" size="mini" @click="handleUpdate(row)">
             编辑
           </el-button>
@@ -146,7 +146,7 @@
 
     <el-dialog :title="textMap[dialogStatus]" :visible.sync="playDialogFormVisible">
       <div class="whole">
-        <video style="display: block;margin: 0 auto;" :src="temp.video_url" controls="controls" />
+        <video style="display: block;margin: 0 auto;" :src="temp.url" controls="controls" />
       </div>
     </el-dialog>
   </div>
@@ -413,6 +413,7 @@
       // 上传成功回调
       handleVideoSuccess(res, file) {
         this.videoRes = res.data
+        console.log(res.data)
       }
     }
   }
