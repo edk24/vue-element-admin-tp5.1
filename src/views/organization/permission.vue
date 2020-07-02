@@ -352,6 +352,7 @@
             data.append('id', tempData.id)
             data.append('name', tempData.name)
             data.append('category_id', tempData.category_id)
+            data.append('company_id', tempData.company_id)
             data.append('province', tempData.province)
             data.append('city', tempData.city)
             data.append('area', tempData.area)
