@@ -289,7 +289,13 @@
       // 获取用户列表
       getUserList() {
         var data = localStorage.getItem('userList')
-        this.userList = JSON.parse(data)
+        if (data) {
+          this.userList = JSON.parse(data)// [1,2]
+
+        } else {
+          this.userList=[]
+
+        }
       },
       // 设置用户列表
       setUserList() {
