@@ -26,8 +26,8 @@
       <el-table-column prop="jifen" label="积分" /> -->
       <el-table-column label="实名状态">
         <template slot-scope="scope">
-          <span v-if="scope.row.audit===1">通过</span>
-          <span v-else-if="scope.row.audit===0">申请中</span>
+          <span v-if="scope.row.audit===3">通过</span>
+          <span v-else-if="scope.row.audit===1">申请中</span>
           <span v-else-if="scope.row.audit===2">驳回</span>
           <span v-else>-</span>
         </template>
@@ -49,7 +49,7 @@
       <el-table-column label="管理" width="200">
         <template slot-scope="scope">
           <el-button-group>
-            <el-button v-if="scope.row.audit === 0" size="mini" type="primary" @click="showAuditDialog(scope.row)">审核</el-button>
+            <el-button v-if="scope.row.audit === 1" size="mini" type="primary" @click="showAuditDialog(scope.row)">审核</el-button>
             <el-popconfirm title="确认删除吗?" @onConfirm="onUserDel(scope.row)">
               <el-button slot="reference" size="mini" type="danger">删除</el-button>
             </el-popconfirm>
@@ -128,7 +128,7 @@ export default {
         card_image_a: '',
         card_image_b: '',
         hand_image: '',
-        audit: 0,
+        audit: 1,
         image: []
       }
     }
@@ -153,7 +153,7 @@ export default {
         this.page = 1
       }
       this.userList = []
-      user_list(this.page, this.limit, this.keyword, this.type, 0).then(
+      user_list(this.page, this.limit, this.keyword, this.type, 1).then(
         ({ code, msg, data, count }) => {
           if (code === 0) {
             data.forEach(user => {
@@ -169,7 +169,7 @@ export default {
     // 提交审核
     onAudit(status) {
       if (status) {
-        user_audit(this.userInfo.id, 1).then(({ code, msg }) => {
+        user_audit(this.userInfo.id, 3).then(({ code, msg }) => {
           if (code === 0) {
             this.$message.success('操作成功')
             this.refreshData()

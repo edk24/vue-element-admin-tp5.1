@@ -19,6 +19,7 @@
           <el-option label="全部" value="all" />
           <el-option v-for="item in trainList" :key="item.id" :label="item.name" :value="item.id" />
         </el-select>
+
       </p>
     </div>
 

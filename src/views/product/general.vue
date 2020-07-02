@@ -377,6 +377,7 @@
         form.append('price', this.form.price)
         form.append('point', this.form.point)
         form.append('content', this.form.content)
+        form.append('jifen', this.form.jifen)
         if (data.imageFile) {
           form.append('image', data.imageFile)
         }
@@ -393,7 +394,7 @@
           return
         }
         if (!this.form.jifen) {
-          this.$message.error('请输入最高可抵用积分')
+          this.$message.error('请填写最高可抵用积分')
           return
         }
         if (!this.form.content) {

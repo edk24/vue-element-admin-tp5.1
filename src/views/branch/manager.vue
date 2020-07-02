@@ -60,6 +60,9 @@
           <el-button type="primary" size="mini" @click="handleUpdate(row)">
             编辑
           </el-button>
+          <el-button type="primary" size="mini" @click="handleLookCompany(row)">
+            查看子公司
+          </el-button>
           <el-popconfirm title="确定删除这行信息吗?" @onConfirm="handleDelete(row,$index)">
             <el-button slot="reference" size="small" type="danger">删除</el-button>
           </el-popconfirm>
@@ -104,6 +107,70 @@
         </el-button>
       </div>
     </el-dialog>
+
+    <el-dialog title="查看子公司" id="dialogCompany" :visible.sync="dialogLookCompany">
+      <el-table
+      :key="tableKey"
+      v-loading="listLoading"
+      style="width: 100%;margin-bottom: 20px;"
+      border
+      :data="company_list"
+    >
+      <el-table-column label="序号" type="index" width="50" align="center">
+        <template scope="scope">
+          <span>{{ (listQuery.page - 1) * listQuery.limit + scope.$index + 1 }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="企业名称" prop="title" width="200" align="center" >
+        <template slot-scope="{row}">
+          <span>{{ row.title }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="社会统一代码" prop="type" align="center" width="200" style="height: 150px;">
+        <template slot-scope="{row}">
+          <span>{{ row.code }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="营业执照" prop="note" align="center" width="150">
+        <template slot-scope="{row}">
+          <span>{{ row.license }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="用户姓名" prop="note" align="center" width="150">
+        <template slot-scope="{row}">
+          <span>{{ row.user.nickname }}</span>
+        </template>
+      </el-table-column>
+        <el-table-column label="联系电话" prop="note" align="center" width="150">
+          <template slot-scope="{row}">
+            <span>{{ row.user.phone }}</span>
+          </template>
+        </el-table-column>
+      <el-table-column label="创建时间" prop="create_time" align="center" width="250">
+        <template slot-scope="{row}">
+          <span>{{ row.create_time }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="修改时间" prop="update_time" align="center" width="250" >
+        <template slot-scope="{row}">
+          <span>{{ row.update_time }}</span>
+        </template>
+      </el-table-column>
+<!--      <el-table-column label="操作" fixed="right" align="center" width="300" class-name="small-padding fixed-width">-->
+<!--        <template slot-scope="{row,$index}">-->
+<!--          <el-button type="primary" size="mini" @click="handleUpdate(row)">-->
+<!--            编辑-->
+<!--          </el-button>-->
+<!--          <el-button type="primary" size="mini" @click="handleLookCompany(row)">-->
+<!--            查看子公司-->
+<!--          </el-button>-->
+<!--          <el-popconfirm title="确定删除这行信息吗?" @onConfirm="handleDelete(row,$index)">-->
+<!--            <el-button slot="reference" size="small" type="danger">删除</el-button>-->
+<!--          </el-popconfirm>-->
+<!--        </template>-->
+<!--      </el-table-column>-->
+    </el-table>
+    </el-dialog>
   </div>
 </template>
 
@@ -115,6 +182,8 @@
     components: { Pagination },
     data() {
       return {
+        company_list: [],
+        dialogLookCompany: false,
         // 用户搜索
         userList: [],
         loading: false,
@@ -176,6 +245,19 @@
           this.userSearch = []
           this.loading = false
         }
+      },
+      // 查看子公司
+      getCompanyList(id){
+        manager.company(id).then(res =>{
+          this.company_list = res.data
+        }).catch(e =>{
+          console.log(e)
+        })
+      },
+      handleLookCompany(row){
+        this.company_list = []
+        this.dialogLookCompany = true
+        this.getCompanyList(row.id)
       },
       getList() {
         this.listLoading = false
@@ -269,7 +351,7 @@
         })
       },
       handleDelete(row, index) {
-        category.del(row.id).then(({ code, msg }) => {
+        manager.del(row.id).then(({ code, msg }) => {
           if (code === 0) {
             this.list.splice(index, 1)
             this.$notify({
@@ -290,5 +372,8 @@
 
 </script>
 <style type="text/css">
+  .el-dialog{
+    width: 65%;
+  }
 </style>
 

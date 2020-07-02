@@ -52,10 +52,10 @@
       <el-table-column prop="jifen" label="积分" />
       <el-table-column label="实名状态">
         <template slot-scope="scope">
-          <span v-if="scope.row.audit===1">通过</span>
-          <span v-else-if="scope.row.audit===0">申请中</span>
+          <span v-if="scope.row.audit===3">通过</span>
+          <span v-else-if="scope.row.audit===1">申请中</span>
           <span v-else-if="scope.row.audit===2">驳回</span>
-          <span v-else>-</span>
+          <span v-else>未审核</span>
         </template>
       </el-table-column>
       <el-table-column label="性别">

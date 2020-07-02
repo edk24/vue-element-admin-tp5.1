@@ -9,7 +9,7 @@ const organization = {
   },
   status: function(id, status, reason) {
     return request({
-      url: '/v1/train/status?' + qs.stringify({ id, status, reason }),
+      url: '/v1/train/hou_status?' + qs.stringify({ id, status, reason }),
       method: 'get'
     })
   },
@@ -42,6 +42,12 @@ const organization = {
   del_image: function(id, url) {
     return request({
       url: '/v1/train/del_image?' + qs.stringify({ id, url }),
+      method: 'get'
+    })
+  },
+  train_detail: function(id) {
+    return request({
+      url: '/v1/train/detail?id=' + id,
       method: 'get'
     })
   }
