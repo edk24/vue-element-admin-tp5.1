@@ -97,8 +97,10 @@
         :class-name="getSortClass('id')"
       >
         <template slot-scope="{row}">
-          <el-image class="image" :src="row.images">
-            <div slot="error" class="image-slot">暂未上传</div>
+          <el-image class="image" :src="row.images" style="width:100px; height:100px" fit="cover">
+            <div slot="error" class="image-slot">
+              暂未上传
+            </div>
           </el-image>
         </template>
       </el-table-column>
