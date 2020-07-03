@@ -1,8 +1,7 @@
-import { asyncRoutes, constantRoutes } from '@/router'
 import { getAuthMenu } from '@/api/user'
-import { getToken } from '@/utils/auth'
-
 import Layout from '@/layout'
+import { asyncRoutes, constantRoutes } from '@/router'
+import { getToken } from '@/utils/auth'
 
 /**
  * Use meta.role to determine if the current user has permission
