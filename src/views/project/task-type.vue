@@ -15,8 +15,7 @@
       style="width: 100%;margin-top: 10px;"
       @sort-change="sortChange"
     >
-      <el-table-column type="index" label="序号" sortable="custom" align="center" width="80" :class-name="getSortClass('id')">
-      </el-table-column>
+      <el-table-column type="index" label="序号" sortable="custom" align="center" width="80" :class-name="getSortClass('id')" />
       <el-table-column label="项目标题" prop="title" align="center" :class-name="getSortClass('id')">
         <template slot-scope="{row}">
           <span>{{ row.title }}</span>
@@ -30,12 +29,12 @@
       <el-table-column label="上级" prop="type_pid" align="center" width="150" :class-name="getSortClass('id')">
         <template slot-scope="{row}">
           <span v-if="row.TypePid.length == 0">顶级</span>
-          <span v-else>{{row.TypePid[0].title}}</span>
+          <span v-else>{{ row.TypePid[0].title }}</span>
         </template>
       </el-table-column>
       <el-table-column label="开发终端" prop="task_terminal" align="center" width="200" :class-name="getSortClass('id')">
         <template slot-scope="{row}">
-          <span v-for="item in row.task_terminal" :key="item.id">{{item.title}}<br/></span>
+          <span v-for="item in row.task_terminal" :key="item.id">{{ item.title }}<br></span>
         </template>
       </el-table-column>
       <el-table-column label="创建时间" prop="create_time" align="center" width="200" :class-name="getSortClass('id')">
@@ -75,9 +74,10 @@
             action="post"
             :on-success="handleAvatarSuccess"
             :before-upload="beforeIconUpload"
-            :on-change="changeIcon">
+            :on-change="changeIcon"
+          >
             <img v-if="temp.icon" :src="temp.icon" class="avatar">
-            <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+            <i v-else class="el-icon-plus avatar-uploader-icon" />
           </el-upload>
         </el-form-item>
         <el-form-item label="选择上级" prop="pid">
@@ -86,8 +86,8 @@
             <el-option v-for="item in this.list" :key="item.id" :label="item.title" :value="item.id" />
           </el-select>
         </el-form-item>
-        <el-form-item label="开发终端" width="500" >
-          <el-transfer v-model="value" style="line-height: 0px;" :titles="['终端列表', '拥有终端']" :data="terminal_list"></el-transfer>
+        <el-form-item label="开发终端" width="500">
+          <el-transfer v-model="value" style="line-height: 0px;" :titles="['终端列表', '拥有终端']" :data="terminal_list" />
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -166,7 +166,6 @@
         that.listLoading = false
         // 请求项目类型
         system.Task_type_list(this.listQuery.page, this.listQuery.limit).then(({ code, msg, data, count }) => {
-
           that.list = []
           data.forEach(row => {
             row.icon = that.url + row.icon

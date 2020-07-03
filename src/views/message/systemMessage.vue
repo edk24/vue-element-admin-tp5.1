@@ -83,12 +83,13 @@
           <el-input v-model="temp.title" />
         </el-form-item>
         <el-form-item label="消息类型">
-          <el-select v-model="temp.type" filterable placeholder="请选择"  style="width: 220px;">
+          <el-select v-model="temp.type" filterable placeholder="请选择" style="width: 220px;">
             <el-option v-for="item in type" :key="item.key" :label="item.name" :value="item.key" />
           </el-select>
         </el-form-item>
         <el-form-item label="推送对象">
           <el-select
+            v-if="temp.type === 'ONE'"
             v-model="temp.to"
             filterable
             remote
@@ -96,7 +97,6 @@
             placeholder="请输入手机号检索"
             :remote-method="userSearch"
             :loading="loading"
-            v-if="temp.type === 'ONE'"
             style="width: 200px;"
           >
             <el-option
@@ -105,17 +105,17 @@
               :label="item.nickname"
               :value="item.id"
             />
-<!--            <el-option v-for="item in user_list" :key="item.id" :label="item.nickname" :value="item.id"/>-->
-<!--            <el-option v-for="item in channel_list" v-if="temp.type === 'SUBSCRIBE'" :key="item.id" :label="item.title" :value="item.id" />-->
+            <!--            <el-option v-for="item in user_list" :key="item.id" :label="item.nickname" :value="item.id"/>-->
+            <!--            <el-option v-for="item in channel_list" v-if="temp.type === 'SUBSCRIBE'" :key="item.id" :label="item.title" :value="item.id" />-->
           </el-select>
 
           <el-select
+            v-if="temp.type === 'SUBSCRIBE'"
             v-model="temp.to"
             filterable
-            v-if="temp.type === 'SUBSCRIBE'"
             style="width: 200px;"
           >
-            <el-option v-for="item in channel_list"  :key="item.id" :label="item.title" :value="item.id" />
+            <el-option v-for="item in channel_list" :key="item.id" :label="item.title" :value="item.id" />
           </el-select>
 
         </el-form-item>

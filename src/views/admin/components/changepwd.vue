@@ -9,7 +9,7 @@
             clearable
             show-password
             :style="{width: '100%'}"
-          /> 
+          />
         </el-form-item>
         <el-form-item label="重复密码" prop="re_pwd">
           <el-input

@@ -22,7 +22,7 @@
       </el-table-column>
       <el-table-column label="商品图片" prop="title" align="center" :class-name="getSortClass('id')">
         <template slot-scope="{row}">
-          <el-image :src="row.images"></el-image>
+          <el-image :src="row.images" />
         </template>
       </el-table-column>
       <el-table-column label="价格" prop="title" align="center" :class-name="getSortClass('id')">
@@ -63,16 +63,16 @@
     <!--   第一层弹窗 -->
     <el-dialog :title="textMap[dialogStatus]" width="40%" :visible.sync="dialogFormVisible">
       <el-form ref="dataForm" :rules="rules" :model="temp" label-position="left" label-width="100px" style="margin-left:50px;">
-<!--        <el-form-item label="选择店铺" width="100px;">-->
-<!--          <el-input v-model="temp.title" />-->
-<!--        </el-form-item>-->
+        <!--        <el-form-item label="选择店铺" width="100px;">-->
+        <!--          <el-input v-model="temp.title" />-->
+        <!--        </el-form-item>-->
         <el-form-item label="商品名称" prop="content" width="100px;">
           <el-input v-model="temp.title" />
         </el-form-item>
         <el-form-item label="轮播图片">
           <template v-for="(item, index) in temp.images">
-              <i class="el-icon-delete" id="img_i" @click="del_img(index)"></i>
-              <img :src="item" :key="index" id="img" style="width: 120px;height: 80px;" />
+            <i id="img_i" class="el-icon-delete" @click="del_img(index)" />
+            <img id="img" :key="index" :src="item" style="width: 120px;height: 80px;">
           </template>
         </el-form-item>
       </el-form>
@@ -252,7 +252,7 @@
         })
       },
       del_img(index) {
-        this.temp.images.splice(index , 1)
+        this.temp.images.splice(index, 1)
       },
       img_enter(row) {
         this.img_i_style.color = '#111111'

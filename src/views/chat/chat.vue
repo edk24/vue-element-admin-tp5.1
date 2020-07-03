@@ -104,7 +104,7 @@
                 hidden="true"
               />
               <div id="message" contenteditable="true" class="message" @focus="EmojiShow = false" @keyup.enter="send()" />
-              <div class="submit" @click="send()" >发送</div>
+              <div class="submit" @click="send()">发送</div>
             </div>
           </div>
           <!-- 控制区域 end -->
@@ -599,11 +599,11 @@ export default {
     // 发送消息
     send() {
       var obj = document.getElementById('message')
-      let msgData = obj.innerHTML;
-      obj.innerHTML=''
-      if (msgData=='') {
-        this.$message.warning('请输入内容!');
-        return ;
+      const msgData = obj.innerHTML
+      obj.innerHTML = ''
+      if (msgData === '') {
+        this.$message.warning('请输入内容!')
+        return
       }
 
       this.Socket.send(
@@ -690,7 +690,6 @@ export default {
       //     current = i;
       //   }
       // }
-      
 
       console.log(have)
       if (have === false) {

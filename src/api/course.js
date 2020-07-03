@@ -2,40 +2,40 @@ import request from '@/utils/request'
 import qs from 'qs'
 
 const course = {
-  getlist: function (page, limit, train_id, user_id) {
+  getlist: function(page, limit, train_id, user_id) {
     return request({
       url: '/v1/course?' + qs.stringify({ page, limit, train_id, user_id }),
       method: 'get'
     })
   },
-  edit: function (data) {
+  edit: function(data) {
     return request({
       url: '/v1/course/edit',
       method: 'post',
       data
     })
   },
-  add: function (data) {
+  add: function(data) {
     return request({
       url: '/v1/course',
       method: 'post',
       data
     })
   },
-  del: function (id) {
+  del: function(id) {
     return request({
       url: '/v1/course/' + id,
       method: 'delete'
     })
   },
-  upload_image: function (data) {
+  upload_image: function(data) {
     return request({
       url: '/v1/course/upload_image',
       method: 'post',
       data
     })
   },
-  del_image: function (data) {
+  del_image: function(data) {
     return request({
       url: '/v1/course/del_image',
       method: 'post',
@@ -43,7 +43,7 @@ const course = {
     })
   },
   // 查询报名人员名单
-  member: function (course_id, status = -1) {
+  member: function(course_id, status = -1) {
     return request({
       url: '/v1/course/member?' + qs.stringify({ course_id, status })
     })
