@@ -7,9 +7,9 @@
         </div>
         <div class="card-panel-description">
           <div class="card-panel-text">
-            新用户
+            今日注册用户
           </div>
-          <count-to :start-val="0" :end-val="102400" :duration="2600" class="card-panel-num" />
+          <count-to :start-val="0" :end-val="user_register_num" :duration="26" class="card-panel-num" />
         </div>
       </div>
     </el-col>
@@ -20,9 +20,9 @@
         </div>
         <div class="card-panel-description">
           <div class="card-panel-text">
-            消息
+            今日成交订单数
           </div>
-          <count-to :start-val="0" :end-val="81212" :duration="3000" class="card-panel-num" />
+          <count-to :start-val="0" :end-val="orders_num" :duration="3000" class="card-panel-num" />
         </div>
       </div>
     </el-col>
@@ -57,14 +57,37 @@
 
 <script>
 import CountTo from 'vue-count-to'
+import { dashboard } from '@/api/dashboard'
 
 export default {
   components: {
     CountTo
   },
+  data() {
+    return {
+      orders_num: '',
+      user_register_num: ''
+    }
+  },
+  created() {
+    this.getNumList()
+  },
   methods: {
     handleSetLineChartData(type) {
       this.$emit('handleSetLineChartData', type)
+    },
+    getNumList() {
+      dashboard.orders_num().then(res => {
+        this.orders_num = res.data
+      }).catch(error => {
+        console.log(error)
+      })
+
+      dashboard.user_register_num().then(res => {
+        this.user_register_num = res.data
+      }).catch(error => {
+        console.log(error)
+      })
     }
   }
 }

@@ -107,11 +107,11 @@
             placeholder="请输入内容"
           />
         </el-form-item>
-        <el-form-item label="是否整包更新" >
+        <el-form-item label="是否整包更新">
           <el-radio v-model="temp.entire" :label="0" @change="changeEntire">否</el-radio>
           <el-radio v-model="temp.entire" :label="1" @change="changeEntire">是</el-radio>
         </el-form-item>
-        <el-form-item label="上传apk" v-if="temp.entire === 1">
+        <el-form-item label="上传apk">
           <el-upload
             v-model="temp.apk"
             class="upload-demo"
@@ -130,7 +130,7 @@
             <div slot="tip" class="el-upload__tip">只能上传一个apk文件，文件后显示绿色小勾，代表上传成功</div>
           </el-upload>
         </el-form-item>
-        <el-form-item label="上传ios" v-if="temp.entire === 1">
+        <el-form-item label="上传ios">
           <el-upload
             v-model="temp.ios"
             class="upload-demo"
@@ -149,7 +149,7 @@
             <div slot="tip" class="el-upload__tip">只能上传一个ios文件，文件后显示绿色小勾，代表上传成功</div>
           </el-upload>
         </el-form-item>
-        <el-form-item label="上传wgt" v-if="temp.entire === 0">
+        <el-form-item label="上传wgt">
           <el-upload
             v-model="temp.wgt"
             class="upload-demo"
