@@ -14,7 +14,8 @@ const getDefaultState = () => {
     avatar: '',
     roles: [],
     init: false, // 是否完成初始化 // 默认未完成
-    RouterList: [] // 动态路由
+    RouterList: [], // 动态路由
+    id: 0
   }
 }
 
@@ -110,6 +111,7 @@ const actions = {
         commit('SET_TYPE', type)
         commit('SET_ID', id)
         commit('SET_AVATAR', avatar)
+        this.commit('chat/wsLogin', id)
         resolve(data)
       }).catch(error => {
         reject(error)

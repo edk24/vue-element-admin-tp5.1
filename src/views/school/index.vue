@@ -38,7 +38,7 @@
       </el-table-column>
       <el-table-column label="公司" prop="title" width="200" align="center" :class-name="getSortClass('id')">
         <template slot-scope="{row}">
-          <span>{{ row.company.title }}</span>
+          <span>{{ row.company.title}}</span>
         </template>
       </el-table-column>
       <el-table-column label="用户" align="center" width="150">

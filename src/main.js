@@ -8,13 +8,18 @@ import 'normalize.css/normalize.css' // CSS重置的现代替代方法
 import Vue from 'vue'
 import App from './App'
 import router from './router'
-import store from './store'
+import store from '@/store/index'
 import 'quill/dist/quill.core.css'
 import 'quill/dist/quill.snow.css'
 import 'video.js/dist/video-js.css'
 
-  const { mockXHR } = require('../mock')
-  mockXHR()
+Vue.prototype.$store = store
+
+  // const { mockXHR } = require('../mock')
+  // mockXHR()
+
+  console.log(555555555)
+store.dispatch('chat/initWs')
 
 Vue.use(ElementUI, { locale })
 // 如果想要中文版 element-ui，按如下方式声明

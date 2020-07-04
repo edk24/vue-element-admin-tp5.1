@@ -21,7 +21,7 @@
             class="item"
             @click="changeUser(a)"
           >
-            <img class="avatar" :src="item.avatar" alt>
+            <img class="avatar" :src="item.avatar" alt />
             <div class="nickname">{{ item.nickname }}</div>
             <div v-if="item.unRead" class="read">{{ item.unRead }}</div>
           </div>
@@ -34,10 +34,10 @@
             <div v-for="(item,b) in messageList" :key="b" class="row">
               <!--对方发送的聊天消息-->
               <div v-if="item.from == ChatUser.id" class="other item">
-                <img class="avatar" :src="ChatUser.avatar">
+                <img class="avatar" :src="ChatUser.avatar" />
                 <div class="box">
                   <div v-if="item.type === 'text'" class="text" v-html="item.msg" />
-                  <img v-if="item.type === 'img'" class="img" :src="item.msg.src" alt>
+                  <img v-if="item.type === 'img'" class="img" :src="item.msg.src" alt />
                   <audio
                     v-if="item.type === 'sound'"
                     muted
@@ -51,7 +51,7 @@
               <div v-if="item.from === MyInfo.id" class="my item">
                 <div class="box">
                   <div v-if="item.type === 'text'" class="text" v-html="item.msg" />
-                  <img v-if="item.type === 'img'" class="img" :src="item.msg.src" alt>
+                  <img v-if="item.type === 'img'" class="img" :src="item.msg.src" alt />
                   <audio
                     v-if="item.type === 'sound'"
                     muted
@@ -60,7 +60,7 @@
                     autostart="false"
                   />
                 </div>
-                <img class="avatar" :src="MyInfo.avatar">
+                <img class="avatar" :src="MyInfo.avatar" />
               </div>
             </div>
           </div>
@@ -78,7 +78,7 @@
                     :src="url+ '/uploads/emoji/' +item.url"
                     :alt="item.url"
                     @click="getEmoji(c,$event)"
-                  >
+                  />
                 </div>
               </div>
               <el-upload
@@ -103,7 +103,13 @@
                 loop="false"
                 hidden="true"
               />
-              <div id="message" contenteditable="true" class="message" @focus="EmojiShow = false" @keyup.enter="send()" />
+              <div
+                id="message"
+                contenteditable="true"
+                class="message"
+                @focus="EmojiShow = false"
+                @keyup.enter="send()"
+              />
               <div class="submit" @click="send()">发送</div>
             </div>
           </div>
@@ -127,7 +133,6 @@ export default {
         token: '',
         reloadTime: 30
       },
-      Socket: {},
       userList: [],
       ChatUser: {},
       messageList: [],
@@ -270,7 +275,9 @@ export default {
   },
   created() {
     // 创建socket 连接
-    this.createWebSocket()
+    // this.createWebSocket()
+    this.$store.commit('chat/set_message_callback', this.onMessage)
+
     this.getMyInfo()
     this.getUserList()
   },
@@ -296,73 +303,33 @@ export default {
     getMyInfo() {
       getInfo().then(res => {
         this.MyInfo = res.data
+        // this.$store.commit('chat/wsLogin', res.data.id)
       })
     },
-    // 创建连接
-    createWebSocket() {
-      try {
-        // 创建Web Socket 连接
-        const socket = new WebSocket(this.Config.url)
-        // 初始化事件
-        this.initEventHandle(socket)
-      } catch (e) {
-        // 出错时重新连接
-        this.reconnect()
+
+    // 收到消息
+    onMessage(pack) {
+      // var data = JSON.parse(msg.data)
+      console.log(pack)
+      switch (pack.call) {
+        case 'login.uid': // 登录
+          this.LoginReturn(pack)
+          break
+        case 'chat.unread': // 未读消息
+          this.NotReadReturn(pack)
+          break
+        case 'chat.history': // 历史消息
+          this.HistoryReturn(pack)
+          break
+        case 'user.get': // 用户信息
+          this.getUserReturn(pack)
+          break
+        case 'chat.recv': // 收到消息
+          this.getMessage(pack)
+          break
       }
     },
-    // 连接初始化
-    initEventHandle(socket) {
-      // 连接关闭时触发
-      socket.onclose = () => {
-        this.Config.online = false
-        this.reconnect()
-        console.log('连接关闭')
-      }
-      // 通信发生错误时触发
-      socket.onerror = () => {
-        console.log('通信错误')
-        // 重新创建长连接
-        this.reconnect()
-      }
-      // 连接建立时触发
-      socket.onopen = () => {
-        // 连接建立, 登录聊天
-        this.Login(socket)
-        console.log('连接成功')
-      }
-      // 客户端接收服务端数据时触发
-      socket.onmessage = msg => {
-        var data = JSON.parse(msg.data)
-        switch (data.call) {
-          case 'login.uid': // 登录
-            this.LoginReturn(data)
-            break
-          case 'chat.unread': // 未读消息
-            this.NotReadReturn(data)
-            break
-          case 'chat.history': // 历史消息
-            this.HistoryReturn(data)
-            break
-          case 'user.get': // 用户信息
-            this.getUserReturn(data)
-            break
-          case 'chat.recv': // 收到消息
-            this.getMessage(data)
-            break
-        }
-      }
-    },
-    // 重连
-    reconnect() {
-      if (this.Config.online) {
-        return
-      }
-      // 没连接上会一直重连，设置延迟避免请求过多
-      setTimeout(() => {
-        this.Config.online = false
-        this.createWebSocket(this.Config.url)
-      }, 2000)
-    },
+
     // 选择图片
     selectImg(file) {
       // 验证
@@ -404,23 +371,19 @@ export default {
     // 发送图片消息
     sendImage(data) {
       var that = this
-      this.Socket.send(
-        JSON.stringify({
-          call: 'chat.send',
-          body: {
-            type: 'img',
-            msg: {
-              src: that.url + data.src,
-              thumb: that.url + data.src, // 缩略图
-              w: data.w,
-              h: data.h
-            },
-            to: that.ChatUser.id, // 群号 or uid
-            origin: 's' // s=单聊, g=群聊
-          },
-          token: that.Config.token
-        })
-      )
+
+      const data1 = {
+        call: 'chat.send',
+        msg: {
+          src: that.url + data.src,
+          thumb: that.url + data.src, // 缩略图
+          w: data.w,
+          h: data.h
+        },
+        to: that.ChatUser.id, // 群号 or uid
+        origin: 's' // s=单聊, g=群聊
+      }
+      this.$store.dispatch('chat/SendRaw', data1)
       this.messageList.push({
         type: 'img',
         msg: {
@@ -442,24 +405,6 @@ export default {
         container.scrollTop = container.scrollHeight
       })
     },
-    // 登录方法
-    Login(socket) {
-      console.log(this.MyInfo.id)
-      this.Socket = socket
-
-      getInfo().then(res => {
-        this.MyInfo = res.data
-        const message = JSON.stringify({
-          call: 'login.uid',
-          body: {
-            uid: res.data.id
-            // user: '18230771271',
-            // pass: 'f8053a97efd69963b5173749ce378e19'
-          }
-        })
-      socket.send(message)
-      })
-    },
     // 登录返回
     LoginReturn(data) {
       if (data.code === 0) {
@@ -471,25 +416,43 @@ export default {
     },
     // 获取未读消息
     NotRead() {
-      const message = JSON.stringify({
+      const message = {
         call: 'chat.unread',
         token: this.Config.token
-      })
-      this.Socket.send(message)
+      }
+      this.$store.dispatch('chat/SendRaw', message)
+      // this.Socket.send(message)
     },
     // 未读消息返回
     NotReadReturn(data) {
       var list = this.objToArray(data.result)
+
       for (let i = 0; i < list.length; i++) {
         if (list[i][0] === 'u') {
-          for (let j = 0; j < this.userList.length; j++) {
-            if (parseInt(list[i][1]) === parseInt(this.userList[j].id)) {
+          var exist = false
+          for (let j = 0; this.userList.length > j; j++) {
+            if (
+              Number.parseInt(this.userList[j].id) ===
+              Number.parseInt(list[i][1])
+            ) {
               if (parseInt(list[i][2]) > 99) {
                 list[i][2] = '99+'
               }
               this.userList[j].unRead = list[i][2]
-              this.setUserList()
+              console.log(this.userList[j].unRead)
+
+              exist = true
+              break
             }
+          }
+
+          if (exist === false) {
+            this.userList.push({
+              id: Number.parseInt(list[i][1]),
+              unRead: list[i][2]
+            })
+            this.setUserList()
+            this.getUser(Number.parseInt(list[i][1]))
           }
         }
       }
@@ -508,18 +471,19 @@ export default {
     },
     // 获取历史记录
     History(to) {
-      this.Socket.send(
-        JSON.stringify({
-          call: 'chat.history',
-          body: {
-            type: 's', // 类型:g=群聊, s=单聊
-            to: to, // uid or 群号
-            limit: 20, // 拉取数量, 建议不超过20条
-            offset: 0 // 偏移
-          },
-          token: this.Config.token
-        })
-      )
+      // this.Socket.send(
+      //   JSON.stringify()
+      // )
+      this.$store.dispatch('chat/SendRaw', {
+        call: 'chat.history',
+        data: {
+          type: 's', // 类型:g=群聊, s=单聊
+          to: to, // uid or 群号
+          limit: 20, // 拉取数量, 建议不超过20条
+          offset: 0 // 偏移
+        }
+      })
+
       this.NotHistory(to)
     },
     // 获取历史返回
@@ -541,22 +505,21 @@ export default {
     },
     // 获取用户信息
     getUser(uid) {
-      this.Socket.send(
-        JSON.stringify({
-          call: 'user.get',
-          body: {
-            uid: uid
-          },
-          token: this.Config.token
-        })
-      )
+      this.$store.dispatch('chat/SendRaw', {
+        call: 'user.get',
+        data: {
+          uid
+        }
+      })
     },
     // 获取用户信息返回
     getUserReturn(data) {
       var havaUser = false
+      var index = -1
       for (let i = 0; i < this.userList.length; i++) {
         if (this.userList[i].id === data.result.id) {
           havaUser = true
+          index = i
         }
       }
       var unRead = 0
@@ -572,8 +535,13 @@ export default {
           nickname: data.result.nickname,
           unRead: unRead
         })
-        localStorage.setItem('userList', JSON.stringify(this.userList))
+      } else {
+        if (index >= 0) {
+          this.userList[index].avatar = data.result.avatar
+          this.userList[index].nickname = data.result.nickname
+        }
       }
+      localStorage.setItem('userList', JSON.stringify(this.userList))
     },
     // 选择聊天对象
     changeUser(index) {
@@ -585,16 +553,13 @@ export default {
     },
     // 获取未读历史
     NotHistory(to) {
-      this.Socket.send(
-        JSON.stringify({
-          call: 'chat.unread_history',
-          body: {
-            type: 's', // 类型: g=群聊, s=单聊
-            to: to // uid or 群号
-          },
-          token: this.Config.token
-        })
-      )
+      this.$store.dispatch('chat/SendRaw', {
+        call: 'chat.unread_history',
+        data: {
+          type: 's', // 类型: g=群聊, s=单聊
+          to: to // uid or 群号
+        }
+      })
     },
     // 发送消息
     send() {
@@ -606,18 +571,16 @@ export default {
         return
       }
 
-      this.Socket.send(
-        JSON.stringify({
-          call: 'chat.send',
-          body: {
-            type: 'text',
-            msg: msgData,
-            to: this.ChatUser.id,
-            origin: 's'
-          },
-          token: this.Config.token
-        })
-      )
+      this.$store.dispatch('chat/SendRaw', {
+        call: 'chat.send',
+        data: {
+          type: 'text',
+          msg: msgData,
+          to: this.ChatUser.id,
+          origin: 's'
+        }
+      })
+
       this.messageList.push({
         type: 'text',
         msg: msgData,

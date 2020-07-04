@@ -298,11 +298,14 @@ export default {
       formdata.append('username', this.formLabelAlign.username)
       formdata.append('manager_id', this.formLabelAlign.manager_id)
       formdata.append('phone', this.formLabelAlign.phone)
-      formdata.append('province', this.formLabelAlign.province)
-      formdata.append('city', this.formLabelAlign.city)
-      formdata.append('area', this.formLabelAlign.area)
-      formdata.append('address', this.formLabelAlign.address)
+      //formdata.append('province', this.formLabelAlign.province)
+      //formdata.append('city', this.formLabelAlign.city)
+      //formdata.append('area', this.formLabelAlign.area)
+      //formdata.append('address', this.formLabelAlign.address)
       formdata.append('commission', this.formLabelAlign.commission)
+      
+     
+      
       if (this.formLabelAlign.license_obj !== undefined) {
         formdata.append('license', this.formLabelAlign.license_obj)
       }
