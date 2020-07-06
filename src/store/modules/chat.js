@@ -99,7 +99,7 @@ const actions = {
                     }
 
                     // if (!bool) {
-                    
+
                     // }
                 }
             }, state.timeout)

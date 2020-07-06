@@ -1,7 +1,5 @@
 import { login, logout, getInfo } from '@/api/user'
 import { getToken, setToken, removeToken } from '@/utils/auth'
-import { get_menu_tree } from '@/api/menu'
-import Layout from '@/layout'
 import { StaticRouterMap } from '@/router/index'
 
 import { resetRouter } from '@/router'
@@ -60,36 +58,6 @@ const actions = {
         const { data } = response
         commit('SET_TOKEN', data)
         setToken(data)
-
-        // 加载动态菜单
-        get_menu_tree().then(response => {
-          const { code, data, msg, count } = response
-          if (code === 0) {
-            const route = []
-            route.push({
-              path: '/school1',
-              component: Layout,
-              name: '学校管理1',
-              meta: {
-                title: '学校管理1',
-                tree: 'tre1e',
-                icon: 'example'
-              },
-              children: [{
-                path: 'index',
-                name: '学校管理',
-                component: () => import('@/views/school/index'),
-                meta: {
-                  title: '学校管理',
-                  icon: 'tree'
-                }
-              }
-              ]
-            })
-
-            // this.router.
-          }
-        }).catch(err => { console.log(err) })
 
         resolve()
       }).catch(error => {

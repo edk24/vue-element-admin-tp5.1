@@ -6,7 +6,7 @@
         <span>{{ list.name }}</span>
       </el-form-item>
       <el-form-item label="推广公司">
-        <span>{{ company.title }}</span>
+        <span>{{ company?company.title:'已注销' }}</span>
       </el-form-item>
       <el-form-item label="营业执照">
         <el-image
@@ -25,7 +25,7 @@
         />
       </el-form-item>
       <el-form-item label="分类">
-        <span>{{ category.title }}</span>
+        <span>{{ category.title||'' }}</span>
       </el-form-item>
       <el-form-item label="展示图">
         <el-upload
@@ -63,7 +63,7 @@
           <img width="100%" :src="list.silder_image" alt="">
         </el-dialog>
       </el-form-item>
-      <el-form-item label="省/市/区">
+      <!-- <el-form-item label="省/市/区">
         <el-cascader
           v-model="selectedOptions"
           size="large"
@@ -77,19 +77,19 @@
       </el-form-item>
       <el-form-item label="详细地址">
         <span>{{ list.address }}</span>
-      </el-form-item>
+      </el-form-item> -->
       <el-form-item label="联系人">
         <span>{{ list.contact }}</span>
       </el-form-item>
       <el-form-item label="联系人电话">
         <span>{{ list.phone }}</span>
       </el-form-item>
-      <el-form-item label="对推广员返点">
+      <!-- <el-form-item label="对推广员返点">
         <span>{{ list.rebate }}</span>
       </el-form-item>
       <el-form-item label="详情">
         <editor-bar v-model="list.content" :is-clear="isClear" style="width: 800px;" />
-      </el-form-item>
+      </el-form-item> -->
     </el-form>
     <div slot="footer" class="dialog-footer" style="margin-left: 254px;">
       <!--          <el-button @click="dialogFormVisible = false">-->
@@ -273,6 +273,7 @@
             this.selectedOptions = str.split(',')
             if (data.images !== '') {
               var img = data.images.split(';')
+              that.silderimgList = []
               img.forEach(function(row) {
                 row = that.imgsrc + row
                 that.silderimgList.push({ url: row })

@@ -21,7 +21,7 @@
             class="item"
             @click="changeUser(a)"
           >
-            <img class="avatar" :src="item.avatar" alt />
+            <img class="avatar" :src="item.avatar" alt>
             <div class="nickname">{{ item.nickname }}</div>
             <div v-if="item.unRead" class="read">{{ item.unRead }}</div>
           </div>
@@ -34,10 +34,10 @@
             <div v-for="(item,b) in messageList" :key="b" class="row">
               <!--对方发送的聊天消息-->
               <div v-if="item.from == ChatUser.id" class="other item">
-                <img class="avatar" :src="ChatUser.avatar" />
+                <img class="avatar" :src="ChatUser.avatar">
                 <div class="box">
                   <div v-if="item.type === 'text'" class="text" v-html="item.msg" />
-                  <img v-if="item.type === 'img'" class="img" :src="item.msg.src" alt />
+                  <img v-if="item.type === 'img'" class="img" :src="item.msg.src" alt>
                   <audio
                     v-if="item.type === 'sound'"
                     muted
@@ -51,7 +51,7 @@
               <div v-if="item.from === MyInfo.id" class="my item">
                 <div class="box">
                   <div v-if="item.type === 'text'" class="text" v-html="item.msg" />
-                  <img v-if="item.type === 'img'" class="img" :src="item.msg.src" alt />
+                  <img v-if="item.type === 'img'" class="img" :src="item.msg.src" alt>
                   <audio
                     v-if="item.type === 'sound'"
                     muted
@@ -60,7 +60,7 @@
                     autostart="false"
                   />
                 </div>
-                <img class="avatar" :src="MyInfo.avatar" />
+                <img class="avatar" :src="MyInfo.avatar">
               </div>
             </div>
           </div>
@@ -78,7 +78,7 @@
                     :src="url+ '/uploads/emoji/' +item.url"
                     :alt="item.url"
                     @click="getEmoji(c,$event)"
-                  />
+                  >
                 </div>
               </div>
               <el-upload

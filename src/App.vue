@@ -10,7 +10,7 @@ export default {
   mounted() {
     // 是否登录
     if (this.$store.state.user.id) {
-      console.log(this.$store.state.user.id,'wsss')
+      console.log(this.$store.state.user.id, 'wsss')
       // this.$store.commit('chat/wsLogin', this.$store.state.user.id)
     }
   }
