@@ -28,7 +28,7 @@ export function addRouter(routerlist) {
         e_new = { ...e_new, hidden: true }
       }
       if (e.icon !== '' && e.title !== '') {
-        e_new = { ...e_new, meta: { title: e.title, icon: 'el-icon-'+e.icon } }
+        e_new = { ...e_new, meta: { title: e.title, icon: e.icon } }
       } else if (e.title !== '' && e.icon === '') {
         e_new = { ...e_new, meta: { title: e.title } }
       }
